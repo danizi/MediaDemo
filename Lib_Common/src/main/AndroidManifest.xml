@@ -1,0 +1,13 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+package="com.bangke.lib">
+
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<application>
+    <!--广告组件声明-->
+    <activity android:name=".common.ad.AdActivity"></activity>
+    <!--引导页组件声明-->
+    <activity android:name=".common.guide.GuideActivity"></activity>
+    <!--加载网页的窗口-->
+    <activity android:name=".common.act.ActPayWebView"></activity>
+</application>
+</manifest>
