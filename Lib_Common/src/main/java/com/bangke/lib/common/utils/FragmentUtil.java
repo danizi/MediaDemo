@@ -10,7 +10,7 @@ import android.text.TextUtils;
  * fragment操作工具类
  */
 public class FragmentUtil {
-    public static FragmentUtil instance;
+    private static FragmentUtil instance;
     private String preFragmentTag;
     private FragmentManager fragmentManager;
 
