@@ -7,12 +7,16 @@ import android.util.AttributeSet
 import android.view.ViewGroup
 import android.widget.FrameLayout
 
-class XmTabbar(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs), XmTabbarContract.View {
-    override fun bindViewPager(viewPager: ViewPager): XmTabbar {
-        presenter!!.model().viewPager = viewPager
+class XmTabbarComponent(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs), XmTabbarContract.View {
+    override fun addCore(core: AbsCreateTabbarCore) :XmTabbarComponent{
+        presenter!!.model().core = core
         return this
     }
 
+    override fun bindViewPager(viewPager: ViewPager): XmTabbarComponent {
+        presenter!!.model().viewPager = viewPager
+        return this
+    }
 
     private var presenter: XmTabbarContract.Presenter? = null
 
@@ -20,13 +24,13 @@ class XmTabbar(context: Context, attrs: AttributeSet?) : FrameLayout(context, at
         presenter = XmTabbarContract.Presenter(getContext(), this)
     }
 
-    override fun setColor(beforeColorID: Int, afterColorID: Int): XmTabbar {
+    override fun setColor(beforeColorID: Int, afterColorID: Int): XmTabbarComponent {
         presenter!!.model().beforeColorID = beforeColorID
         presenter!!.model().afterColorID = afterColorID
         return this
     }
 
-    override fun addItem(instance: Fragment, des: String, beforeIconID: Int, afterIconID: Int): XmTabbar {
+    override fun addItem(instance: Fragment, des: String, beforeIconID: Int, afterIconID: Int): XmTabbarComponent {
         presenter!!.model().fragmentList.add(instance)
         presenter!!.model().desList.add(des)
         presenter!!.model().beforeIconIDList.add(beforeIconID)
@@ -34,7 +38,7 @@ class XmTabbar(context: Context, attrs: AttributeSet?) : FrameLayout(context, at
         return this
     }
 
-    override fun setContainer(layoutID: Int): XmTabbar {
+    override fun setContainer(layoutID: Int): XmTabbarComponent {
         presenter!!.model().container = layoutID
         return this
     }
@@ -47,7 +51,7 @@ class XmTabbar(context: Context, attrs: AttributeSet?) : FrameLayout(context, at
 
     }
 
-    override fun select(i: Int): XmTabbar {
+    override fun select(i: Int): XmTabbarComponent {
         presenter!!.model().index = i
         return this
     }
@@ -60,7 +64,7 @@ class XmTabbar(context: Context, attrs: AttributeSet?) : FrameLayout(context, at
         presenter!!.build()
     }
 
-    override fun getXmTabbar(): XmTabbar {
+    override fun getXmTabbar(): XmTabbarComponent {
         return this
     }
 

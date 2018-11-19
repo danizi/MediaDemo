@@ -16,7 +16,7 @@ import com.bangke.lib.common.utils.FragmentUtil
 /**
  * 引擎
  */
-class OneCore(val context: Context, val view: XmTabbarContract.View, val model: XmTabbarContract.Model) : AbsCreateTabbarCore() {
+class OneCore  : AbsCreateTabbarCore() {
 
     override fun build() {
         try {
@@ -121,15 +121,15 @@ class OneCore(val context: Context, val view: XmTabbarContract.View, val model: 
         tv.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         val p: LinearLayout.LayoutParams = tv.layoutParams as LinearLayout.LayoutParams
         p.topMargin = DisplayUtils.dp2px(context, 6F)
-        tv.text = model.desList[index]
-        tv.setTextColor(model.beforeColorID!!)
+        tv.text = model!!.desList[index]
+        tv.setTextColor(model!!.beforeColorID!!)
         return tv
     }
 
     private fun createIconView(index: Int): ImageView {
         val iv = ImageView(context)
         iv.layoutParams = ViewGroup.LayoutParams(DisplayUtils.dp2px(context, 22F), DisplayUtils.dp2px(context, 19F))
-        iv.setImageResource(model.beforeIconIDList[index])
+        iv.setImageResource(model!!.beforeIconIDList[index])
         return iv
     }
 

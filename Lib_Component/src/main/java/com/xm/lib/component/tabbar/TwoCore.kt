@@ -1,6 +1,5 @@
 package com.xm.lib.component.tabbar
 
-import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.support.design.widget.TabLayout
@@ -8,6 +7,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.view.ViewPager
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -16,10 +16,12 @@ import android.widget.TextView
 import com.bangke.lib.common.utils.DisplayUtils
 import com.bangke.lib.common.utils.FragmentUtil
 
+
 /**
  * 引擎
+ * 请参考：https://juejin.im/entry/58b666238ac2470065a59cd3
  */
-class TwoCore(val context: Context, val view: XmTabbarContract.View, val model: XmTabbarContract.Model) : AbsCreateTabbarCore() {
+class TwoCore : AbsCreateTabbarCore() {
 
     override fun build() {
         try {
@@ -30,38 +32,48 @@ class TwoCore(val context: Context, val view: XmTabbarContract.View, val model: 
     }
 
     private fun setupTabLayout(): TabLayout {
-        //创建ItemView并添加到TabLayout
-        val tabLayout = TabLayout(context)
+
+        val tabLayout = TabLayout(context) //创建ItemView并添加到TabLayout
 
         //TabLayout的滑块
         tabLayout.setSelectedTabIndicatorColor(Color.TRANSPARENT)//滑块设置透明
         tabLayout.setSelectedTabIndicatorHeight(0)               //设置滑块的高度
         tabLayout.setSelectedTabIndicatorColor(Color.CYAN)       //滑块的颜色
-        //tabLayout.clipChildren = true                            //子控件可以超过父控件
-        model.viewPager!!.adapter = MyAdapter((context as FragmentActivity).supportFragmentManager, model.fragmentList)
 
-        tabLayout.setupWithViewPager(model.viewPager)
-        //为TabLayout添加item
-        addTab(tabLayout)
+        addTab(tabLayout) //为TabLayout添加item
+
+        model!!.viewPager!!.adapter = MyAdapter((context as FragmentActivity).supportFragmentManager, model!!.fragmentList)//设置ViewPager适配器
+        //tabLayout.setupWithViewPager(model!!.viewPager)//ViewPager绑定  会将之前的tabView全部删除，所以不采用该种方式
+
 
         //设置监听
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) { //重复选择相同的item
-                //afterTabState(tab)
+                afterTabState(tab)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) { //上一次item的位置
-                //beforeTabState(tab)
+                beforeTabState(tab)
             }
 
             override fun onTabSelected(tab: TabLayout.Tab?) {   //选中
-                //afterTabState(tab)
+                afterTabState(tab)
             }
         })
-        //默认选中第一个item
-        tabLayout.getTabAt(model!!.index)!!.select()
-        tabLayout.tabGravity=TabLayout.GRAVITY_FILL
-        tabLayout.tabMode = TabLayout.MODE_SCROLLABLE
+
+        model!!.viewPager!!.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {
+            }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+            }
+
+            override fun onPageSelected(position: Int) {
+                tabLayout.getTabAt(position)!!.select()
+            }
+        })
+
+        tabLayout.getTabAt(model!!.index)!!.select()//默认选中第一个item
         return tabLayout
     }
 
@@ -75,11 +87,7 @@ class TwoCore(val context: Context, val view: XmTabbarContract.View, val model: 
     fun afterTabState(tab: TabLayout.Tab?) {
         if (null == tab) return
         //设置展示的内容
-        val tag = tab.tag as Int
-        val fragmentActivity = context as FragmentActivity
-        val container = model!!.container!!
-        val framgent = model!!.fragmentList[tag]
-        FragmentUtil.getInstance().displayFragment(fragmentActivity, container, tag.toString(), framgent)
+        model!!.viewPager!!.currentItem = tab!!.position
 
         //设置图标和内容
         getIcon(tab).setImageResource(model!!.afterIconIDList[tab.tag as Int])
@@ -88,7 +96,6 @@ class TwoCore(val context: Context, val view: XmTabbarContract.View, val model: 
         } else {
             getText(tab).setTextColor(context!!.resources.getColor(model!!.afterColorID!!))
         }
-
         //设置动画
         getItemView(tab)
     }
@@ -128,15 +135,15 @@ class TwoCore(val context: Context, val view: XmTabbarContract.View, val model: 
         tv.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         val p: LinearLayout.LayoutParams = tv.layoutParams as LinearLayout.LayoutParams
         p.topMargin = DisplayUtils.dp2px(context, 6F)
-        tv.text = model.desList[index]
-        tv.setTextColor(model.beforeColorID!!)
+        tv.text = model!!.desList[index]
+        tv.setTextColor(model!!.beforeColorID!!)
         return tv
     }
 
     private fun createIconView(index: Int): ImageView {
         val iv = ImageView(context)
         iv.layoutParams = ViewGroup.LayoutParams(DisplayUtils.dp2px(context, 22F), DisplayUtils.dp2px(context, 19F))
-        iv.setImageResource(model.beforeIconIDList[index])
+        iv.setImageResource(model!!.beforeIconIDList[index])
         return iv
     }
 
@@ -150,7 +157,7 @@ class TwoCore(val context: Context, val view: XmTabbarContract.View, val model: 
     }
 }
 
-class MyAdapter(fragmentManager: FragmentManager,  val datas: List<Fragment>) : FragmentPagerAdapter(fragmentManager) {
+class MyAdapter(fragmentManager: FragmentManager, private val datas: List<Fragment>) : FragmentPagerAdapter(fragmentManager) {
     override fun getItem(position: Int): Fragment {
         return datas[position]
     }
@@ -158,5 +165,4 @@ class MyAdapter(fragmentManager: FragmentManager,  val datas: List<Fragment>) : 
     override fun getCount(): Int {
         return datas.size
     }
-
 }

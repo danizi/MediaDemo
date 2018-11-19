@@ -25,17 +25,17 @@ class XmTabbarContract {
         /**
          * 设置颜色
          */
-        fun setColor(beforeColorID: Int, afterColorID: Int): XmTabbar
+        fun setColor(beforeColorID: Int, afterColorID: Int): XmTabbarComponent
 
         /**
          * 添加菜单项
          */
-        fun addItem(instance: Fragment, des: String, beforeIconID: Int, afterIconID: Int): XmTabbar
+        fun addItem(instance: Fragment, des: String, beforeIconID: Int, afterIconID: Int): XmTabbarComponent
 
         /**
          * 装载容器
          */
-        fun setContainer(layoutID: Int): XmTabbar
+        fun setContainer(layoutID: Int): XmTabbarComponent
 
         /**
          * 设置容器的颜色
@@ -50,17 +50,22 @@ class XmTabbarContract {
         /**
          * 获取当前控件
          */
-        fun getXmTabbar(): XmTabbar
+        fun getXmTabbar(): XmTabbarComponent
 
         /**
          * 选中项
          */
-        fun select(i: Int): XmTabbar
+        fun select(i: Int): XmTabbarComponent
 
         /**
          * 绑定ViewPager
          */
-        fun bindViewPager(viewPager: ViewPager): XmTabbar
+        fun bindViewPager(viewPager: ViewPager): XmTabbarComponent
+
+        /**
+         * 添加实现的方式,也可以自定义
+         */
+        fun addCore(core: AbsCreateTabbarCore): XmTabbarComponent
     }
 
     class Model {
@@ -76,6 +81,7 @@ class XmTabbarContract {
         var afterIconIDList: ArrayList<Int> = ArrayList()
         var container: Int? = null
         var viewPager: ViewPager? = null
+        var core: AbsCreateTabbarCore? = null
     }
 
     class Presenter(context: Context, view: View) {
@@ -90,13 +96,16 @@ class XmTabbarContract {
 
         init {
             model = Model()
-            core = TwoCore(this.context!!, this.view!!, this.model!!)
         }
 
         fun build() {
-            core!!.build()
+            if (null == model!!.core) {//默认选择的实现方式
+                model!!.core = OneCore()
+            }
+            model().core!!.context = context
+            model().core!!.model = model
+            model().core!!.view = view
+            model!!.core!!.build()
         }
     }
-
-
 }
