@@ -19,9 +19,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    api project(':Lib_Common')
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(':Lib_Common')
+    api project(':Lib_IJKPlayer')
 }

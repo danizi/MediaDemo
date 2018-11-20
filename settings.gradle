@@ -1,3 +1,4 @@
-include ':app'
+include ':app', ':Lib_IJKPlayer', ':Lib_Media'
 include ':Lib_Common'
 include ':Lib_Component'
+include ':Lib_IJKPlayer_Sdk'

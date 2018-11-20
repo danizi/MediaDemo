@@ -13,4 +13,9 @@
 
     <include layout="@layout/tabbar_mode_three" />
 
+    <com.xm.lib.media.XmMediaComponent
+        android:id="@+id/media"
+        android:layout_width="match_parent"
+        android:layout_height="90dp" />
+
 </LinearLayout>
