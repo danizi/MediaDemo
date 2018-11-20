@@ -3,11 +3,14 @@ package common.xm.com.xmcommon;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 
 import com.xm.lib.component.XmTabbarComponent;
 import com.xm.lib.core.OneCore;
 import com.xm.lib.core.TwoCore;
 import com.xm.lib.ijkplayer.IJKPlayer;
+import com.xm.lib.media.EnumViewType;
 import com.xm.lib.media.XmMediaComponent;
 
 public class MainActivity extends AppCompatActivity {
@@ -51,9 +54,9 @@ public class MainActivity extends AppCompatActivity {
 
         XmMediaComponent xmMediaComponent = findViewById(R.id.media);
         xmMediaComponent.core(new IJKPlayer())
+                .addViewToMedia(EnumViewType.PREVIEW, (ViewGroup) LayoutInflater.from(this).inflate(R.layout.media_preview, xmMediaComponent, false))
                 .setup()
                 .setDisplay("http://hls.videocc.net/26de49f8c2/9/26de49f8c273bbc8f6812d1422a11b39_2.m3u8")
                 .start();
-
     }
 }

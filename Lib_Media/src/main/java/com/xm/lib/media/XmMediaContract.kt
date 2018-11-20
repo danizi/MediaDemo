@@ -9,7 +9,7 @@ class XmMediaContract {
     interface View : IMediaCore {
         fun addViewToMedia(enumViewType: EnumViewType, viewGroup: ViewGroup): XmMediaComponent
         fun mediaComponent(): XmMediaComponent
-        fun setDisplay(url: String): XmMediaComponent
+        fun setDisplay(dataSource: String): XmMediaComponent
         fun setup(): XmMediaComponent
         fun core(absMediaCore: AbsMediaCore): XmMediaComponent
     }
@@ -22,8 +22,8 @@ class XmMediaContract {
     class Present(val context: Context, val view: View) {
 
 
-        var model: Model? = null
-        var player: AbsMediaCore? = null
+        private var model: Model? = null
+        private var player: AbsMediaCore? = null
 
         init {
             model = Model()
@@ -35,6 +35,47 @@ class XmMediaContract {
             player?.view = view
             player?.context = context
             player?.tagerView = view.mediaComponent()
+        }
+
+        fun addViewToMedia(enumViewType: EnumViewType, viewGroup: ViewGroup) {
+            model?.addViewMap?.put(enumViewType, viewGroup)
+            view.mediaComponent().addView(viewGroup)
+        }
+
+        fun release() {
+            player?.release()
+        }
+
+        fun seekTo(msec: Long) {
+            player?.seekTo(msec)
+        }
+
+        fun getCurrentPosition(): Long {
+            return player?.getCurrentPosition()!!
+        }
+
+        fun getDuration(): Long {
+            return player?.getDuration()!!
+        }
+
+        fun stop() {
+            player?.stop()
+        }
+
+        fun pause() {
+            player?.pause()
+        }
+
+        fun start() {
+            player?.start()
+        }
+
+        fun setup() {
+            player?.init()
+        }
+
+        fun setDisplay(dataSource: String) {
+            model?.dataSource = dataSource
         }
     }
 }

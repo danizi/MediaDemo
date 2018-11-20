@@ -47,7 +47,7 @@ class IJKPlayer : AbsMediaCore() {
                 surfaceCreated()
             }
         })
-        tagerView?.addView(mSurfaceView)
+        tagerView?.addView(mSurfaceView, 0)
 
 
     }
@@ -96,4 +96,5 @@ class IJKPlayer : AbsMediaCore() {
         player?.release()
         player = null
     }
+
 }
