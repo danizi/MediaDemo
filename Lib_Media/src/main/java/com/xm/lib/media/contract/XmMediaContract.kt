@@ -1,7 +1,13 @@
-package com.xm.lib.media
+package com.xm.lib.media.contract
 
 import android.content.Context
+import android.util.Log
 import android.view.ViewGroup
+import com.xm.lib.media.core.AbsMediaCore
+import com.xm.lib.media.core.EnumViewType
+import com.xm.lib.media.component.XmMediaComponent
+import com.xm.lib.media.imp.IMediaCore
+import com.xm.lib.media.watcher.MediaViewObservable
 import java.util.*
 
 class XmMediaContract {
@@ -20,8 +26,6 @@ class XmMediaContract {
     }
 
     class Present(val context: Context, val view: View) {
-
-
         private var model: Model? = null
         private var player: AbsMediaCore? = null
 
@@ -40,6 +44,7 @@ class XmMediaContract {
         fun addViewToMedia(enumViewType: EnumViewType, viewGroup: ViewGroup) {
             model?.addViewMap?.put(enumViewType, viewGroup)
             view.mediaComponent().addView(viewGroup)
+            //观察者模式
         }
 
         fun release() {
@@ -74,8 +79,18 @@ class XmMediaContract {
             player?.init()
         }
 
+        private fun setOncLisenter() {
+
+        }
+
         fun setDisplay(dataSource: String) {
             model?.dataSource = dataSource
+        }
+
+        fun update(o: MediaViewObservable, vararg arg: Any) {
+            model?.addViewMap?.get(EnumViewType.PREVIEW)?.visibility = android.view.View.GONE
+            player?.start()
+            Log.e("XmMediaComponent", "XmMediaComponent 观察者接受：" + arg[0])
         }
     }
 }

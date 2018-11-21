@@ -1,26 +1,11 @@
-package com.xm.lib.media
+package com.xm.lib.media.core
 
 import android.content.Context
 import android.view.SurfaceView
 import android.view.ViewGroup
+import com.xm.lib.media.contract.XmMediaContract
+import com.xm.lib.media.imp.IMediaCore
 
-enum class EnumMediaState {
-    PLAYING,
-    PAUSE,
-    STOP,
-    ERROR
-}
-
-interface IMediaCore {
-    fun init()
-    fun start()
-    fun pause()
-    fun stop()
-    fun getDuration(): Long
-    fun getCurrentPosition(): Long
-    fun seekTo(msec: Long)
-    fun release()
-}
 
 abstract class AbsMediaCore : IMediaCore {
     var context: Context? = null

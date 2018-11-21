@@ -1,19 +1,25 @@
-package com.xm.lib.media
+package com.xm.lib.media.component
 
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
 import android.view.ViewGroup
-import android.widget.FrameLayout
+import com.xm.lib.media.core.AbsMediaCore
+import com.xm.lib.media.core.EnumViewType
+import com.xm.lib.media.contract.XmMediaContract
+import com.xm.lib.media.watcher.MediaViewObservable
+import com.xm.lib.media.watcher.Observer
 
 
 /**
  * 播放器组件
  */
-class XmMediaComponent(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs), XmMediaContract.View {
+class XmMediaComponent(context: Context, attrs: AttributeSet?) : MediaViewObservable(context, attrs), XmMediaContract.View, Observer {
 
     private var present: XmMediaContract.Present? = null
 
     init {
+        setBackgroundColor(Color.BLACK)
         present = XmMediaContract.Present(context, this@XmMediaComponent)
     }
 
@@ -37,7 +43,6 @@ class XmMediaComponent(context: Context, attrs: AttributeSet?) : FrameLayout(con
     }
 
     override fun setup(): XmMediaComponent {
-
         present?.setup()
         return this
     }
@@ -74,4 +79,9 @@ class XmMediaComponent(context: Context, attrs: AttributeSet?) : FrameLayout(con
     override fun release() {
         present?.release()
     }
+
+    override fun update(o: MediaViewObservable, vararg arg: Any) {
+        present?.update(o, arg)
+    }
+
 }

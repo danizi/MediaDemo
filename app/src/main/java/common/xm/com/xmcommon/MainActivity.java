@@ -10,8 +10,12 @@ import com.xm.lib.component.XmTabbarComponent;
 import com.xm.lib.core.OneCore;
 import com.xm.lib.core.TwoCore;
 import com.xm.lib.ijkplayer.IJKPlayer;
-import com.xm.lib.media.EnumViewType;
-import com.xm.lib.media.XmMediaComponent;
+import com.xm.lib.media.core.EnumViewType;
+import com.xm.lib.media.component.XmMediaComponent;
+
+import common.xm.com.xmcommon.mediaview.MediaControlView;
+import common.xm.com.xmcommon.mediaview.MediaLoading;
+import common.xm.com.xmcommon.mediaview.MediaPreView;
 
 public class MainActivity extends AppCompatActivity {
     @Override
@@ -52,11 +56,48 @@ public class MainActivity extends AppCompatActivity {
                 .addItem(new MyFragment(), "button4", R.mipmap.bottom_tab_icon_my_n, R.mipmap.bottom_tab_icon_my_h)
                 .builde();
 
+        //播放器
         XmMediaComponent xmMediaComponent = findViewById(R.id.media);
-        xmMediaComponent.core(new IJKPlayer())
-                .addViewToMedia(EnumViewType.PREVIEW, (ViewGroup) LayoutInflater.from(this).inflate(R.layout.media_preview, xmMediaComponent, false))
+
+        MediaPreView mediaPreView = new MediaPreView(this, R.layout.media_preview);
+        MediaLoading mediaLoading = new MediaLoading(this, R.layout.media_loading);
+        MediaControlView mediaController = new MediaControlView(this, R.layout.media_controller);
+
+        ViewGroup mediaError = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.media_error, xmMediaComponent, false);
+        ViewGroup mediaComplete = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.media_complete, xmMediaComponent, false);
+        ViewGroup mediaGestureLight = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.media_gesture_light, xmMediaComponent, false);
+        ViewGroup mediaGestureProgress = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.media_gesture_progress, xmMediaComponent, false);
+        ViewGroup mediaGestureVolume = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.media_gesture_volume, xmMediaComponent, false);
+
+        xmMediaComponent
+                .core(new IJKPlayer())
+                .addViewToMedia(EnumViewType.PREVIEW, mediaPreView)
+                .addViewToMedia(EnumViewType.LOADING, mediaLoading)
+                .addViewToMedia(EnumViewType.CONTROLLER, mediaController)
+                .addViewToMedia(EnumViewType.ERROR, mediaError)
+                .addViewToMedia(EnumViewType.COMPLE, mediaComplete)
+                .addViewToMedia(EnumViewType.GESTURE_LIGHT, mediaGestureLight)
+                .addViewToMedia(EnumViewType.GESTURE_PROGRESS, mediaGestureProgress)
+                .addViewToMedia(EnumViewType.GESTURE_VOLUME, mediaGestureVolume)
                 .setup()
-                .setDisplay("http://hls.videocc.net/26de49f8c2/9/26de49f8c273bbc8f6812d1422a11b39_2.m3u8")
-                .start();
+                .setDisplay("http://hls.videocc.net/26de49f8c2/9/26de49f8c273bbc8f6812d1422a11b39_2.m3u8");
+        //.start();   //设置就会自动播放
+
+        // 观察者
+        mediaPreView.addObserver(xmMediaComponent);
+        mediaPreView.addObserver(mediaLoading);
+        mediaPreView.addObserver(mediaController);
+
+        mediaLoading.addObserver(xmMediaComponent);
+        mediaLoading.addObserver(mediaPreView);
+        mediaLoading.addObserver(mediaController);
+
+        mediaController.addObserver(xmMediaComponent);
+        mediaController.addObserver(mediaPreView);
+        mediaController.addObserver(mediaLoading);
+
+        xmMediaComponent.addObserver(mediaPreView);
+        xmMediaComponent.addObserver(mediaLoading);
+        xmMediaComponent.addObserver(mediaController);
     }
 }

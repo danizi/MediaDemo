@@ -4,7 +4,7 @@ import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import com.xm.lib.media.AbsMediaCore
+import com.xm.lib.media.core.AbsMediaCore
 import tv.danmaku.ijk.media.player.IjkMediaPlayer
 
 class IJKPlayer : AbsMediaCore() {
@@ -48,8 +48,6 @@ class IJKPlayer : AbsMediaCore() {
             }
         })
         tagerView?.addView(mSurfaceView, 0)
-
-
     }
 
     private fun surfaceCreated() {
