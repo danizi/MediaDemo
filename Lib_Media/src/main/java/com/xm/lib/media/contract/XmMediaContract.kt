@@ -1,11 +1,14 @@
 package com.xm.lib.media.contract
 
 import android.content.Context
+import android.media.MediaPlayer
 import android.util.Log
+import android.view.SurfaceHolder
 import android.view.ViewGroup
 import com.xm.lib.media.core.AbsMediaCore
 import com.xm.lib.media.core.EnumViewType
 import com.xm.lib.media.component.XmMediaComponent
+import com.xm.lib.media.core.MediaCoreOnLisenter
 import com.xm.lib.media.imp.IMediaCore
 import com.xm.lib.media.watcher.MediaViewObservable
 import java.util.*
@@ -80,7 +83,54 @@ class XmMediaContract {
         }
 
         private fun setOncLisenter() {
+            player?.setOnLisenter(object : MediaCoreOnLisenter() {
+                override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
+                    view.mediaComponent().notifyObserver("surfaceChanged", holder!!, format!!, width!!, height!!)
+                }
 
+                override fun surfaceDestroyed(holder: SurfaceHolder?) {
+                    view.mediaComponent().notifyObserver("surfaceDestroyed", holder!!)
+                }
+
+                override fun surfaceCreated(holder: SurfaceHolder?) {
+                    view.mediaComponent().notifyObserver("surfaceCreated", holder!!)
+                }
+
+                override fun onPrepared(mp: AbsMediaCore) {
+                    player?.start()
+                    view.mediaComponent().notifyObserver("onPrepared")
+                }
+
+                override fun onCompletion(mp: AbsMediaCore) {
+                    view.mediaComponent().notifyObserver("onCompletion", mp)
+                }
+
+                override fun onBufferingUpdate(mp: AbsMediaCore, percent: Int) {
+                    view.mediaComponent().notifyObserver("onBufferingUpdate", mp, percent)
+                }
+
+                override fun onSeekComplete(mp: AbsMediaCore) {
+                    view.mediaComponent().notifyObserver("onSeekComplete", mp)
+                }
+
+                override fun onVideoSizeChanged(mp: AbsMediaCore, width: Int, height: Int, sar_num: Int, sar_den: Int) {
+                    view.mediaComponent().notifyObserver("onVideoSizeChanged", mp, width, height, sar_num, sar_den)
+                }
+
+                override fun onError(mp: AbsMediaCore, what: Int, extra: Int): Boolean {
+                    view.mediaComponent().notifyObserver("onError", mp, what, extra)
+                    return false
+                }
+
+                override fun onInfo(mp: AbsMediaCore, what: Int, extra: Int): Boolean {
+                    view.mediaComponent().notifyObserver("onInfo", mp, what, extra)
+                    return false
+                }
+
+                override fun onTimedText(mp: AbsMediaCore) {
+                    view.mediaComponent().notifyObserver("onInfo", mp)
+                }
+            })
         }
 
         fun setDisplay(dataSource: String) {
@@ -89,7 +139,6 @@ class XmMediaContract {
 
         fun update(o: MediaViewObservable, vararg arg: Any) {
             model?.addViewMap?.get(EnumViewType.PREVIEW)?.visibility = android.view.View.GONE
-            player?.start()
             Log.e("XmMediaComponent", "XmMediaComponent 观察者接受：" + arg[0])
         }
     }

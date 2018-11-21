@@ -59,7 +59,7 @@ abstract class MediaViewObservable : FrameLayout {
         }
     }
 
-    fun notifyObserver(vararg arg: String) {
+    fun notifyObserver(vararg arg: Any) {
         for (obs in this!!.observers!!) {
             obs.update(this, arg)
         }
