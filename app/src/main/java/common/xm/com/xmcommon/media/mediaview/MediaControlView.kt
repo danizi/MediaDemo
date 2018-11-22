@@ -12,6 +12,7 @@ import com.bangke.lib.common.utils.DisplayUtils
 import com.bangke.lib.common.utils.ToolUtil
 import com.xm.lib.media.AbsMediaCore
 import com.xm.lib.media.enum_.EnumMediaEventType
+import com.xm.lib.media.enum_.EnumMediaState
 import com.xm.lib.media.event.Event
 import com.xm.lib.media.event.EventConstant
 import com.xm.lib.media.watcher.MediaViewObservable
@@ -38,6 +39,16 @@ class MediaControlView(context: Context, layoutID: Int) : MediaViewObservable(co
         seekBar = contentView?.findViewById(R.id.seekBar)
         tvDuration = contentView?.findViewById(R.id.tv_duration)
         imgScreenMode = contentView?.findViewById(R.id.img_screen_mode)
+
+        imgPlayPause?.setOnClickListener {
+            if (media?.playerState == EnumMediaState.PLAYING) {
+                media?.pause()
+                imgPlayPause?.setImageResource(R.mipmap.media_play)
+            } else {
+                media?.start()
+                imgPlayPause?.setImageResource(R.mipmap.media_pause)
+            }
+        }
 
     }
 

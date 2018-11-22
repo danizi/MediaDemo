@@ -5,6 +5,7 @@ import android.view.SurfaceView
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.xm.lib.media.AbsMediaCore
+import com.xm.lib.media.enum_.EnumMediaState
 import tv.danmaku.ijk.media.player.IjkMediaPlayer
 
 class IJKPlayer : AbsMediaCore() {
@@ -55,35 +56,39 @@ class IJKPlayer : AbsMediaCore() {
 
         //设置监听
         player?.setOnPreparedListener {
+            playerState = EnumMediaState.PLAYING
             absMediaCoreOnLisenter?.onPrepared(this)
         }
         player?.setOnCompletionListener {
+            playerState = EnumMediaState.COMPLETION
             absMediaCoreOnLisenter?.onCompletion(this)
         }
-        player?.setOnBufferingUpdateListener { p0, p1 ->
+        player?.setOnBufferingUpdateListener { _, p1 ->
             absMediaCoreOnLisenter?.onBufferingUpdate(this, p1)
         }
-        player?.setOnSeekCompleteListener { mp ->
+        player?.setOnSeekCompleteListener { _ ->
+            playerState = EnumMediaState.SEEKCOMPLETE
             absMediaCoreOnLisenter?.onSeekComplete(this)
         }
-        player?.setOnVideoSizeChangedListener { mp, width, height, sar_num, sar_den ->
+        player?.setOnVideoSizeChangedListener { _, width, height, sar_num, sar_den ->
             absMediaCoreOnLisenter?.onVideoSizeChanged(this, width, height, sar_num, sar_den)
         }
-        player?.setOnErrorListener { mp, what, extra ->
+        player?.setOnErrorListener { _, what, extra ->
+            playerState = EnumMediaState.ERROR
             absMediaCoreOnLisenter?.onError(this, what, extra)!!
         }
-        player?.setOnInfoListener { mp, what, extra ->
+        player?.setOnInfoListener { _, what, extra ->
             absMediaCoreOnLisenter?.onInfo(this, what, extra)!!
         }
-        player?.setOnTimedTextListener { mp, text ->
+        player?.setOnTimedTextListener { _, _ ->
             absMediaCoreOnLisenter?.onTimedText(this)
         }
     }
 
     private fun createSurfaceView(): SurfaceView {
-        var surfaceView = SurfaceView(context)
-        var layoutParams: ViewGroup.LayoutParams = ViewGroup.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
-        surfaceView?.layoutParams = layoutParams
+        val surfaceView = SurfaceView(context)
+        val layoutParams: ViewGroup.LayoutParams = ViewGroup.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
+        surfaceView.layoutParams = layoutParams
         return surfaceView
     }
 
@@ -97,14 +102,19 @@ class IJKPlayer : AbsMediaCore() {
 
     override fun start() {
         player?.start()
+        if (playerState == EnumMediaState.PAUSE) {
+            playerState = EnumMediaState.PLAYING
+        }
     }
 
     override fun pause() {
         player?.pause()
+        playerState = EnumMediaState.PAUSE
     }
 
     override fun stop() {
         player?.stop()
+        playerState = EnumMediaState.STOP
     }
 
     override fun getDuration(): Long {
@@ -123,5 +133,6 @@ class IJKPlayer : AbsMediaCore() {
         player?.reset()
         player?.release()
         player = null
+        playerState = EnumMediaState.RELEASE
     }
 }
