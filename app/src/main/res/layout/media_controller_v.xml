@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_gradient">
+
+    <ImageView
+        android:id="@+id/img_play_pause"
+        android:layout_width="22dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="20dp"
+        android:src="@mipmap/media_play"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+       />
+
+    <TextView
+        android:id="@+id/tv_currentPosition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text="00:00"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/img_play_pause"
+        app:layout_constraintStart_toEndOf="@+id/img_play_pause"
+        app:layout_constraintTop_toTopOf="@+id/img_play_pause"
+        tools:ignore="MissingConstraints" />
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        app:layout_constraintBottom_toBottomOf="@+id/img_play_pause"
+        app:layout_constraintEnd_toStartOf="@+id/tv_duration"
+        app:layout_constraintStart_toEndOf="@+id/tv_currentPosition"
+        app:layout_constraintTop_toTopOf="@+id/img_play_pause"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/tv_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:text="03:00"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/img_screen_mode"
+        app:layout_constraintEnd_toStartOf="@+id/img_screen_mode"
+        app:layout_constraintTop_toTopOf="@+id/img_screen_mode"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/img_screen_mode"
+        android:layout_width="22dp"
+        android:layout_height="30dp"
+        android:layout_marginRight="20dp"
+        android:src="@mipmap/media_screen_mode"
+        app:layout_constraintBottom_toBottomOf="@+id/img_play_pause"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/img_play_pause"
+        tools:ignore="MissingConstraints" />
+
+
+</android.support.constraint.ConstraintLayout>

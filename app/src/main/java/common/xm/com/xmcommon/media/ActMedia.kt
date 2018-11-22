@@ -8,9 +8,7 @@ import com.xm.lib.ijkplayer.IJKPlayer
 import com.xm.lib.media.XmMediaComponent
 import com.xm.lib.media.enum_.EnumViewType
 import common.xm.com.xmcommon.R
-import common.xm.com.xmcommon.media.mediaview.MediaControlView
-import common.xm.com.xmcommon.media.mediaview.MediaLoading
-import common.xm.com.xmcommon.media.mediaview.MediaPreView
+import common.xm.com.xmcommon.media.mediaview.*
 
 class ActMedia : AppCompatActivity() {
 
@@ -22,13 +20,13 @@ class ActMedia : AppCompatActivity() {
         val xmMediaComponent = findViewById<XmMediaComponent>(R.id.media)
 
         val mediaPreView = MediaPreView(this, R.layout.media_preview)
-        val mediaLoading = MediaLoading(this, R.layout.media_loading)
+        val mediaLoading = MediaLoadingView(this, R.layout.media_loading)
         val mediaController = MediaControlView(this, R.layout.media_controller)
-        val mediaError = LayoutInflater.from(this).inflate(R.layout.media_error, xmMediaComponent, false) as ViewGroup
-        val mediaComplete = LayoutInflater.from(this).inflate(R.layout.media_complete, xmMediaComponent, false) as ViewGroup
-        val mediaGestureLight = LayoutInflater.from(this).inflate(R.layout.media_gesture_light, xmMediaComponent, false) as ViewGroup
-        val mediaGestureProgress = LayoutInflater.from(this).inflate(R.layout.media_gesture_progress, xmMediaComponent, false) as ViewGroup
-        val mediaGestureVolume = LayoutInflater.from(this).inflate(R.layout.media_gesture_volume, xmMediaComponent, false) as ViewGroup
+        val mediaError = MediaErrorView(this, R.layout.media_error)
+        val mediaComplete = MediaCompleteView(this, R.layout.media_complete)
+        val mediaGestureLight = MediaGestureLightView(this, R.layout.media_gesture_light)
+        val mediaGestureProgress = MediaGestureProgressView(this, R.layout.media_gesture_progress)
+        val mediaGestureVolume = MediaGestureVolumeView(this, R.layout.media_gesture_volume)
 
         xmMediaComponent
                 .core(IJKPlayer()) //使用的播放器引擎

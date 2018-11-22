@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.SurfaceHolder
 import android.view.ViewGroup
 import com.xm.lib.media.enum_.EnumMediaEventType
+import com.xm.lib.media.enum_.EnumMediaState
 import com.xm.lib.media.enum_.EnumViewType
 import com.xm.lib.media.event.Event
 import com.xm.lib.media.event.EventConstant
@@ -50,6 +51,7 @@ class XmMediaContract {
 
         fun release() {
             player?.release()
+            player?.playerState = EnumMediaState.RELEASE
         }
 
         fun seekTo(msec: Long) {
@@ -66,10 +68,12 @@ class XmMediaContract {
 
         fun stop() {
             player?.stop()
+            player?.playerState = EnumMediaState.STOP
         }
 
         fun pause() {
             player?.pause()
+            player?.playerState = EnumMediaState.PAUSE
         }
 
         fun start() {
@@ -113,6 +117,7 @@ class XmMediaContract {
                                     .setParameter(EventConstant.METHOD, "onPrepared")
                                     .setParameter("mp", mp!!))
                     player?.start()
+                    player?.playerState = EnumMediaState.PLAYING
                 }
 
                 override fun onCompletion(mp: AbsMediaCore) {
@@ -120,6 +125,7 @@ class XmMediaContract {
                             Event().setEventType(EnumMediaEventType.MEDIA)
                                     .setParameter(EventConstant.METHOD, "onCompletion")
                                     .setParameter("mp", mp!!))
+                    player?.playerState = EnumMediaState.COMPLETION
                 }
 
                 override fun onBufferingUpdate(mp: AbsMediaCore, percent: Int) {
@@ -135,6 +141,7 @@ class XmMediaContract {
                             Event().setEventType(EnumMediaEventType.MEDIA)
                                     .setParameter(EventConstant.METHOD, "onSeekComplete")
                                     .setParameter("mp", mp))
+                    player?.playerState = EnumMediaState.SEEKCOMPLETE
                 }
 
                 override fun onVideoSizeChanged(mp: AbsMediaCore, width: Int, height: Int, sar_num: Int, sar_den: Int) {
@@ -152,6 +159,7 @@ class XmMediaContract {
                                     .setParameter(EventConstant.METHOD, "onError")
                                     .setParameter("what", what)
                                     .setParameter("extra", extra))
+                    player?.playerState = EnumMediaState.ERROR
                     return false
                 }
 

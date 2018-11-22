@@ -5,7 +5,11 @@ package com.xm.lib.media.enum_
  */
 enum class EnumMediaState {
     PLAYING,
+    COMPLETION,
     PAUSE,
     STOP,
-    ERROR
+    ERROR,
+    LOADING,
+    RELEASE,
+    SEEKCOMPLETE
 }

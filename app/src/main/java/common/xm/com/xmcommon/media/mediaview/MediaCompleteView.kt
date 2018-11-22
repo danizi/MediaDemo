@@ -8,7 +8,7 @@ import com.xm.lib.media.event.EventConstant
 import com.xm.lib.media.watcher.MediaViewObservable
 import com.xm.lib.media.watcher.Observer
 
-class MediaLoading(context: Context, layoutID: Int) : MediaViewObservable(context), Observer {
+class MediaCompleteView(context: Context, layoutID: Int) : MediaViewObservable(context), Observer {
 
     init {
         contentView = getContentView(layoutID)
