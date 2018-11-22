@@ -3,8 +3,12 @@ package com.xm.lib.media
 import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.ViewGroup
+import com.xm.lib.media.enum_.EnumMediaEventType
 import com.xm.lib.media.enum_.EnumViewType
+import com.xm.lib.media.event.Event
+import com.xm.lib.media.event.EventConstant
 import com.xm.lib.media.watcher.MediaViewObservable
 import com.xm.lib.media.watcher.Observer
 
@@ -13,6 +17,10 @@ import com.xm.lib.media.watcher.Observer
  * 播放器组件
  */
 class XmMediaComponent(context: Context, attrs: AttributeSet?) : MediaViewObservable(context, attrs), XmMediaContract.View, Observer {
+
+    @Deprecated("不对外使用")
+    override fun prepareAsync() {
+    }
 
     private var present: XmMediaContract.Present? = null
 
@@ -78,8 +86,15 @@ class XmMediaComponent(context: Context, attrs: AttributeSet?) : MediaViewObserv
         present?.release()
     }
 
-    override fun update(o: MediaViewObservable, vararg arg: Any) {
-        present?.update(o, arg)
+    override fun update(o: MediaViewObservable, event: Event) {
+        present?.update(o, event)
     }
 
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        notifyObservers(
+                Event().setEventType(EnumMediaEventType.VIEW)
+                        .setParameter(EventConstant.METHOD, "onTouchEvent")
+                        .setParameter("event", event!!))
+        return super.onTouchEvent(event)
+    }
 }

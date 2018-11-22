@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import com.xm.lib.media.event.Event
 
 /**
  *
@@ -47,21 +48,9 @@ abstract class MediaViewObservable : FrameLayout {
         observers?.remove(o)
     }
 
-    fun notifyObservers() {
+    fun notifyObservers(event: Event) {
         for (obs in this!!.observers!!) {
-            obs.update(this, "")
-        }
-    }
-
-    fun notifyObserver() {
-        for (obs in this!!.observers!!) {
-            obs.update(this, "")
-        }
-    }
-
-    fun notifyObserver(vararg arg: Any) {
-        for (obs in this!!.observers!!) {
-            obs.update(this, arg)
+            obs.update(this, event)
         }
     }
 
@@ -83,14 +72,14 @@ abstract class MediaViewObservable : FrameLayout {
     }
 
     fun hide() {
-        if (this.contentView?.visibility == View.VISIBLE) {
-            this.contentView?.visibility = View.GONE
+        if (this?.visibility == View.VISIBLE) {
+            this?.visibility = View.GONE
         }
     }
 
     fun show() {
-        if (this.contentView?.visibility == View.GONE) {
-            this.contentView?.visibility = View.VISIBLE
+        if (this?.visibility == View.GONE) {
+            this?.visibility = View.VISIBLE
         }
     }
 }

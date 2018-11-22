@@ -1,10 +1,12 @@
 package com.xm.lib.media
 
 import android.content.Context
-import android.util.Log
 import android.view.SurfaceHolder
 import android.view.ViewGroup
+import com.xm.lib.media.enum_.EnumMediaEventType
 import com.xm.lib.media.enum_.EnumViewType
+import com.xm.lib.media.event.Event
+import com.xm.lib.media.event.EventConstant
 import com.xm.lib.media.imp.IMediaCore
 import com.xm.lib.media.watcher.MediaViewObservable
 import java.util.*
@@ -82,50 +84,92 @@ class XmMediaContract {
         private fun setOncLisenter() {
             player?.setOnLisenter(object : AbsMediaCoreOnLisenter() {
                 override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
-                    view.mediaComponent().notifyObserver("surfaceChanged", holder!!, format!!, width!!, height!!)
+                    view.mediaComponent().notifyObservers(
+                            Event().setEventType(EnumMediaEventType.MEDIA)
+                                    .setParameter(EventConstant.METHOD, "surfaceChanged")
+                                    .setParameter("holder", holder!!)
+                                    .setParameter("format", format)
+                                    .setParameter("width", width)
+                                    .setParameter("height", height))
                 }
 
                 override fun surfaceDestroyed(holder: SurfaceHolder?) {
-                    view.mediaComponent().notifyObserver("surfaceDestroyed", holder!!)
+                    view.mediaComponent().notifyObservers(
+                            Event().setEventType(EnumMediaEventType.MEDIA)
+                                    .setParameter(EventConstant.METHOD, "surfaceDestroyed")
+                                    .setParameter("holder", holder!!))
                 }
 
                 override fun surfaceCreated(holder: SurfaceHolder?) {
-                    view.mediaComponent().notifyObserver("surfaceCreated", holder!!)
+                    view.mediaComponent().notifyObservers(
+                            Event().setEventType(EnumMediaEventType.MEDIA)
+                                    .setParameter(EventConstant.METHOD, "surfaceCreated")
+                                    .setParameter("holder", holder!!))
                 }
 
                 override fun onPrepared(mp: AbsMediaCore) {
+                    view.mediaComponent().notifyObservers(
+                            Event().setEventType(EnumMediaEventType.MEDIA)
+                                    .setParameter(EventConstant.METHOD, "onPrepared")
+                                    .setParameter("mp", mp!!))
                     player?.start()
-                    view.mediaComponent().notifyObserver("onPrepared")
                 }
 
                 override fun onCompletion(mp: AbsMediaCore) {
-                    view.mediaComponent().notifyObserver("onCompletion", mp)
+                    view.mediaComponent().notifyObservers(
+                            Event().setEventType(EnumMediaEventType.MEDIA)
+                                    .setParameter(EventConstant.METHOD, "onCompletion")
+                                    .setParameter("mp", mp!!))
                 }
 
                 override fun onBufferingUpdate(mp: AbsMediaCore, percent: Int) {
-                    view.mediaComponent().notifyObserver("onBufferingUpdate", mp, percent)
+                    view.mediaComponent().notifyObservers(
+                            Event().setEventType(EnumMediaEventType.MEDIA)
+                                    .setParameter(EventConstant.METHOD, "onBufferingUpdate")
+                                    .setParameter("mp", mp)
+                                    .setParameter("percent", percent))
                 }
 
                 override fun onSeekComplete(mp: AbsMediaCore) {
-                    view.mediaComponent().notifyObserver("onSeekComplete", mp)
+                    view.mediaComponent().notifyObservers(
+                            Event().setEventType(EnumMediaEventType.MEDIA)
+                                    .setParameter(EventConstant.METHOD, "onSeekComplete")
+                                    .setParameter("mp", mp))
                 }
 
                 override fun onVideoSizeChanged(mp: AbsMediaCore, width: Int, height: Int, sar_num: Int, sar_den: Int) {
-                    view.mediaComponent().notifyObserver("onVideoSizeChanged", mp, width, height, sar_num, sar_den)
+                    view.mediaComponent().notifyObservers(
+                            Event().setEventType(EnumMediaEventType.MEDIA)
+                                    .setParameter(EventConstant.METHOD, "onVideoSizeChanged")
+                                    .setParameter("width", width)
+                                    .setParameter("height", height)
+                                    .setParameter("sar_num", sar_num))
                 }
 
                 override fun onError(mp: AbsMediaCore, what: Int, extra: Int): Boolean {
-                    view.mediaComponent().notifyObserver("onError", mp, what, extra)
+                    view.mediaComponent().notifyObservers(
+                            Event().setEventType(EnumMediaEventType.MEDIA)
+                                    .setParameter(EventConstant.METHOD, "onError")
+                                    .setParameter("what", what)
+                                    .setParameter("extra", extra))
                     return false
                 }
 
                 override fun onInfo(mp: AbsMediaCore, what: Int, extra: Int): Boolean {
-                    view.mediaComponent().notifyObserver("onInfo", mp, what, extra)
+                    view.mediaComponent().notifyObservers(
+                            Event().setEventType(EnumMediaEventType.MEDIA)
+                                    .setParameter(EventConstant.METHOD, "onInfo")
+                                    .setParameter("mp", mp)
+                                    .setParameter("what", what)
+                                    .setParameter("extra", extra))
                     return false
                 }
 
                 override fun onTimedText(mp: AbsMediaCore) {
-                    view.mediaComponent().notifyObserver("onTimedText", mp)
+                    view.mediaComponent().notifyObservers(
+                            Event().setEventType(EnumMediaEventType.MEDIA)
+                                    .setParameter(EventConstant.METHOD, "onTimedText")
+                                    .setParameter("mp", mp))
                 }
             })
         }
@@ -134,9 +178,14 @@ class XmMediaContract {
             model?.dataSource = dataSource
         }
 
-        fun update(o: MediaViewObservable, vararg arg: Any) {
-            model?.addViewMap?.get(EnumViewType.PREVIEW)?.visibility = android.view.View.GONE
-            Log.e("XmMediaComponent", "XmMediaComponent 观察者接受：" + arg[0])
+        fun update(o: MediaViewObservable, event: Event) {
+            //预览图点击了播放图标
+            if (event.eventType == EnumMediaEventType.VIEW) {
+                if (null != event.parameter?.get(EventConstant.METHOD)) {
+                    //先重置所有的状态
+                    player?.prepareAsync()
+                }
+            }
         }
     }
 }

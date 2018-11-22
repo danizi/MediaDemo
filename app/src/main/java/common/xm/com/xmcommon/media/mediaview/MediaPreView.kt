@@ -1,9 +1,12 @@
-package common.xm.com.xmcommon.mediaview
+package common.xm.com.xmcommon.media.mediaview
 
 import android.content.Context
-import android.util.Log
+import android.view.View
 import android.widget.ImageView
 import com.bumptech.glide.Glide
+import com.xm.lib.media.enum_.EnumMediaEventType
+import com.xm.lib.media.event.Event
+import com.xm.lib.media.event.EventConstant
 import com.xm.lib.media.watcher.MediaViewObservable
 import com.xm.lib.media.watcher.Observer
 import common.xm.com.xmcommon.R
@@ -25,7 +28,7 @@ class MediaPreView(context: Context, layoutID: Int) : MediaViewObservable(contex
         Glide.with(context).load(preUrl).into(ivPre)
 
         ivPre?.setOnClickListener {
-            notifyObserver("MediaPreView", "ivPre click")
+            notifyObservers(Event().setEventType(EnumMediaEventType.VIEW).setParameter(EventConstant.METHOD, "click"))
         }
 
         ivPlay?.setOnClickListener {
@@ -33,8 +36,12 @@ class MediaPreView(context: Context, layoutID: Int) : MediaViewObservable(contex
         }
     }
 
-    override fun update(o: MediaViewObservable, vararg arg: Any) {
-        Log.e("MediaPreView", "MediaPreView 观察者接受：" + arg[0])
+    override fun update(o: MediaViewObservable, event: Event) {
+        //播放器事件
+        if (event.eventType == EnumMediaEventType.MEDIA) {
+            if ("onPrepared".equals(event.parameter?.get(EventConstant.METHOD))) {
+                visibility = View.GONE
+            }
+        }
     }
-
 }

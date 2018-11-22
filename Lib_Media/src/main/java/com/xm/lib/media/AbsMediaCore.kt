@@ -8,7 +8,7 @@ import com.xm.lib.media.imp.IMediaCore
 /**
  * 播放器引擎抽象
  */
-abstract class AbsMediaCore : IMediaCore {
+abstract class AbsMediaCore : IMediaCore{
     var model: XmMediaContract.Model? = null
     var view: XmMediaContract.View? = null
     var context: Context? = null

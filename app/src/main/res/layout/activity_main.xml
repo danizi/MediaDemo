@@ -7,15 +7,16 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <include layout="@layout/tabbar_mode_one" />
+    <Button
+        android:id="@+id/btn_media"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="media Test" />
 
-    <include layout="@layout/tabbar_mode_two" />
-
-    <include layout="@layout/tabbar_mode_three" />
-
-    <com.xm.lib.media.XmMediaComponent
-        android:id="@+id/media"
-        android:layout_width="match_parent"
-        android:layout_height="90dp" />
+    <Button
+        android:id="@+id/btn_tabbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="tabbar Test" />
 
 </LinearLayout>

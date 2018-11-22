@@ -1,4 +1,4 @@
-package common.xm.com.xmcommon;
+package common.xm.com.xmcommon.tabar;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
