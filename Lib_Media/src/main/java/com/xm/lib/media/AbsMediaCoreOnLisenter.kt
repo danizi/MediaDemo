@@ -1,13 +1,8 @@
-package com.xm.lib.media.core
+package com.xm.lib.media
 
-import android.content.Context
 import android.view.SurfaceHolder
-import android.view.SurfaceView
-import android.view.ViewGroup
-import com.xm.lib.media.contract.XmMediaContract
-import com.xm.lib.media.imp.IMediaCore
 
-abstract class MediaCoreOnLisenter {
+abstract class AbsMediaCoreOnLisenter {
 
     /*-------------
      * 播放器画布相关回调
@@ -36,20 +31,4 @@ abstract class MediaCoreOnLisenter {
     abstract fun onInfo(mp: AbsMediaCore, what: Int, extra: Int): Boolean
 
     abstract fun onTimedText(mp: AbsMediaCore/*, text: IjkTimedText*/)
-}
-
-abstract class AbsMediaCore : IMediaCore {
-    var model: XmMediaContract.Model? = null
-    var view: XmMediaContract.View? = null
-    var context: Context? = null
-    var mSurfaceView: SurfaceView? = null
-    var tagerView: ViewGroup? = null
-    var mediaCoreOnLisenter: MediaCoreOnLisenter? = null
-
-    /**
-     * 设置监听
-     */
-    fun setOnLisenter(mediaCoreOnLisenter: MediaCoreOnLisenter) {
-        this.mediaCoreOnLisenter = mediaCoreOnLisenter
-    }
 }

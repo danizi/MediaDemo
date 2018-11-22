@@ -10,8 +10,8 @@ import com.xm.lib.component.XmTabbarComponent;
 import com.xm.lib.core.OneCore;
 import com.xm.lib.core.TwoCore;
 import com.xm.lib.ijkplayer.IJKPlayer;
-import com.xm.lib.media.core.EnumViewType;
-import com.xm.lib.media.component.XmMediaComponent;
+import com.xm.lib.media.enum_.EnumViewType;
+import com.xm.lib.media.XmMediaComponent;
 
 import common.xm.com.xmcommon.mediaview.MediaControlView;
 import common.xm.com.xmcommon.mediaview.MediaLoading;

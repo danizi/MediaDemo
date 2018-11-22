@@ -1,12 +1,10 @@
-package com.xm.lib.media.component
+package com.xm.lib.media
 
 import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
 import android.view.ViewGroup
-import com.xm.lib.media.core.AbsMediaCore
-import com.xm.lib.media.core.EnumViewType
-import com.xm.lib.media.contract.XmMediaContract
+import com.xm.lib.media.enum_.EnumViewType
 import com.xm.lib.media.watcher.MediaViewObservable
 import com.xm.lib.media.watcher.Observer
 

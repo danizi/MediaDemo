@@ -1,4 +1,4 @@
-package com.xm.lib.media.core
+package com.xm.lib.media.enum_
 
 /**
  * 播放器添加View的类型

@@ -1,14 +1,10 @@
-package com.xm.lib.media.contract
+package com.xm.lib.media
 
 import android.content.Context
-import android.media.MediaPlayer
 import android.util.Log
 import android.view.SurfaceHolder
 import android.view.ViewGroup
-import com.xm.lib.media.core.AbsMediaCore
-import com.xm.lib.media.core.EnumViewType
-import com.xm.lib.media.component.XmMediaComponent
-import com.xm.lib.media.core.MediaCoreOnLisenter
+import com.xm.lib.media.enum_.EnumViewType
 import com.xm.lib.media.imp.IMediaCore
 import com.xm.lib.media.watcher.MediaViewObservable
 import java.util.*
@@ -80,10 +76,11 @@ class XmMediaContract {
 
         fun setup() {
             player?.init()
+            setOncLisenter()
         }
 
         private fun setOncLisenter() {
-            player?.setOnLisenter(object : MediaCoreOnLisenter() {
+            player?.setOnLisenter(object : AbsMediaCoreOnLisenter() {
                 override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
                     view.mediaComponent().notifyObserver("surfaceChanged", holder!!, format!!, width!!, height!!)
                 }
@@ -128,7 +125,7 @@ class XmMediaContract {
                 }
 
                 override fun onTimedText(mp: AbsMediaCore) {
-                    view.mediaComponent().notifyObserver("onInfo", mp)
+                    view.mediaComponent().notifyObserver("onTimedText", mp)
                 }
             })
         }

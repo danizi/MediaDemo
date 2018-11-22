@@ -2,7 +2,6 @@ package common.xm.com.xmcommon.mediaview
 
 import android.content.Context
 import android.util.Log
-import android.view.View
 import com.xm.lib.media.watcher.MediaViewObservable
 import com.xm.lib.media.watcher.Observer
 
