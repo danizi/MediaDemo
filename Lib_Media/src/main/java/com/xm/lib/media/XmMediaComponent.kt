@@ -93,8 +93,10 @@ class XmMediaComponent(context: Context, attrs: AttributeSet?) : MediaViewObserv
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         notifyObservers(
                 Event().setEventType(EnumMediaEventType.VIEW)
-                        .setParameter(EventConstant.METHOD, "onTouchEvent")
+                        .setParameter(EventConstant.KEY_METHOD, "onTouchEvent")
                         .setParameter("event", event!!))
         return super.onTouchEvent(event)
     }
+
+
 }

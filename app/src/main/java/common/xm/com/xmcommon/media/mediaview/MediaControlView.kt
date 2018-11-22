@@ -1,14 +1,11 @@
 package common.xm.com.xmcommon.media.mediaview
 
 import android.content.Context
-import android.os.Build
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
-import com.bangke.lib.common.utils.DisplayUtils
 import com.bangke.lib.common.utils.ToolUtil
 import com.xm.lib.media.AbsMediaCore
 import com.xm.lib.media.enum_.EnumMediaEventType
@@ -28,6 +25,7 @@ class MediaControlView(context: Context, layoutID: Int) : MediaViewObservable(co
     private var seekBar: SeekBar? = null
     private var tvDuration: TextView? = null
     private var imgScreenMode: ImageView? = null
+    private var curScreenMode: String = EventConstant.VALUE_SCREEN_SMALL
 
     init {
         contentView = getContentView(layoutID)
@@ -50,6 +48,15 @@ class MediaControlView(context: Context, layoutID: Int) : MediaViewObservable(co
             }
         }
 
+        imgScreenMode?.setOnClickListener {
+            if (curScreenMode == EventConstant.VALUE_SCREEN_SMALL) {
+                notifyObservers(Event().setEventType(EnumMediaEventType.VIEW).setParameter(EventConstant.KEY_SCREEN_MODE, EventConstant.VALUE_SCREEN_FULL))
+                curScreenMode = EventConstant.VALUE_SCREEN_FULL
+            } else if (curScreenMode.equals(EventConstant.VALUE_SCREEN_FULL)) {
+                notifyObservers(Event().setEventType(EnumMediaEventType.VIEW).setParameter(EventConstant.KEY_SCREEN_MODE, EventConstant.VALUE_SCREEN_SMALL))
+                curScreenMode = EventConstant.VALUE_SCREEN_SMALL
+            }
+        }
     }
 
     override fun update(o: MediaViewObservable, event: Event) {
@@ -64,7 +71,7 @@ class MediaControlView(context: Context, layoutID: Int) : MediaViewObservable(co
                 media = event.parameter?.get("mp") as AbsMediaCore?
             }
 
-            when (event.parameter?.get(EventConstant.METHOD)) {
+            when (event.parameter?.get(EventConstant.KEY_METHOD)) {
                 "onPrepared" -> {
                     prepared = true
                     if (true) {
@@ -77,8 +84,12 @@ class MediaControlView(context: Context, layoutID: Int) : MediaViewObservable(co
                         var timerTask = object : TimerTask() {
                             override fun run() {
                                 seekBar?.post {
-                                    tvCurrentPosition?.text = ToolUtil.formatTime(media?.getCurrentPosition())
-                                    seekBar?.progress = media?.getCurrentPosition()!!.toInt()
+                                    try {
+                                        tvCurrentPosition?.text = ToolUtil.formatTime(media?.getCurrentPosition())
+                                        seekBar?.progress = media?.getCurrentPosition()!!.toInt()
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
                                 }
                             }
                         }
@@ -95,7 +106,7 @@ class MediaControlView(context: Context, layoutID: Int) : MediaViewObservable(co
         }
 
         if (event.eventType == EnumMediaEventType.VIEW) {
-            when (event.parameter?.get(EventConstant.METHOD)) {
+            when (event.parameter?.get(EventConstant.KEY_METHOD)) {
                 "onTouchEvent" -> {
                     setVisibity(event)
                 }

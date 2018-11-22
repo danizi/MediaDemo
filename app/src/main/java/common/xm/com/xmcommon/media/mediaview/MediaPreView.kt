@@ -28,7 +28,7 @@ class MediaPreView(context: Context, layoutID: Int) : MediaViewObservable(contex
         Glide.with(context).load(preUrl).into(ivPre)
 
         ivPre?.setOnClickListener {
-            notifyObservers(Event().setEventType(EnumMediaEventType.VIEW).setParameter(EventConstant.METHOD, "click"))
+            notifyObservers(Event().setEventType(EnumMediaEventType.VIEW).setParameter(EventConstant.KEY_METHOD, "click"))
         }
 
         ivPlay?.setOnClickListener {
@@ -39,7 +39,7 @@ class MediaPreView(context: Context, layoutID: Int) : MediaViewObservable(contex
     override fun update(o: MediaViewObservable, event: Event) {
         //播放器事件
         if (event.eventType == EnumMediaEventType.MEDIA) {
-            if ("onPrepared".equals(event.parameter?.get(EventConstant.METHOD))) {
+            if ("onPrepared".equals(event.parameter?.get(EventConstant.KEY_METHOD))) {
                 visibility = View.GONE
             }
         }

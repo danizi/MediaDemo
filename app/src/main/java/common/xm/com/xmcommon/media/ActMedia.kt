@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.Window
 import com.xm.lib.ijkplayer.IJKPlayer
 import com.xm.lib.media.XmMediaComponent
 import com.xm.lib.media.enum_.EnumViewType

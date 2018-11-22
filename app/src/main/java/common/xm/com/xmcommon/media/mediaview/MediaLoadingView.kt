@@ -21,13 +21,13 @@ class MediaLoadingView(context: Context, layoutID: Int) : MediaViewObservable(co
         // 播放器事件 ：资源缓存过程中，加载控件显示
         // 播放器事件 ：资源缓冲完成，加载控件隐藏
         if (event.eventType == EnumMediaEventType.VIEW) {
-            if ("click".equals(event.parameter?.get(EventConstant.METHOD))) {
+            if ("click".equals(event.parameter?.get(EventConstant.KEY_METHOD))) {
                 visibility = View.VISIBLE
             }
         }
 
         if (event.eventType == EnumMediaEventType.MEDIA) {
-            if ("onPrepared".equals(event.parameter?.get(EventConstant.METHOD))) {
+            if ("onPrepared".equals(event.parameter?.get(EventConstant.KEY_METHOD))) {
                 visibility = View.GONE
             }
         }

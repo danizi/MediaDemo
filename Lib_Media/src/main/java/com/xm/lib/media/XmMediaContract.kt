@@ -1,16 +1,17 @@
 package com.xm.lib.media
 
+import android.app.Activity
 import android.content.Context
 import android.view.SurfaceHolder
 import android.view.ViewGroup
 import com.xm.lib.media.enum_.EnumMediaEventType
-import com.xm.lib.media.enum_.EnumMediaState
 import com.xm.lib.media.enum_.EnumViewType
 import com.xm.lib.media.event.Event
 import com.xm.lib.media.event.EventConstant
 import com.xm.lib.media.imp.IMediaCore
 import com.xm.lib.media.watcher.MediaViewObservable
 import java.util.*
+
 
 class XmMediaContract {
 
@@ -25,6 +26,8 @@ class XmMediaContract {
     class Model {
         var dataSource: String? = null
         var addViewMap: HashMap<EnumViewType, ViewGroup>? = HashMap()
+        var xmMediaFirstW: Int? = -1
+        var xmMediaFirstH: Int? = -1
     }
 
     class Present(val context: Context, val view: View) {
@@ -87,7 +90,7 @@ class XmMediaContract {
                 override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
-                                    .setParameter(EventConstant.METHOD, "surfaceChanged")
+                                    .setParameter(EventConstant.KEY_METHOD, "surfaceChanged")
                                     .setParameter("holder", holder!!)
                                     .setParameter("format", format)
                                     .setParameter("width", width)
@@ -97,21 +100,21 @@ class XmMediaContract {
                 override fun surfaceDestroyed(holder: SurfaceHolder?) {
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
-                                    .setParameter(EventConstant.METHOD, "surfaceDestroyed")
+                                    .setParameter(EventConstant.KEY_METHOD, "surfaceDestroyed")
                                     .setParameter("holder", holder!!))
                 }
 
                 override fun surfaceCreated(holder: SurfaceHolder?) {
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
-                                    .setParameter(EventConstant.METHOD, "surfaceCreated")
+                                    .setParameter(EventConstant.KEY_METHOD, "surfaceCreated")
                                     .setParameter("holder", holder!!))
                 }
 
                 override fun onPrepared(mp: AbsMediaCore) {
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
-                                    .setParameter(EventConstant.METHOD, "onPrepared")
+                                    .setParameter(EventConstant.KEY_METHOD, "onPrepared")
                                     .setParameter("mp", mp!!))
                     player?.start()
                 }
@@ -119,14 +122,14 @@ class XmMediaContract {
                 override fun onCompletion(mp: AbsMediaCore) {
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
-                                    .setParameter(EventConstant.METHOD, "onCompletion")
+                                    .setParameter(EventConstant.KEY_METHOD, "onCompletion")
                                     .setParameter("mp", mp!!))
                 }
 
                 override fun onBufferingUpdate(mp: AbsMediaCore, percent: Int) {
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
-                                    .setParameter(EventConstant.METHOD, "onBufferingUpdate")
+                                    .setParameter(EventConstant.KEY_METHOD, "onBufferingUpdate")
                                     .setParameter("mp", mp)
                                     .setParameter("percent", percent))
                 }
@@ -134,14 +137,14 @@ class XmMediaContract {
                 override fun onSeekComplete(mp: AbsMediaCore) {
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
-                                    .setParameter(EventConstant.METHOD, "onSeekComplete")
+                                    .setParameter(EventConstant.KEY_METHOD, "onSeekComplete")
                                     .setParameter("mp", mp))
                 }
 
                 override fun onVideoSizeChanged(mp: AbsMediaCore, width: Int, height: Int, sar_num: Int, sar_den: Int) {
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
-                                    .setParameter(EventConstant.METHOD, "onVideoSizeChanged")
+                                    .setParameter(EventConstant.KEY_METHOD, "onVideoSizeChanged")
                                     .setParameter("width", width)
                                     .setParameter("height", height)
                                     .setParameter("sar_num", sar_num))
@@ -150,7 +153,7 @@ class XmMediaContract {
                 override fun onError(mp: AbsMediaCore, what: Int, extra: Int): Boolean {
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
-                                    .setParameter(EventConstant.METHOD, "onError")
+                                    .setParameter(EventConstant.KEY_METHOD, "onError")
                                     .setParameter("what", what)
                                     .setParameter("extra", extra))
                     return false
@@ -159,7 +162,7 @@ class XmMediaContract {
                 override fun onInfo(mp: AbsMediaCore, what: Int, extra: Int): Boolean {
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
-                                    .setParameter(EventConstant.METHOD, "onInfo")
+                                    .setParameter(EventConstant.KEY_METHOD, "onInfo")
                                     .setParameter("mp", mp)
                                     .setParameter("what", what)
                                     .setParameter("extra", extra))
@@ -169,7 +172,7 @@ class XmMediaContract {
                 override fun onTimedText(mp: AbsMediaCore) {
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
-                                    .setParameter(EventConstant.METHOD, "onTimedText")
+                                    .setParameter(EventConstant.KEY_METHOD, "onTimedText")
                                     .setParameter("mp", mp))
                 }
             })
@@ -182,9 +185,29 @@ class XmMediaContract {
         fun update(o: MediaViewObservable, event: Event) {
             //预览图点击了播放图标
             if (event.eventType == EnumMediaEventType.VIEW) {
-                if (null != event.parameter?.get(EventConstant.METHOD)) {
+
+                if ("click" == event.parameter?.get(EventConstant.KEY_METHOD)) {
                     //先重置所有的状态
                     player?.prepareAsync()
+                }
+
+                if (EventConstant.VALUE_SCREEN_FULL == (event.parameter?.get(EventConstant.KEY_SCREEN_MODE))) {
+                    if (model?.xmMediaFirstW == -1 && model?.xmMediaFirstH == -1) {
+                        //记录原有的view的宽高
+                        model?.xmMediaFirstW = view.mediaComponent().measuredWidth
+                        model?.xmMediaFirstH = view.mediaComponent().measuredHeight
+                    }
+
+                    PolyvScreenUtils.hideStatusBar(context as Activity)
+                    PolyvScreenUtils.setLandscape(context)
+                    view.mediaComponent().layoutParams.width = PolyvScreenUtils.getNormalWH(context)[0]
+                    view.mediaComponent().layoutParams.height = PolyvScreenUtils.getNormalWH(context)[1]
+
+                } else if (EventConstant.VALUE_SCREEN_SMALL == ((event.parameter?.get(EventConstant.KEY_SCREEN_MODE)))) {
+                    PolyvScreenUtils.hideStatusBar(context as Activity)
+                    PolyvScreenUtils.setPortrait(context)
+                    view.mediaComponent().layoutParams.width = model?.xmMediaFirstW!!
+                    view.mediaComponent().layoutParams.height = model?.xmMediaFirstH!!
                 }
             }
         }
