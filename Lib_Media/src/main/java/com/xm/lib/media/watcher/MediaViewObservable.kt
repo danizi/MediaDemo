@@ -20,7 +20,7 @@ import com.xm.lib.media.event.Event
  * 2 所有的视图都相互绑定了，即事件会一一全部下发
  *
  */
-abstract class MediaViewObservable : FrameLayout {
+abstract class MediaViewObservable : FrameLayout ,Observer{
 
 
     constructor(context: Context) : super(context)

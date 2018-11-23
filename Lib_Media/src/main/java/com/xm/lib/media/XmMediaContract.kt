@@ -1,14 +1,16 @@
 package com.xm.lib.media
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.view.SurfaceHolder
-import android.view.ViewGroup
+import android.view.*
 import com.xm.lib.media.enum_.EnumMediaEventType
 import com.xm.lib.media.enum_.EnumViewType
 import com.xm.lib.media.event.Event
 import com.xm.lib.media.event.EventConstant
 import com.xm.lib.media.imp.IMediaCore
+import com.xm.lib.media.lisenter.AbsMediaCoreOnLisenter
+import com.xm.lib.media.lisenter.MediaGestureListener
 import com.xm.lib.media.watcher.MediaViewObservable
 import java.util.*
 
@@ -16,16 +18,17 @@ import java.util.*
 class XmMediaContract {
 
     interface View : IMediaCore {
-        fun addViewToMedia(enumViewType: EnumViewType, viewGroup: ViewGroup): XmMediaComponent
+        fun addViewToMedia(enumViewType: EnumViewType, viewGroup: MediaViewObservable): XmMediaComponent
         fun mediaComponent(): XmMediaComponent
         fun setDisplay(dataSource: String): XmMediaComponent
         fun setup(): XmMediaComponent
         fun core(absMediaCore: AbsMediaCore): XmMediaComponent
+        fun build()
     }
 
     class Model {
         var dataSource: String? = null
-        var addViewMap: HashMap<EnumViewType, ViewGroup>? = HashMap()
+        var addViewMap: HashMap<EnumViewType, MediaViewObservable>? = HashMap()
         var xmMediaFirstW: Int? = -1
         var xmMediaFirstH: Int? = -1
     }
@@ -33,6 +36,7 @@ class XmMediaContract {
     class Present(val context: Context, val view: View) {
         private var model: Model? = null
         private var player: AbsMediaCore? = null
+        private var gestureDetector: GestureDetector? = null
 
         init {
             model = Model()
@@ -46,7 +50,7 @@ class XmMediaContract {
             player?.tagerView = view.mediaComponent()
         }
 
-        fun addViewToMedia(enumViewType: EnumViewType, viewGroup: ViewGroup) {
+        fun addViewToMedia(enumViewType: EnumViewType, viewGroup: MediaViewObservable) {
             model?.addViewMap?.put(enumViewType, viewGroup)
             view.mediaComponent().addView(viewGroup)
             //观察者模式
@@ -85,6 +89,7 @@ class XmMediaContract {
             setOncLisenter()
         }
 
+        @SuppressLint("ClickableViewAccessibility")
         private fun setOncLisenter() {
             player?.setOnLisenter(object : AbsMediaCoreOnLisenter() {
                 override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
@@ -176,6 +181,53 @@ class XmMediaContract {
                                     .setParameter("mp", mp))
                 }
             })
+
+            // 手势相关的处理
+            gestureDetector = GestureDetector(context, MediaGestureListener(context, object : MediaGestureListener.GestureListener {
+                override fun onClickListener() {
+                    //点击
+                    view.mediaComponent().notifyObservers(
+                            Event().setEventType(EnumMediaEventType.VIEW)
+                                    .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
+                                    .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_CLICK))
+
+                    //通知所有手势视图隐藏
+                    view.mediaComponent().notifyObservers(
+                            Event().setEventType(EnumMediaEventType.VIEW)
+                                    .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
+                                    .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_UP))
+                }
+
+                override fun onVolume(offset: Float) {
+                    //通知显示亮度视图“显示”并且带变化的参数值
+                    view.mediaComponent().notifyObservers(
+                            Event().setEventType(EnumMediaEventType.VIEW)
+                                    .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
+                                    .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONVOLUME)
+                                    .setParameter("offset", offset))
+                }
+
+                override fun onLight(offset: Float) {
+                    //通知获取亮度视图“显示”并且带变化的参数值
+                    view.mediaComponent().notifyObservers(
+                            Event().setEventType(EnumMediaEventType.VIEW)
+                                    .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
+                                    .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONLIGHT)
+                                    .setParameter("offset", offset))
+                }
+
+                override fun onProgress(offset: Float) {
+                    //通知进度视图“显示”，并且带变化的参数值
+                    view.mediaComponent().notifyObservers(
+                            Event().setEventType(EnumMediaEventType.VIEW)
+                                    .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
+                                    .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONPROGRESS)
+                                    .setParameter("offset", offset))
+                }
+            }))
+            view.mediaComponent().setOnTouchListener { _, event ->
+                gestureDetector?.onTouchEvent(event)!!
+            }
         }
 
         fun setDisplay(dataSource: String) {
@@ -210,6 +262,32 @@ class XmMediaContract {
                     view.mediaComponent().layoutParams.height = model?.xmMediaFirstH!!
                 }
             }
+        }
+
+        fun prepareAsync() {
+            player?.prepareAsync()
+        }
+
+        fun build() {
+            //观察者-被观察者
+            for (v1 in model?.addViewMap?.entries!!) {
+                view.mediaComponent().addObserver(v1.value)
+                v1.value.addObserver(view.mediaComponent())
+            }
+            for (v1 in model?.addViewMap?.entries!!) {
+                for (v2 in model?.addViewMap?.entries!!) {
+                    if (v1.value != v2.value) {
+                        v1.value.addObserver(v2.value)
+                    }
+                }
+            }
+
+            //播放器对象创建完成，通知给各个视图
+            view.mediaComponent().notifyObservers(
+                    Event().setEventType(EnumMediaEventType.MEDIA)
+                            .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
+                            .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_CORE)
+                            .setParameter("mp", player!!))
         }
     }
 }

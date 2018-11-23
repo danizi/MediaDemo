@@ -1,4 +1,4 @@
-package common.xm.com.xmcommon.media.mediaview
+package common.xm.com.xmcommon.media.mediaview.component
 
 import android.content.Context
 import android.view.MotionEvent
@@ -17,7 +17,7 @@ import com.xm.lib.media.watcher.Observer
 import common.xm.com.xmcommon.R
 import java.util.*
 
-class MediaControlView(context: Context, layoutID: Int) : MediaViewObservable(context), Observer {
+class MediaControlView(context: Context, layoutID: Int) : MediaViewObservable(context) {
     private var media: AbsMediaCore? = null
     private var prepared: Boolean? = false
     private var imgPlayPause: ImageView? = null
@@ -107,12 +107,18 @@ class MediaControlView(context: Context, layoutID: Int) : MediaViewObservable(co
 
         if (event.eventType == EnumMediaEventType.VIEW) {
             when (event.parameter?.get(EventConstant.KEY_METHOD)) {
-                "onTouchEvent" -> {
-                    setVisibity(event)
+                EventConstant.VALUE_METHOD_CLICK -> {
+                    if(visibility==View.GONE){
+                        visibility= View.VISIBLE
+                    }else{
+                        visibility= View.GONE
+                    }
                 }
             }
         }
     }
+
+    var visibility: Int? = View.GONE
 
     private fun setVisibity(event: Event) {
         var motionEvent = event.parameter?.get("event") as MotionEvent

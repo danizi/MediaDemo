@@ -1,4 +1,4 @@
-package common.xm.com.xmcommon.media.mediaview
+package common.xm.com.xmcommon.media.mediaview.component
 
 import android.content.Context
 import android.view.View
@@ -8,7 +8,7 @@ import com.xm.lib.media.event.EventConstant
 import com.xm.lib.media.watcher.MediaViewObservable
 import com.xm.lib.media.watcher.Observer
 
-class MediaLoadingView(context: Context, layoutID: Int) : MediaViewObservable(context), Observer {
+class MediaLoadingView(context: Context, layoutID: Int) : MediaViewObservable(context) {
 
     init {
         contentView = getContentView(layoutID)
@@ -21,7 +21,7 @@ class MediaLoadingView(context: Context, layoutID: Int) : MediaViewObservable(co
         // 播放器事件 ：资源缓存过程中，加载控件显示
         // 播放器事件 ：资源缓冲完成，加载控件隐藏
         if (event.eventType == EnumMediaEventType.VIEW) {
-            if ("click".equals(event.parameter?.get(EventConstant.KEY_METHOD))) {
+            if ("click" == event.parameter?.get(EventConstant.KEY_METHOD)) {
                 visibility = View.VISIBLE
             }
         }

@@ -5,6 +5,7 @@ import android.view.SurfaceView
 import android.view.ViewGroup
 import com.xm.lib.media.enum_.EnumMediaState
 import com.xm.lib.media.imp.IMediaCore
+import com.xm.lib.media.lisenter.AbsMediaCoreOnLisenter
 
 /**
  * 播放器引擎抽象

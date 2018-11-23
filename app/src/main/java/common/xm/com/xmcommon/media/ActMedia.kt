@@ -2,14 +2,11 @@ package common.xm.com.xmcommon.media
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import android.view.Window
 import com.xm.lib.ijkplayer.IJKPlayer
 import com.xm.lib.media.XmMediaComponent
 import com.xm.lib.media.enum_.EnumViewType
 import common.xm.com.xmcommon.R
-import common.xm.com.xmcommon.media.mediaview.*
+import common.xm.com.xmcommon.media.mediaview.component.*
 
 class ActMedia : AppCompatActivity() {
 
@@ -41,23 +38,7 @@ class ActMedia : AppCompatActivity() {
                 .addViewToMedia(EnumViewType.GESTURE_PROGRESS, mediaGestureProgress)                      //绑定手势滑动进度视图
                 .addViewToMedia(EnumViewType.GESTURE_VOLUME, mediaGestureVolume)                          //绑定手势滑动声音视图
                 .setDisplay("http://hls.videocc.net/26de49f8c2/9/26de49f8c273bbc8f6812d1422a11b39_2.m3u8")//设置播放资源
-
-        // 观察者
-        mediaPreView.addObserver(xmMediaComponent)
-        mediaPreView.addObserver(mediaLoading)
-        mediaPreView.addObserver(mediaController)
-
-        mediaLoading.addObserver(xmMediaComponent)
-        mediaLoading.addObserver(mediaPreView)
-        mediaLoading.addObserver(mediaController)
-
-        mediaController.addObserver(xmMediaComponent)
-        mediaController.addObserver(mediaPreView)
-        mediaController.addObserver(mediaLoading)
-
-        xmMediaComponent.addObserver(mediaPreView)
-        xmMediaComponent.addObserver(mediaLoading)
-        xmMediaComponent.addObserver(mediaController)
+                .build()
 
     }
 }

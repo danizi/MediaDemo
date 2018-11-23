@@ -18,10 +18,6 @@ import com.xm.lib.media.watcher.Observer
  */
 class XmMediaComponent(context: Context, attrs: AttributeSet?) : MediaViewObservable(context, attrs), XmMediaContract.View, Observer {
 
-    @Deprecated("不对外使用")
-    override fun prepareAsync() {
-    }
-
     private var present: XmMediaContract.Present? = null
 
     init {
@@ -33,7 +29,7 @@ class XmMediaComponent(context: Context, attrs: AttributeSet?) : MediaViewObserv
         return this
     }
 
-    override fun addViewToMedia(enumViewType: EnumViewType, viewGroup: ViewGroup): XmMediaComponent {
+    override fun addViewToMedia(enumViewType: EnumViewType, viewGroup: MediaViewObservable): XmMediaComponent {
         present?.addViewToMedia(enumViewType, viewGroup)
         return this
     }
@@ -56,6 +52,10 @@ class XmMediaComponent(context: Context, attrs: AttributeSet?) : MediaViewObserv
     @Deprecated("使用setup方法替代")
     override fun init() {
 
+    }
+
+    override fun prepareAsync() {
+        present?.prepareAsync()
     }
 
     override fun start() {
@@ -90,13 +90,7 @@ class XmMediaComponent(context: Context, attrs: AttributeSet?) : MediaViewObserv
         present?.update(o, event)
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        notifyObservers(
-                Event().setEventType(EnumMediaEventType.VIEW)
-                        .setParameter(EventConstant.KEY_METHOD, "onTouchEvent")
-                        .setParameter("event", event!!))
-        return super.onTouchEvent(event)
+    override fun build() {
+        present?.build()
     }
-
-
 }

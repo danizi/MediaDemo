@@ -1,4 +1,4 @@
-package common.xm.com.xmcommon.media.mediaview
+package common.xm.com.xmcommon.media.mediaview.component
 
 import android.content.Context
 import android.view.View
@@ -8,7 +8,7 @@ import com.xm.lib.media.event.EventConstant
 import com.xm.lib.media.watcher.MediaViewObservable
 import com.xm.lib.media.watcher.Observer
 
-class MediaErrorView(context: Context, layoutID: Int) : MediaViewObservable(context), Observer {
+class MediaGestureLightView(context: Context, layoutID: Int) : MediaViewObservable(context) {
 
     init {
         contentView = getContentView(layoutID)
@@ -21,14 +21,15 @@ class MediaErrorView(context: Context, layoutID: Int) : MediaViewObservable(cont
         // 播放器事件 ：资源缓存过程中，加载控件显示
         // 播放器事件 ：资源缓冲完成，加载控件隐藏
         if (event.eventType == EnumMediaEventType.VIEW) {
-            if ("click".equals(event.parameter?.get(EventConstant.KEY_METHOD))) {
-                visibility = View.VISIBLE
-            }
-        }
-
-        if (event.eventType == EnumMediaEventType.MEDIA) {
-            if ("onPrepared".equals(event.parameter?.get(EventConstant.KEY_METHOD))) {
-                visibility = View.GONE
+            if (event.parameter?.get(EventConstant.KEY_FROM) == EventConstant.VALUE_FROM_MEDIACOMPONENT) {
+                when (event.parameter?.get(EventConstant.KEY_METHOD)) {
+                    EventConstant.VALUE_METHOD_ONLIGHT -> {
+                        visibility = View.VISIBLE
+                    }
+                    EventConstant.VALUE_METHOD_UP -> {
+                        visibility = View.GONE
+                    }
+                }
             }
         }
     }

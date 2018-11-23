@@ -1,4 +1,4 @@
-package common.xm.com.xmcommon.media.mediaview
+package common.xm.com.xmcommon.media.mediaview.component
 
 import android.content.Context
 import android.view.View
@@ -8,7 +8,7 @@ import com.xm.lib.media.event.EventConstant
 import com.xm.lib.media.watcher.MediaViewObservable
 import com.xm.lib.media.watcher.Observer
 
-class MediaCompleteView(context: Context, layoutID: Int) : MediaViewObservable(context), Observer {
+class MediaCompleteView(context: Context, layoutID: Int) : MediaViewObservable(context) {
 
     init {
         contentView = getContentView(layoutID)
