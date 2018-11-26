@@ -1,67 +1,63 @@
 package common.xm.com.xmcommon.media.mediaview.component
 
 import android.content.Context
-import android.view.View
 import android.widget.ImageView
-import com.bumptech.glide.Glide
 import com.xm.lib.media.AbsMediaCore
-import com.xm.lib.media.enum_.EnumMediaEventType
 import com.xm.lib.media.event.Event
-import com.xm.lib.media.event.EventConstant
 import com.xm.lib.media.watcher.MediaViewObservable
-import com.xm.lib.media.watcher.Observer
 import common.xm.com.xmcommon.R
+import common.xm.com.xmcommon.media.mediaview.contract.MediaPreViewContract
 
 
-class MediaPreView(context: Context, layoutID: Int) : MediaViewObservable(context){
-
-    var media: AbsMediaCore? = null
-    var preUrl = "http://img.videocc.net/uimage/2/26de49f8c2/9/26de49f8c273bbc8f6812d1422a11b39_1.jpg"
+class MediaPreView(context: Context, layoutID: Int, preUrl: String) : MediaViewObservable<MediaPreViewContract.Present>(context, layoutID), MediaPreViewContract.View {
+    var preUrl: String? = preUrl
     var ivPre: ImageView? = null
     var ivPlay: ImageView? = null
 
-    init {
-        contentView = getContentView(layoutID)
-        addView(contentView)
+    override fun createPresent(): MediaPreViewContract.Present {
+        return MediaPreViewContract.Present(context, this)
+    }
 
-        ivPre = findViewById(R.id.img_preview)
-        ivPlay = findViewById(R.id.img_play)
+    override fun findViews() {
+        ivPre = contentView?.findViewById(R.id.img_preview)
+        ivPlay = contentView?.findViewById(R.id.img_play)
+    }
 
-        Glide.with(context).load(preUrl).into(ivPre)
-
+    override fun initListenner() {
         ivPre?.setOnClickListener {
-            visibility = View.GONE
-            media?.prepareAsync()
-
+            play()
         }
-
         ivPlay?.setOnClickListener {
-            media?.prepareAsync()
+            play()
         }
     }
 
-    override fun update(o: MediaViewObservable, event: Event) {
-        //播放器事件
-        if (event.eventType == EnumMediaEventType.MEDIA) {
+    override fun getView(): MediaPreView {
+        return this
+    }
 
-            //播放器创建完成通知
-            if (EventConstant.VALUE_METHOD_CORE == event.parameter?.get(EventConstant.KEY_METHOD)) {
-                media = event.parameter?.get("mp") as AbsMediaCore?
-            }
+    override fun showView() {
+        show()
+    }
 
-            if (EventConstant.VALUE_METHOD_ONPREPARED == event.parameter?.get(EventConstant.KEY_METHOD)) {
-                visibility = View.GONE
-            }
-        }
+    override fun hideView() {
+        hide()
+    }
 
-//        if (event.eventType == EnumMediaEventType.VIEW) {
-//            if (event.parameter?.get(EventConstant.KEY_FROM) == EventConstant.VALUE_FROM_MEDIACOMPONENT) {
-//                when (event.parameter?.get(EventConstant.KEY_METHOD)) {
-//                    EventConstant.VALUE_METHOD_CLICK -> {
-//                        visibility = View.GONE
-//                    }
-//                }
-//            }
-//        }
+    override fun initData() {
+        getPresent()?.model?.preUrl = "http://img.videocc.net/uimage/2/26de49f8c2/9/26de49f8c273bbc8f6812d1422a11b39_1.jpg"
+        getPresent()?.process()
+    }
+
+    override fun update(o: MediaViewObservable<*>, event: Event) {
+        getPresent()?.handleReceiveEvent(o, event)
+    }
+
+    private fun play() {
+        getPresent()?.prepareAsync()
+        hideView()
+        getPresent()?.notifyObservers()
     }
 }
+
+

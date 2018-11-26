@@ -1,9 +1,10 @@
 package com.xm.lib.media
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.view.*
+import android.view.GestureDetector
+import android.view.MotionEvent
+import android.view.SurfaceHolder
 import com.xm.lib.media.enum_.EnumMediaEventType
 import com.xm.lib.media.enum_.EnumViewType
 import com.xm.lib.media.event.Event
@@ -18,7 +19,7 @@ import java.util.*
 class XmMediaContract {
 
     interface View : IMediaCore {
-        fun addViewToMedia(enumViewType: EnumViewType, viewGroup: MediaViewObservable): XmMediaComponent
+        fun addViewToMedia(enumViewType: EnumViewType, viewGroup: MediaViewObservable<*>): XmMediaComponent
         fun mediaComponent(): XmMediaComponent
         fun setDisplay(dataSource: String): XmMediaComponent
         fun setup(): XmMediaComponent
@@ -28,7 +29,7 @@ class XmMediaContract {
 
     class Model {
         var dataSource: String? = null
-        var addViewMap: HashMap<EnumViewType, MediaViewObservable>? = HashMap()
+        var addViewMap: HashMap<EnumViewType, MediaViewObservable<*>>? = HashMap()
         var xmMediaFirstW: Int? = -1
         var xmMediaFirstH: Int? = -1
     }
@@ -50,10 +51,8 @@ class XmMediaContract {
             player?.tagerView = view.mediaComponent()
         }
 
-        fun addViewToMedia(enumViewType: EnumViewType, viewGroup: MediaViewObservable) {
+        fun addViewToMedia(enumViewType: EnumViewType, viewGroup: MediaViewObservable<*>) {
             model?.addViewMap?.put(enumViewType, viewGroup)
-            view.mediaComponent().addView(viewGroup)
-            //观察者模式
         }
 
         fun release() {
@@ -86,11 +85,73 @@ class XmMediaContract {
 
         fun setup() {
             player?.init()
-            setOncLisenter()
         }
 
-        @SuppressLint("ClickableViewAccessibility")
-        private fun setOncLisenter() {
+        fun setDisplay(dataSource: String) {
+            model?.dataSource = dataSource
+        }
+
+        fun update(o: MediaViewObservable<*>, event: Event) {
+            //预览图点击了播放图标
+            if (event.eventType == EnumMediaEventType.VIEW) {
+
+                if ("click" == event.parameter?.get(EventConstant.KEY_METHOD)) {
+                    //先重置所有的状态
+                    player?.prepareAsync()
+                }
+
+                if (EventConstant.VALUE_SCREEN_FULL == (event.parameter?.get(EventConstant.KEY_SCREEN_MODE))) {
+                    if (model?.xmMediaFirstW == -1 && model?.xmMediaFirstH == -1) {
+                        //记录原有的view的宽高
+                        model?.xmMediaFirstW = view.mediaComponent().measuredWidth
+                        model?.xmMediaFirstH = view.mediaComponent().measuredHeight
+                    }
+
+                    PolyvScreenUtils.hideStatusBar(context as Activity)
+                    PolyvScreenUtils.setLandscape(context)
+                    view.mediaComponent().layoutParams.width = PolyvScreenUtils.getNormalWH(context)[0]
+                    view.mediaComponent().layoutParams.height = PolyvScreenUtils.getNormalWH(context)[1]
+
+                } else if (EventConstant.VALUE_SCREEN_SMALL == ((event.parameter?.get(EventConstant.KEY_SCREEN_MODE)))) {
+                    PolyvScreenUtils.hideStatusBar(context as Activity)
+                    PolyvScreenUtils.setPortrait(context)
+                    view.mediaComponent().layoutParams.width = model?.xmMediaFirstW!!
+                    view.mediaComponent().layoutParams.height = model?.xmMediaFirstH!!
+                }
+            }
+        }
+
+        fun prepareAsync() {
+            player?.prepareAsync()
+        }
+
+        fun build() {
+            //观察者-被观察者
+            for (v1 in model?.addViewMap?.entries!!) {
+                view.mediaComponent().addObserver(v1.value)
+                v1.value.addObserver(view.mediaComponent())
+            }
+            for (v1 in model?.addViewMap?.entries!!) {
+                for (v2 in model?.addViewMap?.entries!!) {
+                    if (v1.value != v2.value) {
+                        v1.value.addObserver(v2.value)
+                    }
+                }
+            }
+
+            //播放器对象创建完成，通知给各个视图
+            view.mediaComponent().notifyObservers(
+                    Event().setEventType(EnumMediaEventType.MEDIA)
+                            .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
+                            .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_CORE)
+                            .setParameter("mp", player!!))
+
+            //添加view
+            for (e in model?.addViewMap?.entries!!) {
+                view.mediaComponent().addView(model?.addViewMap?.get(e.key))
+            }
+
+            //播放器监听
             player?.setOnLisenter(object : AbsMediaCoreOnLisenter() {
                 override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
                     view.mediaComponent().notifyObservers(
@@ -190,12 +251,6 @@ class XmMediaContract {
                             Event().setEventType(EnumMediaEventType.VIEW)
                                     .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
                                     .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_CLICK))
-
-                    //通知所有手势视图隐藏
-                    view.mediaComponent().notifyObservers(
-                            Event().setEventType(EnumMediaEventType.VIEW)
-                                    .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
-                                    .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_UP))
                 }
 
                 override fun onVolume(offset: Float) {
@@ -226,68 +281,15 @@ class XmMediaContract {
                 }
             }))
             view.mediaComponent().setOnTouchListener { _, event ->
+                if (event.action == MotionEvent.ACTION_UP) {
+                    //通知所有手势视图隐藏
+                    view.mediaComponent().notifyObservers(
+                            Event().setEventType(EnumMediaEventType.VIEW)
+                                    .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
+                                    .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_UP))
+                }
                 gestureDetector?.onTouchEvent(event)!!
             }
-        }
-
-        fun setDisplay(dataSource: String) {
-            model?.dataSource = dataSource
-        }
-
-        fun update(o: MediaViewObservable, event: Event) {
-            //预览图点击了播放图标
-            if (event.eventType == EnumMediaEventType.VIEW) {
-
-                if ("click" == event.parameter?.get(EventConstant.KEY_METHOD)) {
-                    //先重置所有的状态
-                    player?.prepareAsync()
-                }
-
-                if (EventConstant.VALUE_SCREEN_FULL == (event.parameter?.get(EventConstant.KEY_SCREEN_MODE))) {
-                    if (model?.xmMediaFirstW == -1 && model?.xmMediaFirstH == -1) {
-                        //记录原有的view的宽高
-                        model?.xmMediaFirstW = view.mediaComponent().measuredWidth
-                        model?.xmMediaFirstH = view.mediaComponent().measuredHeight
-                    }
-
-                    PolyvScreenUtils.hideStatusBar(context as Activity)
-                    PolyvScreenUtils.setLandscape(context)
-                    view.mediaComponent().layoutParams.width = PolyvScreenUtils.getNormalWH(context)[0]
-                    view.mediaComponent().layoutParams.height = PolyvScreenUtils.getNormalWH(context)[1]
-
-                } else if (EventConstant.VALUE_SCREEN_SMALL == ((event.parameter?.get(EventConstant.KEY_SCREEN_MODE)))) {
-                    PolyvScreenUtils.hideStatusBar(context as Activity)
-                    PolyvScreenUtils.setPortrait(context)
-                    view.mediaComponent().layoutParams.width = model?.xmMediaFirstW!!
-                    view.mediaComponent().layoutParams.height = model?.xmMediaFirstH!!
-                }
-            }
-        }
-
-        fun prepareAsync() {
-            player?.prepareAsync()
-        }
-
-        fun build() {
-            //观察者-被观察者
-            for (v1 in model?.addViewMap?.entries!!) {
-                view.mediaComponent().addObserver(v1.value)
-                v1.value.addObserver(view.mediaComponent())
-            }
-            for (v1 in model?.addViewMap?.entries!!) {
-                for (v2 in model?.addViewMap?.entries!!) {
-                    if (v1.value != v2.value) {
-                        v1.value.addObserver(v2.value)
-                    }
-                }
-            }
-
-            //播放器对象创建完成，通知给各个视图
-            view.mediaComponent().notifyObservers(
-                    Event().setEventType(EnumMediaEventType.MEDIA)
-                            .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
-                            .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_CORE)
-                            .setParameter("mp", player!!))
         }
     }
 }

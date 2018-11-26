@@ -7,6 +7,7 @@ class EventConstant {
     companion object {
         val KEY_FROM: String = "KEY_FROM"                        //事件产生来自于哪里
         val VALUE_FROM_MEDIACOMPONENT: String = "mediaComponent"
+        val VALUE_FROM_PREVIEW: String = "previewComponent"
 
         // 播放器回调的方法名称
         val KEY_METHOD: String = "KEY_METHOD"
@@ -26,6 +27,7 @@ class EventConstant {
         val KEY_SCREEN_MODE: String = "KEY_SCREEN_MODE"
         val VALUE_SCREEN_SMALL: String = "small"                 //小窗口
         val VALUE_SCREEN_FULL: String = "full"                   //全屏
+
     }
 }
 

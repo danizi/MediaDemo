@@ -1,36 +1,48 @@
 package common.xm.com.xmcommon.media.mediaview.component
 
 import android.content.Context
-import android.view.View
-import com.xm.lib.media.enum_.EnumMediaEventType
+import android.widget.ImageView
+import android.widget.ProgressBar
 import com.xm.lib.media.event.Event
-import com.xm.lib.media.event.EventConstant
 import com.xm.lib.media.watcher.MediaViewObservable
-import com.xm.lib.media.watcher.Observer
+import common.xm.com.xmcommon.R
+import common.xm.com.xmcommon.media.mediaview.contract.MediaGestureProgressViewContract
 
-class MediaGestureProgressView(context: Context, layoutID: Int) : MediaViewObservable(context) {
+class MediaGestureProgressView(context: Context, layoutID: Int) : MediaViewObservable<MediaGestureProgressViewContract.Present>(context, layoutID), MediaGestureProgressViewContract.View {
 
-    init {
-        contentView = getContentView(layoutID)
-        addView(contentView)
+    var iv: ImageView? = null
+    var progress: ProgressBar? = null
+
+
+    override fun createPresent(): MediaGestureProgressViewContract.Present {
+        return MediaGestureProgressViewContract.Present(context, this)
+    }
+    override fun findViews() {
+        iv =  contentView?.findViewById(R.id.iv)
+        progress =  contentView?.findViewById(R.id.progress)
+    }
+
+    override fun initListenner() {
+
+    }
+
+    override fun initData() {
+        getPresent()?.process()
+    }
+
+    override fun update(o: MediaViewObservable<*>, event: Event) {
+        getPresent()?.handleReceiveEvent(o, event)
+    }
+
+    override fun showView() {
+        show()
+    }
+
+    override fun hideView() {
         hide()
     }
 
-    override fun update(o: MediaViewObservable, event: Event) {
-        // 控件事件   ：点击了播放按钮，加载控件显示
-        // 播放器事件 ：资源缓存过程中，加载控件显示
-        // 播放器事件 ：资源缓冲完成，加载控件隐藏
-        if (event.eventType == EnumMediaEventType.VIEW) {
-            if (event.parameter?.get(EventConstant.KEY_FROM) == EventConstant.VALUE_FROM_MEDIACOMPONENT) {
-                when (event.parameter?.get(EventConstant.KEY_METHOD)) {
-                    EventConstant.VALUE_METHOD_ONPROGRESS -> {
-                        visibility = View.VISIBLE
-                    }
-                    EventConstant.VALUE_METHOD_UP -> {
-                        visibility = View.GONE
-                    }
-                }
-            }
-        }
+    override fun getView(): MediaGestureProgressView {
+        return this
     }
 }

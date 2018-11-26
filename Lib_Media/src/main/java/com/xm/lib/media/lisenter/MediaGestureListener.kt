@@ -86,4 +86,5 @@ class MediaGestureListener(context: Context, gestureListener: GestureListener) :
     private fun log(msg: String) {
         Log.d("MediaGestureListener", msg)
     }
+
 }

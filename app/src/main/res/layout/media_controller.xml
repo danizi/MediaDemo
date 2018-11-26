@@ -14,6 +14,7 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <include layout="@layout/media_controller_v" />
+
     </LinearLayout>
 
 

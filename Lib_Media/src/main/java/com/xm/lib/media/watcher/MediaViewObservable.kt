@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.xm.lib.media.event.Event
+import com.xm.lib.media.imp.IInit
 
 /**
  *
@@ -20,20 +21,47 @@ import com.xm.lib.media.event.Event
  * 2 所有的视图都相互绑定了，即事件会一一全部下发
  *
  */
-abstract class MediaViewObservable : FrameLayout ,Observer{
+abstract class MediaViewObservable<T> : FrameLayout, Observer, IInit {
+    private var present: T? = null
+    var contentView: View? = null
+    var observers: ArrayList<Observer>? = ArrayList()
+    var layoutID: Int? = null
+
+    constructor(context: Context, layoutID: Int) : super(context) {
+        present = createPresent()
+        // todo 为非播放控件提供
+        contentView = getContentView(layoutID)
+        addView(contentView)
+        hide()
+        findViews()
+        initListenner()
+        initData()
+    }
+
+    constructor(context: Context) : super(context) {
+        present = createPresent()
+    }
+
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        present = createPresent()
+    }
 
 
-    constructor(context: Context) : super(context)
+    /*
+     * -------
+     * 创建P层
+     */
+    abstract fun createPresent(): T
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    fun getPresent(): T? {
+        return present
+    }
+
 
     /*
      * -------
      * 被观察者
      */
-    var contentView: View? = null
-    var observers: ArrayList<Observer>? = ArrayList()
-
     @Synchronized
     fun addObserver(o: Observer?) {
         if (o == null)
@@ -72,14 +100,14 @@ abstract class MediaViewObservable : FrameLayout ,Observer{
     }
 
     fun hide() {
-        if (this?.visibility == View.VISIBLE) {
-            this?.visibility = View.GONE
+        if (this.visibility == View.VISIBLE) {
+            this.visibility = View.GONE
         }
     }
 
     fun show() {
-        if (this?.visibility == View.GONE) {
-            this?.visibility = View.VISIBLE
+        if (this.visibility == View.GONE) {
+            this.visibility = View.VISIBLE
         }
     }
 }

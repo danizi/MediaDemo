@@ -4,13 +4,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ImageView
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@mipmap/media_fast_forward"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <include layout="@layout/media_gesture_common" />
 
 </android.support.constraint.ConstraintLayout>
