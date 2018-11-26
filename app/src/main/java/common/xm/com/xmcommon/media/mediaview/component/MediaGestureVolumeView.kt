@@ -10,8 +10,6 @@ import common.xm.com.xmcommon.media.mediaview.contract.MediaGestureVolumeViewCon
 
 class MediaGestureVolumeView(context: Context, layoutID: Int) : MediaViewObservable<MediaGestureVolumeViewContract.Present>(context,layoutID), MediaGestureVolumeViewContract.View {
 
-
-    var present: MediaGestureVolumeViewContract.Present? = null
     var iv: ImageView? = null
     var progress: ProgressBar? = null
 
@@ -29,11 +27,11 @@ class MediaGestureVolumeView(context: Context, layoutID: Int) : MediaViewObserva
     }
 
     override fun initData() {
-        present?.process()
+        getPresent()?.process()
     }
 
     override fun update(o: MediaViewObservable<*>, event: Event) {
-        present?.handleReceiveEvent(o, event)
+        getPresent()?.handleReceiveEvent(o, event)
     }
 
     override fun showView() {
