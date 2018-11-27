@@ -7,9 +7,6 @@ import common.xm.com.xmcommon.media.mediaview.contract.MediaLoadingViewContract
 
 class MediaLoadingView(context: Context?, layoutID: Int?) : MediaViewObservable<MediaLoadingViewContract.Present>(context!!, layoutID!!), MediaLoadingViewContract.View {
 
-
-    var present: MediaLoadingViewContract.Present? = null
-
     override fun createPresent(): MediaLoadingViewContract.Present {
         return MediaLoadingViewContract.Present(context, this)
     }
@@ -19,7 +16,7 @@ class MediaLoadingView(context: Context?, layoutID: Int?) : MediaViewObservable<
     override fun initListenner() {}
 
     override fun initData() {
-        present?.process()
+        getPresent()?.process()
     }
 
     override fun showView() {
@@ -35,6 +32,6 @@ class MediaLoadingView(context: Context?, layoutID: Int?) : MediaViewObservable<
     }
 
     override fun update(o: MediaViewObservable<*>, event: Event) {
-        present?.handleReceiveEvent(o, event)
+        getPresent()?.handleReceiveEvent(o, event)
     }
 }

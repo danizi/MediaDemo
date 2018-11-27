@@ -55,7 +55,6 @@ class MediaPreView(context: Context?, layoutID: Int?, preUrl: String?) : MediaVi
 
     private fun play() {
         getPresent()?.prepareAsync()
-        hideView()
         getPresent()?.notifyObservers()
     }
 }

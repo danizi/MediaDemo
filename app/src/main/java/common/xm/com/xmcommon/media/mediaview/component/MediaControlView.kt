@@ -1,6 +1,7 @@
 package common.xm.com.xmcommon.media.mediaview.component
 
 import android.content.Context
+import android.util.Log
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
@@ -10,8 +11,6 @@ import common.xm.com.xmcommon.R
 import common.xm.com.xmcommon.media.mediaview.contract.MediaControlViewContract
 
 class MediaControlView(context: Context?, layoutID: Int?) : MediaViewObservable<MediaControlViewContract.Present>(context!!, layoutID!!), MediaControlViewContract.View {
-
-
     var imgPlayPause: ImageView? = null
     var tvCurrentPosition: TextView? = null
     var seekBar: SeekBar? = null
@@ -30,6 +29,20 @@ class MediaControlView(context: Context?, layoutID: Int?) : MediaViewObservable<
         imgScreenMode?.setOnClickListener {
             getPresent()?.fullOrSmall()
         }
+
+        seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                getPresent()?.onProgressChanged(seekBar, progress, fromUser)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                getPresent()?.onStartTrackingTouch(seekBar)
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                getPresent()?.onStopTrackingTouch(seekBar)
+            }
+        })
     }
 
     override fun initData() {

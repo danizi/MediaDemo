@@ -32,13 +32,14 @@ class MediaGestureProgressViewContract {
             if (event?.parameter?.get(EventConstant.KEY_FROM) == EventConstant.VALUE_FROM_MEDIACOMPONENT) {
                 when (event.parameter?.get(EventConstant.KEY_METHOD)) {
                     EventConstant.VALUE_METHOD_CORE -> {
-                        model?.media = event.parameter?.get("mp") as AbsMediaCore?
+                        model.media = event.parameter?.get("mp") as AbsMediaCore?
                     }
                 }
             }
         }
 
         var curProgress: Int = -1
+        var present: Float? = 0f
         override fun handleViewEvent(o: MediaViewObservable<*>?, event: Event?) {
             if (event?.parameter?.get(EventConstant.KEY_FROM) == EventConstant.VALUE_FROM_MEDIACOMPONENT) {
                 when (event.parameter?.get(EventConstant.KEY_METHOD)) {
@@ -49,16 +50,16 @@ class MediaGestureProgressViewContract {
                             curProgress = view?.getView()?.progress?.progress!!
                         }
                         //当前的播放进度
-                        val present: Float = (model?.media?.getCurrentPosition()!! / model?.media?.getDuration()!!) + event.parameter?.get("percent") as Float
+                        present = (model.media?.getCurrentPosition()!! / model.media?.getDuration()!!) + event.parameter?.get("percent") as Float
                         //获取滑动的距离再加
-                        view?.getView()?.progress?.progress = curProgress+(present * 100).toInt()
-                        //设置进度
-                        model?.media?.seekTo((present * model?.media?.getDuration()!!).toLong())
+                        view?.getView()?.progress?.progress = curProgress + (present!! * 100).toInt()
                         view?.showView()
                     }
                     EventConstant.VALUE_METHOD_UP -> {
                         view?.hideView()
                         curProgress = -1
+                        //设置进度
+                        model.media?.seekTo((present!! * model.media?.getDuration()!!).toLong())
                     }
                 }
             }

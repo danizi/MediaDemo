@@ -14,29 +14,38 @@ class MediaLoadingViewContract {
     class Model : BaseMediaContract.Model()
 
     class Present(context: Context?, view: View?) : BaseMediaContract.Present() {
-
-
         var context: Context = context!!
-        var model: Model? = null
+        var model: Model? = Model()
         var view: View? = view
-
-        init {
-            model = Model()
-        }
 
         override fun process() {
 
         }
 
         override fun handleMediaEvent(o: MediaViewObservable<*>?, event: Event?) {
-            if (EventConstant.VALUE_METHOD_ONPREPARED == (event?.parameter?.get(EventConstant.KEY_METHOD))) {
+            val eventFrom = event?.parameter!![EventConstant.KEY_FROM]
+            val eventMethod = event.parameter?.get(EventConstant.KEY_METHOD)
+            if (eventMethod == EventConstant.VALUE_METHOD_ONPREPARED || eventFrom==EventConstant.VALUE_METHOD_ONSEEKCOMPLETE) {
                 view?.hideView()
             }
         }
 
         override fun handleViewEvent(o: MediaViewObservable<*>?, event: Event?) {
-            if (event?.parameter!![EventConstant.KEY_FROM] == EventConstant.VALUE_FROM_PREVIEW && EventConstant.VALUE_METHOD_CLICK == event.parameter?.get(EventConstant.KEY_METHOD)) {
-                view?.showView()
+            val eventFrom = event?.parameter!![EventConstant.KEY_FROM]
+            val eventMethod = event.parameter?.get(EventConstant.KEY_METHOD)
+
+            if (eventFrom == EventConstant.VALUE_FROM_PREVIEW) {
+                when (eventMethod) {
+                    EventConstant.VALUE_METHOD_CLICK -> { //点击了预览图或者预览图上面播放按钮
+                        view?.showView()
+                    }
+                }
+            } else if (eventFrom == EventConstant.VALUE_FROM_CONTROLVIEW) {
+                when (eventMethod) {
+                    EventConstant.VALUE_METHOD_SEEKTO -> { //拖动了
+                        view?.showView()
+                    }
+                }
             }
         }
 

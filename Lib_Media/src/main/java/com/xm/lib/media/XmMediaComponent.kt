@@ -16,7 +16,7 @@ import com.xm.lib.media.watcher.Observer
 /**
  * 播放器组件
  */
-class XmMediaComponent(context: Context, attrs: AttributeSet?) : MediaViewObservable<XmMediaContract.Present>(context, attrs), XmMediaContract.View, Observer {
+class XmMediaComponent(context: Context?, attrs: AttributeSet?) : MediaViewObservable<XmMediaContract.Present>(context!!, attrs), XmMediaContract.View, Observer {
 
     override fun createPresent(): XmMediaContract.Present {
         return XmMediaContract.Present(context, this@XmMediaComponent)
@@ -26,18 +26,18 @@ class XmMediaComponent(context: Context, attrs: AttributeSet?) : MediaViewObserv
         return this
     }
 
-    override fun addViewToMedia(enumViewType: EnumViewType, viewGroup: MediaViewObservable<*>): XmMediaComponent {
-        getPresent()?.addViewToMedia(enumViewType, viewGroup)
+    override fun addViewToMedia(enumViewType: EnumViewType?, viewGroup: MediaViewObservable<*>?): XmMediaComponent {
+        getPresent()?.addViewToMedia(enumViewType!!, viewGroup!!)
         return this
     }
 
-    override fun setDisplay(dataSource: String): XmMediaComponent {
-        getPresent()?.setDisplay(dataSource)
+    override fun setDisplay(dataSource: String?): XmMediaComponent {
+        getPresent()?.setDisplay(dataSource!!)
         return this
     }
 
-    override fun core(absMediaCore: AbsMediaCore): XmMediaComponent {
-        getPresent()?.core(absMediaCore)
+    override fun core(absMediaCore: AbsMediaCore?): XmMediaComponent {
+        getPresent()?.core(absMediaCore!!)
         return this
     }
 
@@ -87,14 +87,18 @@ class XmMediaComponent(context: Context, attrs: AttributeSet?) : MediaViewObserv
     }
 
     @Deprecated("使用setup方法替代")
-    override fun init() {}
+    override fun init() {
+    }
 
     @Deprecated("暂不使用")
-    override fun findViews() {}
+    override fun findViews() {
+    }
 
     @Deprecated("暂不使用")
-    override fun initListenner() {}
+    override fun initListenner() {
+    }
 
     @Deprecated("暂不使用")
-    override fun initData() {}
+    override fun initData() {
+    }
 }

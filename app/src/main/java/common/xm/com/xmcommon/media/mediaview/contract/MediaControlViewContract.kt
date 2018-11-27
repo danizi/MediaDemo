@@ -1,6 +1,7 @@
 package common.xm.com.xmcommon.media.mediaview.contract
 
 import android.content.Context
+import android.widget.SeekBar
 import com.bangke.lib.common.utils.ToolUtil
 import com.xm.lib.media.AbsMediaCore
 import com.xm.lib.media.contract.BaseMediaContract
@@ -26,11 +27,7 @@ class MediaControlViewContract {
         var curScreenMode: String = EventConstant.VALUE_SCREEN_SMALL  //当前窗口模式 全屏/小窗口
     }
 
-    class Present(context: Context?, view: View?) : BaseMediaContract.Present() {
-
-
-        var context: Context? = context
-        var view: View? = view
+    class Present(val context: Context?, val view: View?) : BaseMediaContract.Present() {
         var model: Model? = Model()
 
         override fun process() {
@@ -91,6 +88,9 @@ class MediaControlViewContract {
 
         }
 
+        /**
+         * 暂停&播放
+         */
         fun startOrPause() {
             if (model?.media?.playerState == EnumMediaState.PLAYING) {
                 model?.media?.pause()
@@ -101,6 +101,9 @@ class MediaControlViewContract {
             }
         }
 
+        /**
+         * 全屏&小窗口
+         */
         fun fullOrSmall() {
             if (model?.curScreenMode == EventConstant.VALUE_SCREEN_SMALL) {
                 view?.getView()?.notifyObservers(Event().setEventType(EnumMediaEventType.VIEW).setParameter(EventConstant.KEY_SCREEN_MODE, EventConstant.VALUE_SCREEN_FULL))
@@ -109,6 +112,25 @@ class MediaControlViewContract {
                 view?.getView()?.notifyObservers(Event().setEventType(EnumMediaEventType.VIEW).setParameter(EventConstant.KEY_SCREEN_MODE, EventConstant.VALUE_SCREEN_SMALL))
                 model?.curScreenMode = EventConstant.VALUE_SCREEN_SMALL
             }
+        }
+
+        fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+
+        }
+
+        fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+        }
+
+        fun onStopTrackingTouch(seekBar: SeekBar?) {
+            var msec = ((seekBar?.progress!! / 100) * model?.media?.getDuration()!!)
+            model?.media?.seekTo(msec)
+            //拖动了进度条,通知加载页面
+            view?.getView()?.notifyObservers(
+                    Event().setEventType(EnumMediaEventType.MEDIA)
+                            .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_CONTROLVIEW)
+                            .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_SEEKTO)
+                            .setParameter("msec", msec))
         }
     }
 }

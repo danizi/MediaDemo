@@ -3,6 +3,7 @@ package com.xm.lib.media
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.SurfaceHolder
@@ -147,7 +148,7 @@ class XmMediaContract {
                 override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
-                                    .setParameter(EventConstant.KEY_METHOD, "surfaceChanged")
+                                    .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_SURFACECHANGED)
                                     .setParameter("holder", holder!!)
                                     .setParameter("format", format)
                                     .setParameter("width", width)
@@ -157,21 +158,21 @@ class XmMediaContract {
                 override fun surfaceDestroyed(holder: SurfaceHolder?) {
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
-                                    .setParameter(EventConstant.KEY_METHOD, "surfaceDestroyed")
+                                    .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_SURFACEDESTROYED)
                                     .setParameter("holder", holder!!))
                 }
 
                 override fun surfaceCreated(holder: SurfaceHolder?) {
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
-                                    .setParameter(EventConstant.KEY_METHOD, "surfaceCreated")
+                                    .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_SURFACECREATED)
                                     .setParameter("holder", holder!!))
                 }
 
                 override fun onPrepared(mp: AbsMediaCore) {
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
-                                    .setParameter(EventConstant.KEY_METHOD, "onPrepared")
+                                    .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONPREPARED)
                                     .setParameter("mp", mp))
                     player?.start()
                 }
@@ -179,29 +180,34 @@ class XmMediaContract {
                 override fun onCompletion(mp: AbsMediaCore) {
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
-                                    .setParameter(EventConstant.KEY_METHOD, "onCompletion")
+                                    .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONCOMPLETION)
                                     .setParameter("mp", mp))
                 }
 
+                /**
+                 * 怎么加缓存进度:https://github.com/Bilibili/ijkplayer/issues/1137
+                 */
                 override fun onBufferingUpdate(mp: AbsMediaCore, percent: Int) {
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
-                                    .setParameter(EventConstant.KEY_METHOD, "onBufferingUpdate")
+                                    .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONBUFFERINGUPDATE)
                                     .setParameter("mp", mp)
                                     .setParameter("percent", percent))
+                    Log.d("xxxm", "percent:$percent")
                 }
 
                 override fun onSeekComplete(mp: AbsMediaCore) {
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
-                                    .setParameter(EventConstant.KEY_METHOD, "onSeekComplete")
+                                    .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONSEEKCOMPLETE)
                                     .setParameter("mp", mp))
+                    Log.d("xxxm", "onSeekComplete")
                 }
 
                 override fun onVideoSizeChanged(mp: AbsMediaCore, width: Int, height: Int, sar_num: Int, sar_den: Int) {
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
-                                    .setParameter(EventConstant.KEY_METHOD, "onVideoSizeChanged")
+                                    .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONVIDEOSIZECHANGED)
                                     .setParameter("width", width)
                                     .setParameter("height", height)
                                     .setParameter("sar_num", sar_num))
@@ -210,7 +216,7 @@ class XmMediaContract {
                 override fun onError(mp: AbsMediaCore, what: Int, extra: Int): Boolean {
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
-                                    .setParameter(EventConstant.KEY_METHOD, "onError")
+                                    .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONERROR)
                                     .setParameter("what", what)
                                     .setParameter("extra", extra))
                     return false
@@ -219,17 +225,18 @@ class XmMediaContract {
                 override fun onInfo(mp: AbsMediaCore, what: Int, extra: Int): Boolean {
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
-                                    .setParameter(EventConstant.KEY_METHOD, "onInfo")
+                                    .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONINFO)
                                     .setParameter("mp", mp)
                                     .setParameter("what", what)
                                     .setParameter("extra", extra))
+                    Log.d("xxxm", "what:$what" + "extra$extra")
                     return false
                 }
 
                 override fun onTimedText(mp: AbsMediaCore) {
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
-                                    .setParameter(EventConstant.KEY_METHOD, "onTimedText")
+                                    .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONTIMEDTEXT)
                                     .setParameter("mp", mp))
                 }
             })
@@ -250,7 +257,7 @@ class XmMediaContract {
                 }
 
                 override fun onVolume(offset: Float) {
-                    var percent = offset / view?.mediaComponent().height
+                    val percent = offset / view.mediaComponent().height
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.VIEW)
                                     .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
@@ -259,7 +266,7 @@ class XmMediaContract {
                 }
 
                 override fun onLight(offset: Float) {
-                    var percent = offset / view?.mediaComponent().height
+                    val percent = offset / view.mediaComponent().height
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.VIEW)
                                     .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
@@ -268,7 +275,7 @@ class XmMediaContract {
                 }
 
                 override fun onProgress(offset: Float) {
-                    var percent = offset / view?.mediaComponent().width
+                    val percent = offset / view.mediaComponent().width
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.VIEW)
                                     .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
