@@ -33,10 +33,6 @@ class XmMediaComponent(context: Context?, attrs: AttributeSet?) : MediaViewObser
         return XmMediaContract.Present(context, this@XmMediaComponent)
     }
 
-//    override fun mediaComponent(): XmMediaComponent {
-//        return this
-//    }
-
     override fun addViewToMedia(enumViewType: EnumViewType?, viewGroup: MediaViewObservable<*>?): XmMediaComponent {
         getPresent()?.addViewToMedia(enumViewType!!, viewGroup!!)
         return this

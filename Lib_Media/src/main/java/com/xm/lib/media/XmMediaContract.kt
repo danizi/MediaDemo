@@ -51,6 +51,12 @@ class XmMediaContract {
 
         fun seekTo(msec: Long) {
             player?.seekTo(msec)
+
+            //更新消息主要是为了通知消息给加载页面
+            view.getView().notifyObservers(
+                    Event().setEventType(EnumMediaEventType.MEDIA)
+                            .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
+                            .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_SEEKTO))
         }
 
         fun getCurrentPosition(): Long {
@@ -121,6 +127,7 @@ class XmMediaContract {
                     }
                 }
             }
+            view?.getView().addObserver(view?.getView())
         }
 
         /**
@@ -305,12 +312,16 @@ class XmMediaContract {
         }
 
         override fun process() {
+
         }
 
         override fun handleMediaEvent(o: MediaViewObservable<*>?, event: Event?) {
         }
 
         override fun handleViewEvent(o: MediaViewObservable<*>?, event: Event?) {
+            var eventFrom = event?.parameter?.get(EventConstant.KEY_FROM)
+            var eventMethod = event?.parameter?.get(EventConstant.KEY_METHOD)
+
             if ("click" == event?.parameter?.get(EventConstant.KEY_METHOD)) {
                 //先重置所有的状态
                 player?.prepareAsync()
@@ -334,10 +345,28 @@ class XmMediaContract {
                 view.getView().layoutParams.width = model?.xmMediaFirstW!!
                 view.getView().layoutParams.height = model?.xmMediaFirstH!!
             }
+
+            if (eventFrom == EventConstant.VALUE_FROM_CONTROLVIEW) {
+                when (eventMethod) {
+                    EventConstant.VALUE_METHOD_ONSTOPTRACKINGTOUCH -> {
+                        val msec = event?.parameter?.get("progress") as Int * getDuration()
+                        seekTo(msec)
+                    }
+                }
+            }
         }
 
         override fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?) {
-
+            var eventFrom = event?.parameter?.get(EventConstant.KEY_FROM)
+            var eventMethod = event?.parameter?.get(EventConstant.KEY_METHOD)
+            if (eventFrom == "Activity") {
+                when (eventMethod) {
+                    "onDestroy" -> {
+                        stop()
+                        release()
+                    }
+                }
+            }
         }
     }
 }

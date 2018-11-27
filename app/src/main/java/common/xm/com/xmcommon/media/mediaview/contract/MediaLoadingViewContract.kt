@@ -31,6 +31,14 @@ class MediaLoadingViewContract {
             if (eventMethod == EventConstant.VALUE_METHOD_ONSEEKCOMPLETE) {
                 view?.hideView()
             }
+
+            if (eventFrom == EventConstant.VALUE_FROM_MEDIACOMPONENT) {
+                when (eventMethod) {
+                    EventConstant.VALUE_METHOD_SEEKTO -> { //调用了seekto方法
+                        view?.showView()
+                    }
+                }
+            }
         }
 
         override fun handleViewEvent(o: MediaViewObservable<*>?, event: Event?) {
@@ -40,12 +48,6 @@ class MediaLoadingViewContract {
             if (eventFrom == EventConstant.VALUE_FROM_PREVIEW) {
                 when (eventMethod) {
                     EventConstant.VALUE_METHOD_CLICK -> { //点击了预览图或者预览图上面播放按钮
-                        view?.showView()
-                    }
-                }
-            } else if (eventFrom == EventConstant.VALUE_FROM_CONTROLVIEW) {
-                when (eventMethod) {
-                    EventConstant.VALUE_METHOD_ONSTOPTRACKINGTOUCH -> { //停止seekbar拖动了
                         view?.showView()
                     }
                 }
