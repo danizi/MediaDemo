@@ -144,6 +144,10 @@ class XmMediaContract {
          * 初始化播放器监听
          */
         private fun setupMediaLisenter() {
+            /**
+             * ijkplayer的错误回调信息解释
+             * https://juejin.im/post/5bc7e689f265da0adc18fb7a
+             */
             player?.setOnLisenter(object : AbsMediaCoreOnLisenter() {
                 override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
                     view.mediaComponent().notifyObservers(
@@ -188,11 +192,11 @@ class XmMediaContract {
                  * 怎么加缓存进度:https://github.com/Bilibili/ijkplayer/issues/1137
                  */
                 override fun onBufferingUpdate(mp: AbsMediaCore, percent: Int) {
-                    view.mediaComponent().notifyObservers(
-                            Event().setEventType(EnumMediaEventType.MEDIA)
-                                    .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONBUFFERINGUPDATE)
-                                    .setParameter("mp", mp)
-                                    .setParameter("percent", percent))
+//                    view.mediaComponent().notifyObservers(
+//                            Event().setEventType(EnumMediaEventType.MEDIA)
+//                                    .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONBUFFERINGUPDATE)
+//                                    .setParameter("mp", mp)
+//                                    .setParameter("percent", percent))
                     Log.d("xxxm", "percent:$percent")
                 }
 
@@ -222,6 +226,9 @@ class XmMediaContract {
                     return false
                 }
 
+                /**
+                 * 播放的状态
+                 */
                 override fun onInfo(mp: AbsMediaCore, what: Int, extra: Int): Boolean {
                     view.mediaComponent().notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)

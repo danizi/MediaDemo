@@ -25,7 +25,10 @@ class MediaLoadingViewContract {
         override fun handleMediaEvent(o: MediaViewObservable<*>?, event: Event?) {
             val eventFrom = event?.parameter!![EventConstant.KEY_FROM]
             val eventMethod = event.parameter?.get(EventConstant.KEY_METHOD)
-            if (eventMethod == EventConstant.VALUE_METHOD_ONPREPARED || eventFrom==EventConstant.VALUE_METHOD_ONSEEKCOMPLETE) {
+            if (eventMethod == EventConstant.VALUE_METHOD_ONPREPARED ) {
+                view?.hideView()
+            }
+            if(eventMethod==EventConstant.VALUE_METHOD_ONSEEKCOMPLETE){
                 view?.hideView()
             }
         }
@@ -42,7 +45,7 @@ class MediaLoadingViewContract {
                 }
             } else if (eventFrom == EventConstant.VALUE_FROM_CONTROLVIEW) {
                 when (eventMethod) {
-                    EventConstant.VALUE_METHOD_SEEKTO -> { //拖动了
+                    EventConstant.VALUE_METHOD_ONSTOPTRACKINGTOUCH -> { //停止seekbar拖动了
                         view?.showView()
                     }
                 }

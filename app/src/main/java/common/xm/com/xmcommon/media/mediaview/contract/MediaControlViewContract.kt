@@ -1,6 +1,7 @@
 package common.xm.com.xmcommon.media.mediaview.contract
 
 import android.content.Context
+import android.util.Log
 import android.widget.SeekBar
 import com.bangke.lib.common.utils.ToolUtil
 import com.xm.lib.media.AbsMediaCore
@@ -36,7 +37,7 @@ class MediaControlViewContract {
 
         override fun handleMediaEvent(o: MediaViewObservable<*>?, event: Event?) {
             //获取播放器实例
-            if (model?.media != event?.parameter?.get("mp") as AbsMediaCore?) {
+            if (null!=event?.parameter?.get("mp") as AbsMediaCore? && model?.media != event?.parameter?.get("mp") as AbsMediaCore?) {
                 model?.media = event?.parameter?.get("mp") as AbsMediaCore?
             }
 
@@ -51,8 +52,12 @@ class MediaControlViewContract {
                         override fun run() {
                             view?.getView()?.seekBar?.post {
                                 try {
-                                    view?.getView()?.tvCurrentPosition?.text = ToolUtil.formatTime(model?.media?.getCurrentPosition())
-                                    view?.getView()?.seekBar?.progress = model?.media?.getCurrentPosition()!!.toInt()
+                                    if (view.getView().seekBar?.max != 100) {
+                                        view.getView().seekBar?.max = 100
+                                    }
+                                    Log.d("xxxm","progress:"+((model?.media?.getCurrentPosition()!!.toInt() / model?.media?.getCurrentPosition()!!) * 100).toInt())
+                                    view.getView().tvCurrentPosition?.text = ToolUtil.formatTime(model?.media?.getCurrentPosition())
+                                    view.getView().seekBar?.progress = ((model?.media?.getCurrentPosition()!!.toInt() / model?.media?.getCurrentPosition()!!) * 100).toInt()
                                 } catch (e: Exception) {
                                     e.printStackTrace()
                                 }
@@ -115,11 +120,21 @@ class MediaControlViewContract {
         }
 
         fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-
+            view?.getView()?.notifyObservers(
+                    Event().setEventType(EnumMediaEventType.VIEW)
+                            .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_CONTROLVIEW)
+                            .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONPROGRESSCHANGED)
+                            .setParameter("seekBar", seekBar!!)
+                            .setParameter("progress", progress)
+                            .setParameter("fromUser", fromUser))
         }
 
         fun onStartTrackingTouch(seekBar: SeekBar?) {
-
+            view?.getView()?.notifyObservers(
+                    Event().setEventType(EnumMediaEventType.VIEW)
+                            .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_CONTROLVIEW)
+                            .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONSTARTTRACKINGTOUCH)
+                            .setParameter("seekBar", seekBar!!))
         }
 
         fun onStopTrackingTouch(seekBar: SeekBar?) {
@@ -127,9 +142,9 @@ class MediaControlViewContract {
             model?.media?.seekTo(msec)
             //拖动了进度条,通知加载页面
             view?.getView()?.notifyObservers(
-                    Event().setEventType(EnumMediaEventType.MEDIA)
+                    Event().setEventType(EnumMediaEventType.VIEW)
                             .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_CONTROLVIEW)
-                            .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_SEEKTO)
+                            .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONSTOPTRACKINGTOUCH)
                             .setParameter("msec", msec))
         }
     }

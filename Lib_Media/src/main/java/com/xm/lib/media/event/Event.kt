@@ -32,7 +32,7 @@ class EventConstant {
         val VALUE_METHOD_SURFACECREATED: String = "surfaceCreated"        //画布创建监听
         val VALUE_METHOD_ONPREPARED: String = "onPrepared"                //播放就绪监听
         val VALUE_METHOD_ONCOMPLETION: String = "onCompletion"            //播放完成监听
-        val VALUE_METHOD_ONBUFFERINGUPDATE: String = "onBufferingUpdate"  //字节更新监听
+        val VALUE_METHOD_ONBUFFERINGUPDATE: String = "onBufferingUpdate"  //缓冲监听
         val VALUE_METHOD_ONSEEKCOMPLETE: String = "onSeekComplete"        //设置播放位置完成
         val VALUE_METHOD_ONVIDEOSIZECHANGED: String = "onVideoSizeChanged"//播放器组件发送改变
         val VALUE_METHOD_ONERROR: String = "onError"                      //播放错误
@@ -46,12 +46,15 @@ class EventConstant {
         /*=======================================================================================
          * view相关方法
          */
-        val VALUE_METHOD_ONTOUCHEVENT: String = "onTouchEvent"   //点击
-        val VALUE_METHOD_UP: String = "up"                       //用户手指释放
-        val VALUE_METHOD_CLICK: String = "CLICK"                 //用户手指释放
-        val VALUE_METHOD_ONVOLUME: String = "onVolume"           //音量
-        val VALUE_METHOD_ONLIGHT: String = "onLight"             //亮度
-        val VALUE_METHOD_ONPROGRESS: String = "onProgress"       //进度
+        val VALUE_METHOD_ONTOUCHEVENT: String = "onTouchEvent"                      //点击
+        val VALUE_METHOD_UP: String = "up"                                          //用户手指释放
+        val VALUE_METHOD_CLICK: String = "CLICK"                                    //用户手指释放
+        val VALUE_METHOD_ONVOLUME: String = "onVolume"                              //音量
+        val VALUE_METHOD_ONLIGHT: String = "onLight"                                //亮度
+        val VALUE_METHOD_ONPROGRESS: String = "onProgress"                          //进度
+        val VALUE_METHOD_ONPROGRESSCHANGED: String = "onProgressChanged"            //seekbar停止滑动
+        val VALUE_METHOD_ONSTARTTRACKINGTOUCH: String = "onStartTrackingTouch"      //seekbar停止滑动
+        val VALUE_METHOD_ONSTOPTRACKINGTOUCH: String = "onStoptrackingtouch"        //seekbar停止滑动
     }
 }
 
