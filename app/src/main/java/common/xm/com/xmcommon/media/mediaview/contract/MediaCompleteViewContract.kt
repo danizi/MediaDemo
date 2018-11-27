@@ -20,15 +20,15 @@ class MediaCompleteViewContract {
             TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
-        override fun handleMediaEvent(o: MediaViewObservable<*>, event: Event) {
+        override fun handleMediaEvent(o: MediaViewObservable<*>?, event: Event?) {
             TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
-        override fun handleViewEvent(o: MediaViewObservable<*>, event: Event) {
+        override fun handleViewEvent(o: MediaViewObservable<*>?, event: Event?) {
             TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
-        override fun handleOtherEvent(o: MediaViewObservable<*>, event: Event) {
+        override fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?) {
             TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
     }

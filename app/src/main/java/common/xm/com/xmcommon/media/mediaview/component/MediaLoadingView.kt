@@ -5,7 +5,7 @@ import com.xm.lib.media.event.Event
 import com.xm.lib.media.watcher.MediaViewObservable
 import common.xm.com.xmcommon.media.mediaview.contract.MediaLoadingViewContract
 
-class MediaLoadingView(context: Context, layoutID: Int) : MediaViewObservable<MediaLoadingViewContract.Present>(context, layoutID), MediaLoadingViewContract.View {
+class MediaLoadingView(context: Context?, layoutID: Int?) : MediaViewObservable<MediaLoadingViewContract.Present>(context!!, layoutID!!), MediaLoadingViewContract.View {
 
 
     var present: MediaLoadingViewContract.Present? = null

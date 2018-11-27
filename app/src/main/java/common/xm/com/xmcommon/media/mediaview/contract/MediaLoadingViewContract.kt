@@ -13,10 +13,10 @@ class MediaLoadingViewContract {
 
     class Model : BaseMediaContract.Model()
 
-    class Present(context: Context, view: View) : BaseMediaContract.Present() {
+    class Present(context: Context?, view: View?) : BaseMediaContract.Present() {
 
 
-        var context: Context = context
+        var context: Context = context!!
         var model: Model? = null
         var view: View? = view
 
@@ -28,19 +28,19 @@ class MediaLoadingViewContract {
 
         }
 
-        override fun handleMediaEvent(o: MediaViewObservable<*>, event: Event) {
-            if (EventConstant.VALUE_METHOD_ONPREPARED == (event.parameter?.get(EventConstant.KEY_METHOD))) {
+        override fun handleMediaEvent(o: MediaViewObservable<*>?, event: Event?) {
+            if (EventConstant.VALUE_METHOD_ONPREPARED == (event?.parameter?.get(EventConstant.KEY_METHOD))) {
                 view?.hideView()
             }
         }
 
-        override fun handleViewEvent(o: MediaViewObservable<*>, event: Event) {
-            if (event.parameter!![EventConstant.KEY_FROM] == EventConstant.VALUE_FROM_PREVIEW && EventConstant.VALUE_METHOD_CLICK == event.parameter?.get(EventConstant.KEY_METHOD)) {
+        override fun handleViewEvent(o: MediaViewObservable<*>?, event: Event?) {
+            if (event?.parameter!![EventConstant.KEY_FROM] == EventConstant.VALUE_FROM_PREVIEW && EventConstant.VALUE_METHOD_CLICK == event.parameter?.get(EventConstant.KEY_METHOD)) {
                 view?.showView()
             }
         }
 
-        override fun handleOtherEvent(o: MediaViewObservable<*>, event: Event) {
+        override fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?) {
 
         }
     }

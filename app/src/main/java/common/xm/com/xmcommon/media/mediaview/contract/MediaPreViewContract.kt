@@ -19,7 +19,7 @@ class MediaPreViewContract {
         var media: AbsMediaCore? = null
     }
 
-    class Present(context: Context, view: View) : BaseMediaContract.Present() {
+    class Present(context: Context?, view: View?) : BaseMediaContract.Present() {
         var context: Context? = context
         var view: View? = view
         var model: Model? = null
@@ -45,22 +45,22 @@ class MediaPreViewContract {
             view?.getView()?.notifyObservers(event)
         }
 
-        override fun handleMediaEvent(o: MediaViewObservable<*>, event: Event) {
+        override fun handleMediaEvent(o: MediaViewObservable<*>?, event: Event?) {
             //播放器创建完成通知
-            if (EventConstant.VALUE_METHOD_CORE == event.parameter?.get(EventConstant.KEY_METHOD)) {
+            if (EventConstant.VALUE_METHOD_CORE == event?.parameter?.get(EventConstant.KEY_METHOD)) {
                 model?.media = event.parameter?.get("mp") as AbsMediaCore?
             }
 
-            if (EventConstant.VALUE_METHOD_ONPREPARED == event.parameter?.get(EventConstant.KEY_METHOD)) {
+            if (EventConstant.VALUE_METHOD_ONPREPARED == event?.parameter?.get(EventConstant.KEY_METHOD)) {
                 view?.hideView()
             }
         }
 
-        override fun handleViewEvent(o: MediaViewObservable<*>, event: Event) {
+        override fun handleViewEvent(o: MediaViewObservable<*>?, event: Event?) {
 
         }
 
-        override fun handleOtherEvent(o: MediaViewObservable<*>, event: Event) {
+        override fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?) {
 
         }
     }

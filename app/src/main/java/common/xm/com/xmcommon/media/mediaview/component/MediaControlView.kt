@@ -9,7 +9,7 @@ import com.xm.lib.media.watcher.MediaViewObservable
 import common.xm.com.xmcommon.R
 import common.xm.com.xmcommon.media.mediaview.contract.MediaControlViewContract
 
-class MediaControlView(context: Context, layoutID: Int) : MediaViewObservable<MediaControlViewContract.Present>(context, layoutID), MediaControlViewContract.View {
+class MediaControlView(context: Context?, layoutID: Int?) : MediaViewObservable<MediaControlViewContract.Present>(context!!, layoutID!!), MediaControlViewContract.View {
 
 
     var imgPlayPause: ImageView? = null

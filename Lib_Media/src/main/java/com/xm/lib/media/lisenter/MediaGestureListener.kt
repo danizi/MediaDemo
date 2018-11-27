@@ -11,9 +11,24 @@ import com.xm.lib.media.enum_.EnumGestureState
 class MediaGestureListener(context: Context, gestureListener: GestureListener) : GestureDetector.SimpleOnGestureListener() {
 
     interface GestureListener {
+        /**
+         * 通知显示亮度视图“显示”并且带变化的参数值
+         */
         fun onVolume(offset: Float)
+
+        /**
+         * 通知获取亮度视图“显示”并且带变化的参数值
+         */
         fun onLight(offset: Float)
+
+        /**
+         * 通知进度视图“显示”，并且带变化的参数值
+         */
         fun onProgress(offset: Float)
+
+        /**
+         * 点击
+         */
         fun onClickListener()
     }
 

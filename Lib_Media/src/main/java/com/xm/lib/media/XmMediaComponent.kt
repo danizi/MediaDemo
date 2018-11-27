@@ -46,11 +46,6 @@ class XmMediaComponent(context: Context, attrs: AttributeSet?) : MediaViewObserv
         return this
     }
 
-    @Deprecated("使用setup方法替代")
-    override fun init() {
-
-    }
-
     override fun prepareAsync() {
         getPresent()?.prepareAsync()
     }
@@ -91,12 +86,15 @@ class XmMediaComponent(context: Context, attrs: AttributeSet?) : MediaViewObserv
         getPresent()?.build()
     }
 
-    override fun findViews() {
-    }
+    @Deprecated("使用setup方法替代")
+    override fun init() {}
 
-    override fun initListenner() {
-    }
+    @Deprecated("暂不使用")
+    override fun findViews() {}
 
-    override fun initData() {
-    }
+    @Deprecated("暂不使用")
+    override fun initListenner() {}
+
+    @Deprecated("暂不使用")
+    override fun initData() {}
 }

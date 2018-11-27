@@ -8,7 +8,7 @@ import com.xm.lib.media.watcher.MediaViewObservable
 import common.xm.com.xmcommon.R
 import common.xm.com.xmcommon.media.mediaview.contract.MediaGestureProgressViewContract
 
-class MediaGestureProgressView(context: Context, layoutID: Int) : MediaViewObservable<MediaGestureProgressViewContract.Present>(context, layoutID), MediaGestureProgressViewContract.View {
+class MediaGestureProgressView(context: Context?, layoutID: Int?) : MediaViewObservable<MediaGestureProgressViewContract.Present>(context!!, layoutID!!), MediaGestureProgressViewContract.View {
 
     var iv: ImageView? = null
     var progress: ProgressBar? = null

@@ -11,32 +11,42 @@ class BaseMediaContract {
         fun getView(): T
     }
 
-    open class Model {
-
-    }
+    open class Model
 
     abstract class Present {
+        /**
+         * 数据初始化处理
+         */
         abstract fun process()
 
-        open fun handleReceiveEvent(o: MediaViewObservable<*>, event: Event) {
-            //播放器事件
-            if (event.eventType == EnumMediaEventType.MEDIA) {
-                handleMediaEvent(o, event)
+        /**
+         * 分派接受的事件
+         */
+        open fun handleReceiveEvent(o: MediaViewObservable<*>?, event: Event?) {
+            if (event?.eventType == EnumMediaEventType.MEDIA) {
+                handleMediaEvent(o!!, event)
             }
-
-            //控件事件
-            if (event.eventType == EnumMediaEventType.VIEW) {
-                handleViewEvent(o, event)
+            if (event?.eventType == EnumMediaEventType.VIEW) {
+                handleViewEvent(o!!, event)
             }
-
-            //其他事件
-            if (event.eventType == EnumMediaEventType.OTHER) {
-                handleOtherEvent(o, event)
+            if (event?.eventType == EnumMediaEventType.OTHER) {
+                handleOtherEvent(o!!, event)
             }
         }
 
-        abstract fun handleMediaEvent(o: MediaViewObservable<*>, event: Event)
-        abstract fun handleViewEvent(o: MediaViewObservable<*>, event: Event)
-        abstract fun handleOtherEvent(o: MediaViewObservable<*>, event: Event)
+        /**
+         * 播放器事件
+         */
+        abstract fun handleMediaEvent(o: MediaViewObservable<*>?, event: Event?)
+
+        /**
+         * 控件事件
+         */
+        abstract fun handleViewEvent(o: MediaViewObservable<*>?, event: Event?)
+
+        /**
+         * 其他事件
+         */
+        abstract fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?)
     }
 }

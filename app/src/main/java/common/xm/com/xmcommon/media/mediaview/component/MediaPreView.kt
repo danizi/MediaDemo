@@ -9,7 +9,7 @@ import common.xm.com.xmcommon.R
 import common.xm.com.xmcommon.media.mediaview.contract.MediaPreViewContract
 
 
-class MediaPreView(context: Context, layoutID: Int, preUrl: String) : MediaViewObservable<MediaPreViewContract.Present>(context, layoutID), MediaPreViewContract.View {
+class MediaPreView(context: Context?, layoutID: Int?, preUrl: String?) : MediaViewObservable<MediaPreViewContract.Present>(context!!, layoutID!!), MediaPreViewContract.View {
     var preUrl: String? = preUrl
     var ivPre: ImageView? = null
     var ivPlay: ImageView? = null

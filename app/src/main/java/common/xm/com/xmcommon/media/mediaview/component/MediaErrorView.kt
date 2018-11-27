@@ -5,7 +5,7 @@ import com.xm.lib.media.event.Event
 import com.xm.lib.media.watcher.MediaViewObservable
 import common.xm.com.xmcommon.media.mediaview.contract.MediaErrorViewContract
 
-class MediaErrorView(context: Context, layoutID: Int) : MediaViewObservable<MediaErrorViewContract.Present>(context, layoutID) ,MediaErrorViewContract.View{
+class MediaErrorView(context: Context?, layoutID: Int?) : MediaViewObservable<MediaErrorViewContract.Present>(context!!, layoutID!!) ,MediaErrorViewContract.View{
 
     override fun showView() {
     }
@@ -33,7 +33,7 @@ class MediaErrorView(context: Context, layoutID: Int) : MediaViewObservable<Medi
     }
 
     init {
-        contentView = getContentView(layoutID)
+        contentView = getContentView(layoutID!!)
         addView(contentView)
         hide()
     }

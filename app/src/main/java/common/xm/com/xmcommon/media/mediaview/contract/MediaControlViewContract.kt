@@ -26,7 +26,7 @@ class MediaControlViewContract {
         var curScreenMode: String = EventConstant.VALUE_SCREEN_SMALL  //当前窗口模式 全屏/小窗口
     }
 
-    class Present(context: Context, view: View) : BaseMediaContract.Present() {
+    class Present(context: Context?, view: View?) : BaseMediaContract.Present() {
 
 
         var context: Context? = context
@@ -37,13 +37,13 @@ class MediaControlViewContract {
 
         }
 
-        override fun handleMediaEvent(o: MediaViewObservable<*>, event: Event) {
+        override fun handleMediaEvent(o: MediaViewObservable<*>?, event: Event?) {
             //获取播放器实例
-            if (model?.media != event.parameter?.get("mp") as AbsMediaCore?) {
-                model?.media = event.parameter?.get("mp") as AbsMediaCore?
+            if (model?.media != event?.parameter?.get("mp") as AbsMediaCore?) {
+                model?.media = event?.parameter?.get("mp") as AbsMediaCore?
             }
 
-            when (event.parameter?.get(EventConstant.KEY_METHOD)) {
+            when (event?.parameter?.get(EventConstant.KEY_METHOD)) {
                 EventConstant.VALUE_METHOD_ONPREPARED -> {
                     model?.prepared = true
                     //开启计时器了
@@ -73,8 +73,8 @@ class MediaControlViewContract {
             }
         }
 
-        override fun handleViewEvent(o: MediaViewObservable<*>, event: Event) {
-            when (event.parameter?.get(EventConstant.KEY_METHOD)) {
+        override fun handleViewEvent(o: MediaViewObservable<*>?, event: Event?) {
+            when (event?.parameter?.get(EventConstant.KEY_METHOD)) {
                 EventConstant.VALUE_METHOD_CLICK -> {
                     model?.visibilityFlag = if (model?.visibilityFlag == android.view.View.GONE) {
                         view?.showView()
@@ -87,7 +87,7 @@ class MediaControlViewContract {
             }
         }
 
-        override fun handleOtherEvent(o: MediaViewObservable<*>, event: Event) {
+        override fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?) {
 
         }
 
