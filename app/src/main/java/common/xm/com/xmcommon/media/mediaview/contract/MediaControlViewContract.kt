@@ -138,14 +138,14 @@ class MediaControlViewContract {
         }
 
         fun onStopTrackingTouch(seekBar: SeekBar?) {
-            var msec = ((seekBar?.progress!! / 100) * model?.media?.getDuration()!!)
+            val msec = ((seekBar?.progress!! / 100) * model?.media?.getDuration()!!)
             model?.media?.seekTo(msec)
             //拖动了进度条,通知加载页面
             view?.getView()?.notifyObservers(
                     Event().setEventType(EnumMediaEventType.VIEW)
                             .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_CONTROLVIEW)
                             .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONSTOPTRACKINGTOUCH)
-                            .setParameter("msec", msec))
+                            .setParameter("progress", seekBar.progress))
         }
     }
 }

@@ -25,10 +25,10 @@ class MediaLoadingViewContract {
         override fun handleMediaEvent(o: MediaViewObservable<*>?, event: Event?) {
             val eventFrom = event?.parameter!![EventConstant.KEY_FROM]
             val eventMethod = event.parameter?.get(EventConstant.KEY_METHOD)
-            if (eventMethod == EventConstant.VALUE_METHOD_ONPREPARED ) {
+            if (eventMethod == EventConstant.VALUE_METHOD_ONPREPARED) {
                 view?.hideView()
             }
-            if(eventMethod==EventConstant.VALUE_METHOD_ONSEEKCOMPLETE){
+            if (eventMethod == EventConstant.VALUE_METHOD_ONSEEKCOMPLETE) {
                 view?.hideView()
             }
         }

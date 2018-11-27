@@ -17,19 +17,15 @@ class MediaErrorViewContract {
 
     class Present(context: Context?, view: View?) : BaseMediaContract.Present() {
         override fun process() {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
         override fun handleMediaEvent(o: MediaViewObservable<*>?, event: Event?) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
         override fun handleViewEvent(o: MediaViewObservable<*>?, event: Event?) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
         override fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
     }
 }

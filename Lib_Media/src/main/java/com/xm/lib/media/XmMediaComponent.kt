@@ -17,14 +17,25 @@ import com.xm.lib.media.watcher.Observer
  * 播放器组件
  */
 class XmMediaComponent(context: Context?, attrs: AttributeSet?) : MediaViewObservable<XmMediaContract.Present>(context!!, attrs), XmMediaContract.View, Observer {
+    override fun showView() {
+        show()
+    }
+
+    override fun hideView() {
+        hide()
+    }
+
+    override fun getView(): XmMediaComponent {
+        return this
+    }
 
     override fun createPresent(): XmMediaContract.Present {
         return XmMediaContract.Present(context, this@XmMediaComponent)
     }
 
-    override fun mediaComponent(): XmMediaComponent {
-        return this
-    }
+//    override fun mediaComponent(): XmMediaComponent {
+//        return this
+//    }
 
     override fun addViewToMedia(enumViewType: EnumViewType?, viewGroup: MediaViewObservable<*>?): XmMediaComponent {
         getPresent()?.addViewToMedia(enumViewType!!, viewGroup!!)
@@ -79,7 +90,7 @@ class XmMediaComponent(context: Context?, attrs: AttributeSet?) : MediaViewObser
     }
 
     override fun update(o: MediaViewObservable<*>, event: Event) {
-        getPresent()?.update(o, event)
+        getPresent()?.handleReceiveEvent(o, event)
     }
 
     override fun build() {
