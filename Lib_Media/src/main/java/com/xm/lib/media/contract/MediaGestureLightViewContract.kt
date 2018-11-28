@@ -2,20 +2,19 @@ package common.xm.com.xmcommon.media.mediaview.contract
 
 import android.content.Context
 import com.xm.lib.media.AbsMediaCore
+import com.xm.lib.media.R
+import com.xm.lib.media.component.MediaGestureLightView
 import com.xm.lib.media.contract.BaseGestureContract
-import com.xm.lib.media.contract.BaseMediaContract
 import com.xm.lib.media.event.Event
 import com.xm.lib.media.event.EventConstant
-import com.xm.lib.media.help.VolumeHelper
 import com.xm.lib.media.watcher.MediaViewObservable
-import common.xm.com.xmcommon.R
-import common.xm.com.xmcommon.media.mediaview.component.MediaGestureVolumeView
 
-class MediaGestureVolumeViewContract {
-    interface View : BaseGestureContract.View<MediaGestureVolumeView> {}
+
+class MediaGestureLightViewContract {
+    interface View : BaseGestureContract.View<MediaGestureLightView> {}
 
     class Model : BaseGestureContract.Model() {
-        val volumeResID: Int? = R.mipmap.media_volume
+        var lightResID: Int = R.mipmap.media_light
     }
 
     class Present(context: Context?, view: View?) : BaseGestureContract.Present(context) {
@@ -23,7 +22,7 @@ class MediaGestureVolumeViewContract {
         var model: Model? = Model()
 
         override fun process() {
-            view?.getView()?.iv?.setImageResource(model?.volumeResID!!)
+            view?.getView()?.iv?.setImageResource(model?.lightResID!!)
         }
 
         override fun handleMediaEvent(o: MediaViewObservable<*>?, event: Event?) {
@@ -39,8 +38,8 @@ class MediaGestureVolumeViewContract {
         override fun handleViewEvent(o: MediaViewObservable<*>?, event: Event?) {
             if (eventFrom == EventConstant.VALUE_FROM_MEDIACOMPONENT) {
                 when (eventMethod) {
-                    EventConstant.VALUE_METHOD_ONVOLUME -> {
-                        view?.getView()?.progress?.progress = getVolumePresent(view?.getView()?.progress, event)
+                    EventConstant.VALUE_METHOD_ONLIGHT -> {
+                        view?.getView()?.progress?.progress = getLightPresent(view?.getView()?.progress,event)
                         view?.showView()
                     }
 
@@ -50,11 +49,11 @@ class MediaGestureVolumeViewContract {
                     }
                 }
             }
-        }
 
-        override fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?) {
 
         }
+
+        override fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?) {}
         private fun obtainMedia() {
             if (null == model?.media && media != null) {
                 model?.media = media

@@ -9,7 +9,7 @@ import com.xm.lib.media.enum_.EnumViewType
 import com.xm.lib.media.event.Event
 import com.xm.lib.media.event.EventConstant
 import common.xm.com.xmcommon.R
-import common.xm.com.xmcommon.media.mediaview.component.*
+import com.xm.lib.media.component.*
 
 class ActMedia : AppCompatActivity() {
     //播放器

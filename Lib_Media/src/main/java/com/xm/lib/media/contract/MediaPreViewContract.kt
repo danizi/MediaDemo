@@ -2,13 +2,12 @@ package common.xm.com.xmcommon.media.mediaview.contract
 
 import android.content.Context
 import com.bumptech.glide.Glide
-import com.xm.lib.media.AbsMediaCore
+import com.xm.lib.media.component.MediaPreView
 import com.xm.lib.media.contract.BaseMediaContract
 import com.xm.lib.media.enum_.EnumMediaEventType
 import com.xm.lib.media.event.Event
 import com.xm.lib.media.event.EventConstant
 import com.xm.lib.media.watcher.MediaViewObservable
-import common.xm.com.xmcommon.media.mediaview.component.MediaPreView
 
 class MediaPreViewContract {
 

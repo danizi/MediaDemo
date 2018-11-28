@@ -1,4 +1,4 @@
-package common.xm.com.xmcommon.media.mediaview.component
+package com.xm.lib.media.component
 
 import android.content.Context
 import com.xm.lib.media.event.Event

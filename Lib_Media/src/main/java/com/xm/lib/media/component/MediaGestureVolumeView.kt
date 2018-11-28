@@ -1,11 +1,11 @@
-package common.xm.com.xmcommon.media.mediaview.component
+package com.xm.lib.media.component
 
 import android.content.Context
 import android.widget.ImageView
 import android.widget.ProgressBar
+import com.xm.lib.media.R
 import com.xm.lib.media.event.Event
 import com.xm.lib.media.watcher.MediaViewObservable
-import common.xm.com.xmcommon.R
 import common.xm.com.xmcommon.media.mediaview.contract.MediaGestureVolumeViewContract
 
 class MediaGestureVolumeView(context: Context?, layoutID: Int?) : MediaViewObservable<MediaGestureVolumeViewContract.Present>(context!!,layoutID!!), MediaGestureVolumeViewContract.View {

@@ -1,18 +1,16 @@
 package common.xm.com.xmcommon.media.mediaview.contract
 
 import android.content.Context
-import android.util.Log
 import android.widget.SeekBar
 import com.bangke.lib.common.utils.ToolUtil
-import com.xm.lib.media.AbsMediaCore
+import com.xm.lib.media.R
+import com.xm.lib.media.component.MediaControlView
 import com.xm.lib.media.contract.BaseMediaContract
 import com.xm.lib.media.enum_.EnumMediaEventType
 import com.xm.lib.media.enum_.EnumMediaState
 import com.xm.lib.media.event.Event
 import com.xm.lib.media.event.EventConstant
 import com.xm.lib.media.watcher.MediaViewObservable
-import common.xm.com.xmcommon.R
-import common.xm.com.xmcommon.media.mediaview.component.MediaControlView
 import java.util.*
 
 class MediaControlViewContract {

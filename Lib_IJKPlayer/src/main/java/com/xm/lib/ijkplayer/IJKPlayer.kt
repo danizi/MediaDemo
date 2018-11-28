@@ -23,20 +23,53 @@ class IJKPlayer : AbsMediaCore() {
     var player: IjkMediaPlayer? = null
 
     override fun init() {
-        //初始化相关配置
-        IjkMediaPlayer.loadLibrariesOnce(null)
-        IjkMediaPlayer.native_profileBegin(SO_LIB_NAME)
-        player = IjkMediaPlayer()
-        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, FRAMEDROP, 1)
-        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, START_ON_PREPARED, 0)
-        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, HTTP_DETECT_RANGE_SUPPORT, 1)
-        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, SKIP_LOOP_FILTER, 48)
-        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, OPENSLES, 1)
-        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, MEDIACODEC, 1)
-        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, MEDIACODEC_AUTO_ROTATE, 1)
-        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, MEDIACODEC_HANDLE_RESOLUTION_CHANGE, 1)
+        playerConfig()
+        addSurfaceViewAndListener()
+        setUpPlayerListener()
+    }
 
-        //添加画布并设置画布监听
+    /**
+     * 设置监听
+     */
+    fun setUpPlayerListener() {
+        player?.setOnPreparedListener {
+            playerState = EnumMediaState.PLAYING
+            absMediaCoreOnLisenter?.onPrepared(this)
+        }
+        player?.setOnCompletionListener {
+            playerState = EnumMediaState.COMPLETION
+            absMediaCoreOnLisenter?.onCompletion(this)
+        }
+        player?.setOnBufferingUpdateListener { _, p1 ->
+            absMediaCoreOnLisenter?.onBufferingUpdate(this, p1)
+        }
+        player?.setOnSeekCompleteListener { _ ->
+            // todo 不准确
+            playerState = EnumMediaState.SEEKCOMPLETE
+        }
+        player?.setOnVideoSizeChangedListener { _, width, height, sar_num, sar_den ->
+            absMediaCoreOnLisenter?.onVideoSizeChanged(this, width, height, sar_num, sar_den)
+        }
+        player?.setOnErrorListener { _, what, extra ->
+            playerState = EnumMediaState.ERROR
+            absMediaCoreOnLisenter?.onError(this, what, extra)!!
+        }
+        player?.setOnInfoListener { _, what, extra ->
+            if (702 == what) {
+                absMediaCoreOnLisenter?.onSeekComplete(this)
+                playerState = EnumMediaState.PLAYING
+            }
+            absMediaCoreOnLisenter?.onInfo(this, what, extra)!!
+        }
+        player?.setOnTimedTextListener { _, _ ->
+            absMediaCoreOnLisenter?.onTimedText(this)
+        }
+    }
+
+    /**
+     * 添加画布并设置画布监听
+     */
+    private fun addSurfaceViewAndListener() {
         mSurfaceView = createSurfaceView()
         mSurfaceView?.holder?.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
@@ -52,40 +85,25 @@ class IJKPlayer : AbsMediaCore() {
             }
         })
         tagerView?.addView(mSurfaceView, 0)
-
-        //设置监听
-        player?.setOnPreparedListener {
-            playerState = EnumMediaState.PLAYING
-            absMediaCoreOnLisenter?.onPrepared(this)
-        }
-        player?.setOnCompletionListener {
-            playerState = EnumMediaState.COMPLETION
-            absMediaCoreOnLisenter?.onCompletion(this)
-        }
-        player?.setOnBufferingUpdateListener { _, p1 ->
-            absMediaCoreOnLisenter?.onBufferingUpdate(this, p1)
-        }
-        player?.setOnSeekCompleteListener { _ -> // todo 不准确
-            playerState = EnumMediaState.SEEKCOMPLETE
-        }
-        player?.setOnVideoSizeChangedListener { _, width, height, sar_num, sar_den ->
-            absMediaCoreOnLisenter?.onVideoSizeChanged(this, width, height, sar_num, sar_den)
-        }
-        player?.setOnErrorListener { _, what, extra ->
-            playerState = EnumMediaState.ERROR
-            absMediaCoreOnLisenter?.onError(this, what, extra)!!
-        }
-        player?.setOnInfoListener { _, what, extra ->
-            if(702==what){
-                absMediaCoreOnLisenter?.onSeekComplete(this)
-                playerState = EnumMediaState.PLAYING
-            }
-            absMediaCoreOnLisenter?.onInfo(this, what, extra)!!
-        }
-        player?.setOnTimedTextListener { _, _ ->
-            absMediaCoreOnLisenter?.onTimedText(this)
-        }
     }
+
+    /**
+     *  初始化相关配置
+     */
+    private fun playerConfig() {
+        IjkMediaPlayer.loadLibrariesOnce(null)
+        IjkMediaPlayer.native_profileBegin(SO_LIB_NAME)
+        player = IjkMediaPlayer()
+        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, FRAMEDROP, 1)
+        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, START_ON_PREPARED, 0)
+        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, HTTP_DETECT_RANGE_SUPPORT, 1)
+        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, SKIP_LOOP_FILTER, 48)
+        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, OPENSLES, 1)
+        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, MEDIACODEC, 1)
+        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, MEDIACODEC_AUTO_ROTATE, 1)
+        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, MEDIACODEC_HANDLE_RESOLUTION_CHANGE, 1)
+    }
+
 
     private fun createSurfaceView(): SurfaceView {
         val surfaceView = SurfaceView(context)
@@ -104,14 +122,14 @@ class IJKPlayer : AbsMediaCore() {
 
     override fun start() {
         player?.start()
-        if (playerState == EnumMediaState.PAUSE) {
-            playerState = EnumMediaState.PLAYING
-        }
+        playerState = EnumMediaState.PLAYING
     }
 
     override fun pause() {
-        player?.pause()
-        playerState = EnumMediaState.PAUSE
+        if (playerState == EnumMediaState.PLAYING) {
+            player?.pause()
+            playerState = EnumMediaState.PAUSE
+        }
     }
 
     override fun stop() {

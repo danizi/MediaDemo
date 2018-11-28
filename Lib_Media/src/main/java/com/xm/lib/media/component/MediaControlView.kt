@@ -1,13 +1,12 @@
-package common.xm.com.xmcommon.media.mediaview.component
+package com.xm.lib.media.component
 
 import android.content.Context
-import android.util.Log
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
+import com.xm.lib.media.R
 import com.xm.lib.media.event.Event
 import com.xm.lib.media.watcher.MediaViewObservable
-import common.xm.com.xmcommon.R
 import common.xm.com.xmcommon.media.mediaview.contract.MediaControlViewContract
 
 class MediaControlView(context: Context?, layoutID: Int?) : MediaViewObservable<MediaControlViewContract.Present>(context!!, layoutID!!), MediaControlViewContract.View {
