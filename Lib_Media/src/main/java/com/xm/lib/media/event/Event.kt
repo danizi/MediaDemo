@@ -13,16 +13,12 @@ class EventConstant {
         val KEY_FROM: String = "KEY_FROM"
         val VALUE_FROM_MEDIACOMPONENT: String = "mediaComponent"
         val VALUE_FROM_PREVIEW: String = "preview"
-        val VALUE_FROM_CONTROLVIEW: String = "control"
-
-        /*=======================================================================================
-         * 事件来自于于哪个方法
-         */
-        val KEY_METHOD: String = "KEY_METHOD"
+        //val VALUE_FROM_CONTROLVIEW: String = "control"
 
         /*=======================================================================================
          * 播放器相关
          */
+        val KEY_METHOD: String = "KEY_METHOD"                             //事件来自于于哪个方法
         /*调用播放器方法*/
         val VALUE_METHOD_SEEKTO: String = "seekto"                        //调用了seekto
         /*播放器回调的方法名称*/
@@ -36,12 +32,13 @@ class EventConstant {
         val VALUE_METHOD_ONSEEKCOMPLETE: String = "onSeekComplete"        //设置播放位置完成
         val VALUE_METHOD_ONVIDEOSIZECHANGED: String = "onVideoSizeChanged"//播放器组件发送改变
         val VALUE_METHOD_ONERROR: String = "onError"                      //播放错误
-        val VALUE_METHOD_ONINFO: String = "onInfo"                        //
-        val VALUE_METHOD_ONTIMEDTEXT: String = "onTimedText"              //
+        val VALUE_METHOD_ONINFO: String = "onInfo"                        //播放信息
+        val VALUE_METHOD_ONTIMEDTEXT: String = "onTimedText"              //定时显示文字
         /*播放容器当前的模式*/
         val KEY_SCREEN_MODE: String = "KEY_SCREEN_MODE"
-        val VALUE_SCREEN_SMALL: String = "small"                 //小窗口
-        val VALUE_SCREEN_FULL: String = "full"                   //全屏
+        val VALUE_SCREEN_SMALL: String = "small"                          //小窗口
+        val VALUE_SCREEN_FULL: String = "full"                            //全屏
+
 
         /*=======================================================================================
          * view相关方法
@@ -52,9 +49,14 @@ class EventConstant {
         val VALUE_METHOD_ONVOLUME: String = "onVolume"                              //音量
         val VALUE_METHOD_ONLIGHT: String = "onLight"                                //亮度
         val VALUE_METHOD_ONPROGRESS: String = "onProgress"                          //进度
-        val VALUE_METHOD_ONPROGRESSCHANGED: String = "onProgressChanged"            //seekbar停止滑动
-        val VALUE_METHOD_ONSTARTTRACKINGTOUCH: String = "onStartTrackingTouch"      //seekbar停止滑动
-        val VALUE_METHOD_ONSTOPTRACKINGTOUCH: String = "onStoptrackingtouch"        //seekbar停止滑动
+//        val VALUE_METHOD_ONPROGRESSCHANGED: String = "onProgressChanged"            //seekbar停止滑动
+//        val VALUE_METHOD_ONSTARTTRACKINGTOUCH: String = "onStartTrackingTouch"      //seekbar停止滑动
+//        val VALUE_METHOD_ONSTOPTRACKINGTOUCH: String = "onStoptrackingtouch"        //seekbar停止滑动
+
+        /*=======================================================================================
+         * 其他
+         */
+        val KEY_GESTURE_STATE: String = "gestureState"                              //手势
     }
 }
 

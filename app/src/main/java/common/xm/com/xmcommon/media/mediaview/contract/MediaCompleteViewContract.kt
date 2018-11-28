@@ -15,7 +15,8 @@ class MediaCompleteViewContract {
 
     }
 
-    class Present(context: Context, view: View) : BaseMediaContract.Present() {
+    class Present(context: Context, view: View) : BaseMediaContract.Present(context) {
+        val model:Model? = null
         override fun process() {
             TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
@@ -30,6 +31,17 @@ class MediaCompleteViewContract {
 
         override fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?) {
             TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+        private fun obtainMedia() {
+
+            if (null == model?.media && media != null) {
+                model?.media = media
+            }
+        }
+        private fun obtainMediaView() {
+            if (null == model?.mediaView && mediaView != null) {
+                model?.mediaView = mediaView
+            }
         }
     }
 }

@@ -22,13 +22,13 @@ class MediaControlViewContract {
         var startResId: Int? = R.mipmap.media_play
         var pauseResId: Int? = R.mipmap.media_pause
 
-        var media: AbsMediaCore? = null                               //播放接口
         var visibilityFlag: Int? = android.view.View.GONE             //显示标识位,是否显示控制视图
         var prepared: Boolean? = false                                //准备状态标志位
         var curScreenMode: String = EventConstant.VALUE_SCREEN_SMALL  //当前窗口模式 全屏/小窗口
+
     }
 
-    class Present(val context: Context?, val view: View?) : BaseMediaContract.Present() {
+    class Present(context: Context?, val view: View?) : BaseMediaContract.Present(context) {
         var model: Model? = Model()
 
         override fun process() {
@@ -36,35 +36,14 @@ class MediaControlViewContract {
         }
 
         override fun handleMediaEvent(o: MediaViewObservable<*>?, event: Event?) {
-            //获取播放器实例
-            if (null != event?.parameter?.get("mp") as AbsMediaCore? && model?.media != event?.parameter?.get("mp") as AbsMediaCore?) {
-                model?.media = event?.parameter?.get("mp") as AbsMediaCore?
+            if (null == model?.media && null != media) {
+                model?.media = media
             }
 
             when (event?.parameter?.get(EventConstant.KEY_METHOD)) {
                 EventConstant.VALUE_METHOD_ONPREPARED -> {
                     model?.prepared = true
-                    //开启计时器了
-                    view?.getView()?.seekBar?.max = model?.media?.getDuration()!!.toInt()
-                    view?.getView()?.tvDuration?.text = ToolUtil.formatTime(model?.media?.getDuration())
-                    val timer = Timer()
-                    val timerTask = object : TimerTask() {
-                        override fun run() {
-                            view?.getView()?.seekBar?.post {
-                                try {
-//                                    if (view.getView().seekBar?.max != 100) {
-//                                        view.getView().seekBar?.max = 100
-//                                    }
-//                                    Log.d("xxxm","progress:"+((model?.media?.getCurrentPosition()!!.toInt() / model?.media?.getCurrentPosition()!!) * 100).toInt())
-//                                    view.getView().tvCurrentPosition?.text = ToolUtil.formatTime(model?.media?.getCurrentPosition())
-//                                    view.getView().seekBar?.progress = ((model?.media?.getCurrentPosition()!!.toInt() / model?.media?.getCurrentPosition()!!) * 100).toInt()
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                }
-                            }
-                        }
-                    }
-                    timer.schedule(timerTask, 0, 1000)
+                    timer()
                 }
                 EventConstant.VALUE_METHOD_ONERROR -> {
                     model?.prepared = false
@@ -73,6 +52,29 @@ class MediaControlViewContract {
                     model?.prepared = false
                 }
             }
+        }
+
+        /**
+         * 开启定时器
+         */
+        private fun timer() {
+            view?.getView()?.seekBar?.max = 100
+            view?.getView()?.tvDuration?.text = ToolUtil.formatTime(model?.media?.getDuration())
+            val timer = Timer()
+            val timerTask = object : TimerTask() {
+                override fun run() {
+                    view?.getView()?.seekBar?.post {
+                        try {
+                            view.getView().tvCurrentPosition?.text = ToolUtil.formatTime(model?.media?.getCurrentPosition())
+                            var percentF = model?.media?.getCurrentPosition()?.toFloat()!! / model?.media?.getDuration()!!
+                            view.getView().seekBar?.progress = (percentF * 100).toInt()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                }
+            }
+            timer.schedule(timerTask, 0, 1000)
         }
 
         override fun handleViewEvent(o: MediaViewObservable<*>?, event: Event?) {
@@ -122,30 +124,44 @@ class MediaControlViewContract {
         }
 
         fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-            view?.getView()?.notifyObservers(
-                    Event().setEventType(EnumMediaEventType.VIEW)
-                            .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_CONTROLVIEW)
-                            .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONPROGRESSCHANGED)
-                            .setParameter("seekBar", seekBar!!)
-                            .setParameter("progress", progress)
-                            .setParameter("fromUser", fromUser))
+//            view?.getView()?.notifyObservers(
+//                    Event().setEventType(EnumMediaEventType.VIEW)
+//                            .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_CONTROLVIEW)
+//                            .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONPROGRESSCHANGED)
+//                            .setParameter("seekBar", seekBar!!)
+//                            .setParameter("progress", progress)
+//                            .setParameter("fromUser", fromUser))
         }
 
         fun onStartTrackingTouch(seekBar: SeekBar?) {
-            view?.getView()?.notifyObservers(
-                    Event().setEventType(EnumMediaEventType.VIEW)
-                            .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_CONTROLVIEW)
-                            .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONSTARTTRACKINGTOUCH)
-                            .setParameter("seekBar", seekBar!!))
+//            view?.getView()?.notifyObservers(
+//                    Event().setEventType(EnumMediaEventType.VIEW)
+//                            .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_CONTROLVIEW)
+//                            .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONSTARTTRACKINGTOUCH)
+//                            .setParameter("seekBar", seekBar!!))
         }
 
         fun onStopTrackingTouch(seekBar: SeekBar?) {
+            val msec: Long = (seekBar?.progress!!.toFloat() / 100F * mediaView?.getDuration()!! as Long).toLong()
+            mediaView?.seekTo(msec)
             //拖动了进度条,通知加载页面
-            view?.getView()?.notifyObservers(
-                    Event().setEventType(EnumMediaEventType.VIEW)
-                            .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_CONTROLVIEW)
-                            .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONSTOPTRACKINGTOUCH)
-                            .setParameter("progress", seekBar?.progress!!))
+//            view?.getView()?.notifyObservers(
+//                    Event().setEventType(EnumMediaEventType.VIEW)
+//                            .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_CONTROLVIEW)
+//                            .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONSTOPTRACKINGTOUCH)
+//                            .setParameter("progress",seekBar?.progress!! ))
+        }
+
+        private fun obtainMedia() {
+            if (null == model?.media && media != null) {
+                model?.media = media
+            }
+        }
+
+        private fun obtainMediaView() {
+            if (null == model?.mediaView && mediaView != null) {
+                model?.mediaView = mediaView
+            }
         }
     }
 }

@@ -2,6 +2,7 @@ package com.xm.lib.media.help
 
 import android.content.Context
 import android.media.AudioManager
+import android.util.Log
 
 
 class VolumeHelper {
@@ -16,7 +17,7 @@ class VolumeHelper {
          */
         fun getVolume(context: Context?): Float {
             val audioManager: AudioManager = context?.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            return (audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) / audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)).toFloat()
+            return audioManager.getStreamVolume(AudioManager.STREAM_MUSIC).toFloat() / audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC).toFloat()
         }
 
         /**

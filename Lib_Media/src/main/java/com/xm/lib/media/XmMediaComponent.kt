@@ -17,6 +17,10 @@ import com.xm.lib.media.watcher.Observer
  * 播放器组件
  */
 class XmMediaComponent(context: Context?, attrs: AttributeSet?) : MediaViewObservable<XmMediaContract.Present>(context!!, attrs), XmMediaContract.View, Observer {
+    override fun getMedia(): AbsMediaCore {
+        return getPresent()?.getMediaCore()!!
+    }
+
     override fun showView() {
         show()
     }

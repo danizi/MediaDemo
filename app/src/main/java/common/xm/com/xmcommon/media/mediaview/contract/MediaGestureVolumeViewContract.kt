@@ -2,6 +2,7 @@ package common.xm.com.xmcommon.media.mediaview.contract
 
 import android.content.Context
 import com.xm.lib.media.AbsMediaCore
+import com.xm.lib.media.contract.BaseGestureContract
 import com.xm.lib.media.contract.BaseMediaContract
 import com.xm.lib.media.event.Event
 import com.xm.lib.media.event.EventConstant
@@ -11,15 +12,13 @@ import common.xm.com.xmcommon.R
 import common.xm.com.xmcommon.media.mediaview.component.MediaGestureVolumeView
 
 class MediaGestureVolumeViewContract {
-    interface View : BaseMediaContract.View<MediaGestureVolumeView> {}
+    interface View : BaseGestureContract.View<MediaGestureVolumeView> {}
 
-    class Model : BaseMediaContract.Model() {
+    class Model : BaseGestureContract.Model() {
         val volumeResID: Int? = R.mipmap.media_volume
-        var media: AbsMediaCore? = null
     }
 
-    class Present(context: Context?, view: View?) : BaseMediaContract.Present() {
-        var context: Context? = context
+    class Present(context: Context?, view: View?) : BaseGestureContract.Present(context) {
         var view: View? = view
         var model: Model? = Model()
 
@@ -28,35 +27,26 @@ class MediaGestureVolumeViewContract {
         }
 
         override fun handleMediaEvent(o: MediaViewObservable<*>?, event: Event?) {
-            if (event?.parameter?.get(EventConstant.KEY_FROM) == EventConstant.VALUE_FROM_MEDIACOMPONENT) {
-                when (event.parameter?.get(EventConstant.KEY_METHOD)) {
+            if (eventFrom == EventConstant.VALUE_FROM_MEDIACOMPONENT) {
+                when (eventMethod) {
                     EventConstant.VALUE_METHOD_CORE -> {
-                        model?.media = event.parameter?.get("mp") as AbsMediaCore?
+                        model?.media = event?.parameter?.get("mp") as AbsMediaCore?
                     }
                 }
             }
         }
 
-        var curProgress: Int? = -1
         override fun handleViewEvent(o: MediaViewObservable<*>?, event: Event?) {
-            if (event?.parameter?.get(EventConstant.KEY_FROM) == EventConstant.VALUE_FROM_MEDIACOMPONENT) {
-                when (event.parameter?.get(EventConstant.KEY_METHOD)) {
+            if (eventFrom == EventConstant.VALUE_FROM_MEDIACOMPONENT) {
+                when (eventMethod) {
                     EventConstant.VALUE_METHOD_ONVOLUME -> {
-                        if (curProgress == -1) {
-                            curProgress = view?.getView()?.progress?.progress!!
-                        }
-                        //当前媒体音量
-                        val present: Float = VolumeHelper.getVolume(context) - event.parameter?.get("percent") as Float
-                        //获取滑动的距离再加
-                        view?.getView()?.progress?.progress = curProgress!! + (present * 100).toInt()
-                        //设置音量
-                        VolumeHelper.setVolume(context, present)
+                        view?.getView()?.progress?.progress = getVolumePresent(view?.getView()?.progress, event)
                         view?.showView()
                     }
 
                     EventConstant.VALUE_METHOD_UP -> {
                         view?.hideView()
-                        curProgress=-1
+                        resetCurProgress()
                     }
                 }
             }
@@ -65,6 +55,15 @@ class MediaGestureVolumeViewContract {
         override fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?) {
 
         }
-
+        private fun obtainMedia() {
+            if (null == model?.media && media != null) {
+                model?.media = media
+            }
+        }
+        private fun obtainMediaView() {
+            if (null == model?.mediaView && mediaView != null) {
+                model?.mediaView = mediaView
+            }
+        }
     }
 }

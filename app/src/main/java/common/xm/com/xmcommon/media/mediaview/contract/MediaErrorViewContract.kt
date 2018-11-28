@@ -15,7 +15,8 @@ class MediaErrorViewContract {
 
     }
 
-    class Present(context: Context?, view: View?) : BaseMediaContract.Present() {
+    class Present(context: Context?, view: View?) : BaseMediaContract.Present(context) {
+        var model:Model?=null
         override fun process() {
         }
 
@@ -27,5 +28,16 @@ class MediaErrorViewContract {
 
         override fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?) {
         }
+        private fun obtainMedia() {
+            if (null == model?.media && media != null) {
+                model?.media = media
+            }
+        }
+        private fun obtainMediaView() {
+            if (null == model?.mediaView && mediaView != null) {
+                model?.mediaView = mediaView
+            }
+        }
+
     }
 }

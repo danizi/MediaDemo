@@ -13,8 +13,7 @@ class MediaLoadingViewContract {
 
     class Model : BaseMediaContract.Model()
 
-    class Present(context: Context?, view: View?) : BaseMediaContract.Present() {
-        var context: Context = context!!
+    class Present(context: Context?, view: View?) : BaseMediaContract.Present(context) {
         var model: Model? = Model()
         var view: View? = view
 
@@ -56,6 +55,17 @@ class MediaLoadingViewContract {
 
         override fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?) {
 
+        }
+
+        private fun obtainMedia() {
+            if (null == model?.media && media != null) {
+                model?.media = media
+            }
+        }
+        private fun obtainMediaView() {
+            if (null == model?.mediaView && mediaView != null) {
+                model?.mediaView = mediaView
+            }
         }
     }
 }

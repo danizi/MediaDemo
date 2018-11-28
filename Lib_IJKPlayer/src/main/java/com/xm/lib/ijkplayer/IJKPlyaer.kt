@@ -10,7 +10,6 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer
 
 class IJKPlayer : AbsMediaCore() {
 
-
     private val SO_LIB_NAME = "libijkplayer.so"
     private val FRAMEDROP = "framedrop"
     private val START_ON_PREPARED = "start-on-prepared"
@@ -66,9 +65,8 @@ class IJKPlayer : AbsMediaCore() {
         player?.setOnBufferingUpdateListener { _, p1 ->
             absMediaCoreOnLisenter?.onBufferingUpdate(this, p1)
         }
-        player?.setOnSeekCompleteListener { _ ->
+        player?.setOnSeekCompleteListener { _ -> // todo 不准确
             playerState = EnumMediaState.SEEKCOMPLETE
-            absMediaCoreOnLisenter?.onSeekComplete(this)
         }
         player?.setOnVideoSizeChangedListener { _, width, height, sar_num, sar_den ->
             absMediaCoreOnLisenter?.onVideoSizeChanged(this, width, height, sar_num, sar_den)
@@ -78,6 +76,10 @@ class IJKPlayer : AbsMediaCore() {
             absMediaCoreOnLisenter?.onError(this, what, extra)!!
         }
         player?.setOnInfoListener { _, what, extra ->
+            if(702==what){
+                absMediaCoreOnLisenter?.onSeekComplete(this)
+                playerState = EnumMediaState.PLAYING
+            }
             absMediaCoreOnLisenter?.onInfo(this, what, extra)!!
         }
         player?.setOnTimedTextListener { _, _ ->
