@@ -3,7 +3,7 @@ package common.xm.com.xmcommon.media.mediaview.contract
 import android.content.Context
 import com.xm.lib.media.R
 import com.xm.lib.media.component.MediaGestureProgressView
-import com.xm.lib.media.contract.BaseGestureContract
+import com.xm.lib.media.contract.base.BaseGestureContract
 import com.xm.lib.media.enum_.EnumGestureState
 import com.xm.lib.media.event.Event
 import com.xm.lib.media.event.EventConstant
@@ -44,9 +44,9 @@ class MediaGestureProgressViewContract {
                     EventConstant.VALUE_METHOD_UP -> {
                         view?.hideView()
                         resetCurProgress()
-                        if (event?.parameter?.get(EventConstant.KEY_GESTURE_STATE) == EnumGestureState.PROGRESS) {
-                            var duration = model.media?.getDuration()
-                            var progress = view?.getView()?.progress?.progress!!.toFloat() / 100F
+                        if (event.parameter?.get(EventConstant.KEY_GESTURE_STATE) == EnumGestureState.PROGRESS) {
+                            val duration = model.media?.getDuration()
+                            val progress = view?.getView()?.progress?.progress!!.toFloat() / 100F
                             model.mediaView?.seekTo((progress.toFloat() * duration?.toFloat()!!).toLong())
                         }
                     }

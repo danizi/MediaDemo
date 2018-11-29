@@ -28,6 +28,8 @@ class MediaControlView(context: Context?, layoutID: Int?) : MediaViewObservable<
 
         imgScreenMode?.setOnClickListener {
             getPresent()?.fullOrSmall()
+            //切换移除横向view
+            //
         }
 
         seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {

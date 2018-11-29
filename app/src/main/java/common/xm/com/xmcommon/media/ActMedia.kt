@@ -3,7 +3,7 @@ package common.xm.com.xmcommon.media
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.xm.lib.ijkplayer.IJKPlayer
-import com.xm.lib.media.XmMediaComponent
+import com.xm.lib.media.component.XmMediaComponent
 import com.xm.lib.media.enum_.EnumMediaEventType
 import com.xm.lib.media.enum_.EnumViewType
 import com.xm.lib.media.event.Event

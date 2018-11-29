@@ -1,14 +1,11 @@
-package com.xm.lib.media
+package com.xm.lib.media.component
 
 import android.content.Context
-import android.graphics.Color
 import android.util.AttributeSet
-import android.view.MotionEvent
-import android.view.ViewGroup
-import com.xm.lib.media.enum_.EnumMediaEventType
+import com.xm.lib.media.AbsMediaCore
+import com.xm.lib.media.contract.XmMediaContract
 import com.xm.lib.media.enum_.EnumViewType
 import com.xm.lib.media.event.Event
-import com.xm.lib.media.event.EventConstant
 import com.xm.lib.media.watcher.MediaViewObservable
 import com.xm.lib.media.watcher.Observer
 

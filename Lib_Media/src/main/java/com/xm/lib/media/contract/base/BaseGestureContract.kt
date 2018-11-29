@@ -1,7 +1,6 @@
-package com.xm.lib.media.contract
+package com.xm.lib.media.contract.base
 
 import android.content.Context
-import android.util.Log
 import android.widget.ProgressBar
 import com.xm.lib.media.AbsMediaCore
 import com.xm.lib.media.event.Event

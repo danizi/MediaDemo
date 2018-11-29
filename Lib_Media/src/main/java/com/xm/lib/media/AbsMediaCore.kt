@@ -3,6 +3,7 @@ package com.xm.lib.media
 import android.content.Context
 import android.view.SurfaceView
 import android.view.ViewGroup
+import com.xm.lib.media.contract.XmMediaContract
 import com.xm.lib.media.enum_.EnumMediaState
 import com.xm.lib.media.imp.IMediaCore
 import com.xm.lib.media.lisenter.AbsMediaCoreOnLisenter

@@ -1,5 +1,6 @@
 package com.xm.lib.ijkplayer
 
+import android.support.v7.widget.CardView
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.ViewGroup
@@ -55,7 +56,10 @@ class IJKPlayer : AbsMediaCore() {
             absMediaCoreOnLisenter?.onError(this, what, extra)!!
         }
         player?.setOnInfoListener { _, what, extra ->
-            if (702 == what) {
+            if (701 == what) {//视频缓存中
+
+            } else if (702 == what) { //视频缓存完成
+                player?.setSpeed(4/10f)
                 absMediaCoreOnLisenter?.onSeekComplete(this)
                 playerState = EnumMediaState.PLAYING
             }

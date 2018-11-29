@@ -1,8 +1,8 @@
-package com.xm.lib.media.contract
+package com.xm.lib.media.contract.base
 
 import android.content.Context
 import com.xm.lib.media.AbsMediaCore
-import com.xm.lib.media.XmMediaComponent
+import com.xm.lib.media.component.XmMediaComponent
 import com.xm.lib.media.enum_.EnumMediaEventType
 import com.xm.lib.media.event.Event
 import com.xm.lib.media.event.EventConstant

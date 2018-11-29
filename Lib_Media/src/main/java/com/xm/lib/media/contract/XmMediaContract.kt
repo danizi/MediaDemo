@@ -1,4 +1,4 @@
-package com.xm.lib.media
+package com.xm.lib.media.contract
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -7,13 +7,15 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.SurfaceHolder
-import com.xm.lib.media.contract.BaseMediaContract
+import com.xm.lib.media.AbsMediaCore
+import com.xm.lib.media.PolyvScreenUtils
+import com.xm.lib.media.component.XmMediaComponent
+import com.xm.lib.media.contract.base.BaseMediaContract
 import com.xm.lib.media.enum_.EnumGestureState
 import com.xm.lib.media.enum_.EnumMediaEventType
 import com.xm.lib.media.enum_.EnumViewType
 import com.xm.lib.media.event.Event
 import com.xm.lib.media.event.EventConstant
-import com.xm.lib.media.event.EventConstant.Companion.KEY_GESTURE_STATE
 import com.xm.lib.media.imp.IMediaCore
 import com.xm.lib.media.lisenter.AbsMediaCoreOnLisenter
 import com.xm.lib.media.lisenter.MediaGestureListener

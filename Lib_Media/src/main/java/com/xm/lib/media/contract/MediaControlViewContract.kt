@@ -5,7 +5,7 @@ import android.widget.SeekBar
 import com.bangke.lib.common.utils.ToolUtil
 import com.xm.lib.media.R
 import com.xm.lib.media.component.MediaControlView
-import com.xm.lib.media.contract.BaseMediaContract
+import com.xm.lib.media.contract.base.BaseMediaContract
 import com.xm.lib.media.enum_.EnumMediaEventType
 import com.xm.lib.media.enum_.EnumMediaState
 import com.xm.lib.media.event.Event

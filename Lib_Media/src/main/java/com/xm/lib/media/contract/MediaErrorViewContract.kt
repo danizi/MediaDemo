@@ -2,7 +2,7 @@ package common.xm.com.xmcommon.media.mediaview.contract
 
 import android.content.Context
 import com.xm.lib.media.component.MediaErrorView
-import com.xm.lib.media.contract.BaseMediaContract
+import com.xm.lib.media.contract.base.BaseMediaContract
 import com.xm.lib.media.event.Event
 import com.xm.lib.media.watcher.MediaViewObservable
 

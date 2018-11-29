@@ -4,7 +4,7 @@ import android.content.Context
 import com.xm.lib.media.AbsMediaCore
 import com.xm.lib.media.R
 import com.xm.lib.media.component.MediaGestureVolumeView
-import com.xm.lib.media.contract.BaseGestureContract
+import com.xm.lib.media.contract.base.BaseGestureContract
 import com.xm.lib.media.event.Event
 import com.xm.lib.media.event.EventConstant
 import com.xm.lib.media.watcher.MediaViewObservable
