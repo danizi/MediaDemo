@@ -38,11 +38,11 @@ class MediaGestureProgressViewContract {
 
                     EventConstant.VALUE_METHOD_ONPROGRESS -> {
                         view?.getView()?.progress?.progress = getProgresPresent(view?.getView()?.progress, event, model.media)
-                        view?.showView()
+                        view?.getView()?.show()
                     }
 
                     EventConstant.VALUE_METHOD_UP -> {
-                        view?.hideView()
+                        view?.getView()?.hide()
                         resetCurProgress()
                         if (event.parameter?.get(EventConstant.KEY_GESTURE_STATE) == EnumGestureState.PROGRESS) {
                             val duration = model.media?.getDuration()
@@ -52,10 +52,6 @@ class MediaGestureProgressViewContract {
                     }
                 }
             }
-        }
-
-        override fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?) {
-
         }
 
         private fun obtainMedia() {

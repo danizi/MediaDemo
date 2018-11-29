@@ -49,50 +49,50 @@ class XmMediaContract {
         private var player: AbsMediaCore? = null
         private var gestureDetector: GestureDetector? = null
 
-        fun release() {
-            player?.release()
-        }
-
-        fun seekTo(msec: Long) {
-            player?.seekTo(msec)
-
-            //更新消息主要是为了通知消息给加载页面
-            view?.getView()?.notifyObservers(
-                    Event().setEventType(EnumMediaEventType.MEDIA)
-                            .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
-                            .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_SEEKTO))
-        }
-
-        fun getCurrentPosition(): Long {
-            return player?.getCurrentPosition()!!
-        }
-
-        fun getDuration(): Long {
-            return player?.getDuration()!!
-        }
-
-        fun stop() {
-            player?.stop()
-        }
-
-        fun pause() {
-            player?.pause()
-        }
-
-        fun start() {
-            player?.start()
+        /**
+         * 播放器相关动作
+         */
+        fun action(action: String?, vararg params: Any?): Any? {
+            var result: Any? = Any()
+            when (action) {
+                XmMediaComponent.Action.release -> {
+                    player?.release()
+                }
+                XmMediaComponent.Action.seekTo -> {
+                    player?.seekTo(msec = params[0] as Long)
+                    //更新消息主要是为了通知消息给加载页面
+                    view?.getView()?.notifyObservers(
+                            Event().setEventType(EnumMediaEventType.MEDIA)
+                                    .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
+                                    .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_SEEKTO))
+                }
+                XmMediaComponent.Action.getDuration -> {
+                    result = player?.getCurrentPosition()!!
+                }
+                XmMediaComponent.Action.getCurrentPosition -> {
+                    result = player?.getCurrentPosition()!!
+                }
+                XmMediaComponent.Action.stop -> {
+                    player?.stop()
+                }
+                XmMediaComponent.Action.pause -> {
+                    player?.pause()
+                }
+                XmMediaComponent.Action.start -> {
+                    player?.start()
+                }
+                XmMediaComponent.Action.setDisplay -> {
+                    model?.dataSource = params[0] as String?
+                }
+                XmMediaComponent.Action.prepareAsync -> {
+                    player?.prepareAsync()
+                }
+            }
+            return result
         }
 
         fun setup() {
             player?.init()
-        }
-
-        fun setDisplay(dataSource: String) {
-            model?.dataSource = dataSource
-        }
-
-        fun prepareAsync() {
-            player?.prepareAsync()
         }
 
         fun core(absMediaCore: AbsMediaCore) {
@@ -142,13 +142,8 @@ class XmMediaContract {
                     Event().setEventType(EnumMediaEventType.MEDIA)
                             .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
                             .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_CORE)
-                            .setParameter("mp", player!!))
-
-            view?.getView()?.notifyObservers(
-                    Event().setEventType(EnumMediaEventType.MEDIA)
-                            .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
-                            .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_CORE)
-                            .setParameter("mediaComponent", view?.getView()!!))
+                            .setParameter("mp", player!!)
+                            .setParameter("mediaComponent",  view.getView()))
         }
 
         /**
@@ -327,15 +322,7 @@ class XmMediaContract {
 
         }
 
-        override fun handleMediaEvent(o: MediaViewObservable<*>?, event: Event?) {
-        }
-
         override fun handleViewEvent(o: MediaViewObservable<*>?, event: Event?) {
-
-            if ("click" == event?.parameter?.get(EventConstant.KEY_METHOD)) {
-                //先重置所有的状态
-                player?.prepareAsync()
-            }
 
             if (EventConstant.VALUE_SCREEN_FULL == (event?.parameter?.get(EventConstant.KEY_SCREEN_MODE))) {
                 if (model?.xmMediaFirstW == -1 && model?.xmMediaFirstH == -1) {
@@ -355,15 +342,6 @@ class XmMediaContract {
                 view?.getView()?.layoutParams?.width = model?.xmMediaFirstW!!
                 view?.getView()?.layoutParams?.height = model?.xmMediaFirstH!!
             }
-
-//            if (eventFrom == EventConstant.VALUE_FROM_CONTROLVIEW) {
-//                when (eventMethod) {
-//                    EventConstant.VALUE_METHOD_ONSTOPTRACKINGTOUCH -> {
-//                        val msec = event?.parameter?.get("progress") as Int * getDuration()
-//                        seekTo(msec)
-//                    }
-//                }
-//            }
         }
 
         override fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?) {
@@ -372,8 +350,8 @@ class XmMediaContract {
             if (eventFrom == "Activity") {
                 when (eventMethod) {
                     "onDestroy" -> {
-                        stop()
-                        release()
+                        action("stop")
+                        action("release")
                     }
                 }
             }

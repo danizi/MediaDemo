@@ -25,16 +25,16 @@ class MediaLoadingViewContract {
             val eventFrom = event?.parameter!![EventConstant.KEY_FROM]
             val eventMethod = event.parameter?.get(EventConstant.KEY_METHOD)
             if (eventMethod == EventConstant.VALUE_METHOD_ONPREPARED) {
-                view?.hideView()
+                view?.getView()?.hide()
             }
             if (eventMethod == EventConstant.VALUE_METHOD_ONSEEKCOMPLETE) {
-                view?.hideView()
+                view?.getView()?.hide()
             }
 
             if (eventFrom == EventConstant.VALUE_FROM_MEDIACOMPONENT) {
                 when (eventMethod) {
                     EventConstant.VALUE_METHOD_SEEKTO -> { //调用了seekto方法
-                        view?.showView()
+                        view?.getView()?.show()
                     }
                 }
             }
@@ -47,7 +47,7 @@ class MediaLoadingViewContract {
             if (eventFrom == EventConstant.VALUE_FROM_PREVIEW) {
                 when (eventMethod) {
                     EventConstant.VALUE_METHOD_CLICK -> { //点击了预览图或者预览图上面播放按钮
-                        view?.showView()
+                        view?.getView()?.show()
                     }
                 }
             }

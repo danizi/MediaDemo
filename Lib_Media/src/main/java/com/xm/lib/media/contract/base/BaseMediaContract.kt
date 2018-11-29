@@ -10,8 +10,6 @@ import com.xm.lib.media.watcher.MediaViewObservable
 
 class BaseMediaContract {
     interface View<T> {
-        fun showView()
-        fun hideView()
         fun getView(): T
     }
 
@@ -55,17 +53,19 @@ class BaseMediaContract {
         /**
          * 播放器事件
          */
-        abstract fun handleMediaEvent(o: MediaViewObservable<*>?, event: Event?)
+        open fun handleMediaEvent(o: MediaViewObservable<*>?, event: Event?) {
+
+        }
 
         /**
          * 控件事件
          */
-        abstract fun handleViewEvent(o: MediaViewObservable<*>?, event: Event?)
+        open fun handleViewEvent(o: MediaViewObservable<*>?, event: Event?) {}
 
         /**
          * 其他事件
          */
-        abstract fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?)
+        open fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?) {}
 
         /**
          * 获取播放抽象对象
@@ -74,7 +74,9 @@ class BaseMediaContract {
             if (eventFrom == EventConstant.VALUE_FROM_MEDIACOMPONENT) {
                 when (eventMethod) {
                     EventConstant.VALUE_METHOD_CORE -> {
-                        media = (event?.parameter?.get("mp") as AbsMediaCore?)
+                        if (null != (event?.parameter?.get("mp") as AbsMediaCore?)) {
+                            media = (event?.parameter?.get("mp") as AbsMediaCore?)
+                        }
                     }
                 }
             }
@@ -87,8 +89,10 @@ class BaseMediaContract {
             if (eventFrom == EventConstant.VALUE_FROM_MEDIACOMPONENT) {
                 when (eventMethod) {
                     EventConstant.VALUE_METHOD_CORE -> {
-                        if(event?.parameter?.get("mediaComponent")!=null){
-                            mediaView = event?.parameter?.get("mediaComponent") as XmMediaComponent
+                        if (event?.parameter?.get("mediaComponent") != null) {
+                            if (null != event?.parameter?.get("mediaComponent") as XmMediaComponent) {
+                                mediaView = event?.parameter?.get("mediaComponent") as XmMediaComponent
+                            }
                         }
                     }
                 }

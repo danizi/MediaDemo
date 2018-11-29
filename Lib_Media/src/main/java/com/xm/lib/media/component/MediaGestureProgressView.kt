@@ -1,6 +1,7 @@
 package com.xm.lib.media.component
 
 import android.content.Context
+import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import com.xm.lib.media.R
@@ -17,29 +18,13 @@ class MediaGestureProgressView(context: Context?, layoutID: Int?) : MediaViewObs
     override fun createPresent(): MediaGestureProgressViewContract.Present {
         return MediaGestureProgressViewContract.Present(context, this)
     }
-    override fun findViews() {
+    override fun findViews(contentView: View?) {
         iv =  contentView?.findViewById(R.id.iv)
         progress =  contentView?.findViewById(R.id.progress)
     }
 
-    override fun initListenner() {
-
-    }
-
     override fun initData() {
         getPresent()?.process()
-    }
-
-    override fun update(o: MediaViewObservable<*>, event: Event) {
-        getPresent()?.handleReceiveEvent(o, event)
-    }
-
-    override fun showView() {
-        show()
-    }
-
-    override fun hideView() {
-        hide()
     }
 
     override fun getView(): MediaGestureProgressView {

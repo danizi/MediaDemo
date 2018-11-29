@@ -39,20 +39,17 @@ class MediaGestureVolumeViewContract {
                 when (eventMethod) {
                     EventConstant.VALUE_METHOD_ONVOLUME -> {
                         view?.getView()?.progress?.progress = getVolumePresent(view?.getView()?.progress, event)
-                        view?.showView()
+                        view?.getView()?.show()
                     }
 
                     EventConstant.VALUE_METHOD_UP -> {
-                        view?.hideView()
+                        view?.getView()?.hide()
                         resetCurProgress()
                     }
                 }
             }
         }
 
-        override fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?) {
-
-        }
         private fun obtainMedia() {
             if (null == model?.media && media != null) {
                 model?.media = media

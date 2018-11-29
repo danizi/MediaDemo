@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import com.xm.lib.media.contract.base.BaseMediaContract
 import com.xm.lib.media.event.Event
 import com.xm.lib.media.imp.IInit
 
@@ -21,19 +22,18 @@ import com.xm.lib.media.imp.IInit
  * 2 所有的视图都相互绑定了，即事件会一一全部下发
  *
  */
-abstract class MediaViewObservable<T> : FrameLayout, Observer, IInit {
+abstract class MediaViewObservable<T :BaseMediaContract.Present> : FrameLayout, Observer {
     private var present: T? = null
-    var contentView: View? = null
-    var observers: ArrayList<Observer>? = ArrayList()
-    var layoutID: Int? = null
+    private var contentView: View? = null
+    private var observers: ArrayList<Observer>? = ArrayList()
+    private var layoutID: Int? = null
 
     constructor(context: Context, layoutID: Int) : super(context) {
         present = createPresent()
-        // todo 为非播放控件提供
-        contentView = getContentView(layoutID)
+        contentView = getContentView(layoutID)      // todo 为非播放控件提供
         addView(contentView)
         hide()
-        findViews()
+        findViews(contentView)
         initListenner()
         initData()
     }
@@ -46,6 +46,21 @@ abstract class MediaViewObservable<T> : FrameLayout, Observer, IInit {
         present = createPresent()
     }
 
+    /*
+     * -------
+     * 初始化
+     */
+    open fun findViews(contentView: View?) {
+
+    }
+
+    open fun initListenner() {
+
+    }
+
+    open fun initData() {
+
+    }
 
     /*
      * -------
@@ -57,6 +72,9 @@ abstract class MediaViewObservable<T> : FrameLayout, Observer, IInit {
         return present
     }
 
+    override fun update(o: MediaViewObservable<*>, event: Event) {
+        getPresent()?.handleReceiveEvent(o, event)
+    }
 
     /*
      * -------
@@ -91,11 +109,11 @@ abstract class MediaViewObservable<T> : FrameLayout, Observer, IInit {
      * -------
      * 内容装载控件相关处理
      */
-    fun getContentView(layoutID: Int, root: ViewGroup, attachToRoot: Boolean): View {
+    private fun getContentView(layoutID: Int, root: ViewGroup, attachToRoot: Boolean): View {
         return LayoutInflater.from(context).inflate(layoutID, root, attachToRoot)
     }
 
-    fun getContentView(layoutID: Int): View {
+    private fun getContentView(layoutID: Int): View {
         return LayoutInflater.from(context).inflate(layoutID, this, false)
     }
 

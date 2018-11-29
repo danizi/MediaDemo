@@ -19,15 +19,11 @@ class MediaPreViewContract {
 
     class Present(context: Context?, view: View?) : BaseMediaContract.Present(context) {
         var view: View? = view
-        var model: Model? = null
-
-        init {
-            model = Model()
-        }
+        var model: Model? = Model()
 
         override fun process() {
             Glide.with(context).load(model?.preUrl).into(view?.getView()?.ivPre)
-            view?.showView()
+            view?.getView()?.show()
         }
 
         fun prepareAsync() {
@@ -46,16 +42,8 @@ class MediaPreViewContract {
             obtainMedia()
 
             if (EventConstant.VALUE_METHOD_ONPREPARED == event?.parameter?.get(EventConstant.KEY_METHOD)) {
-                view?.hideView()
+                view?.getView()?.hide()
             }
-
-        }
-
-        override fun handleViewEvent(o: MediaViewObservable<*>?, event: Event?) {
-
-        }
-
-        override fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?) {
 
         }
 
@@ -64,6 +52,7 @@ class MediaPreViewContract {
                 model?.media = media
             }
         }
+
         private fun obtainMediaView() {
             if (null == model?.mediaView && mediaView != null) {
                 model?.mediaView = mediaView

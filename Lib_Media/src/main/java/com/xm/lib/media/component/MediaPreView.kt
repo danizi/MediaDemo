@@ -1,6 +1,7 @@
 package com.xm.lib.media.component
 
 import android.content.Context
+import android.view.View
 import android.widget.ImageView
 import com.xm.lib.media.R
 import com.xm.lib.media.event.Event
@@ -17,17 +18,19 @@ class MediaPreView(context: Context?, layoutID: Int?, preUrl: String?) : MediaVi
         return MediaPreViewContract.Present(context, this)
     }
 
-    override fun findViews() {
+    override fun findViews(contentView: View?) {
         ivPre = contentView?.findViewById(R.id.img_preview)
         ivPlay = contentView?.findViewById(R.id.img_play)
     }
 
     override fun initListenner() {
         ivPre?.setOnClickListener {
-            play()
+            getPresent()?.prepareAsync()
+            getPresent()?.notifyObservers()
         }
         ivPlay?.setOnClickListener {
-            play()
+            getPresent()?.prepareAsync()
+            getPresent()?.notifyObservers()
         }
     }
 
@@ -35,27 +38,11 @@ class MediaPreView(context: Context?, layoutID: Int?, preUrl: String?) : MediaVi
         return this
     }
 
-    override fun showView() {
-        show()
-    }
-
-    override fun hideView() {
-        hide()
-    }
-
     override fun initData() {
         getPresent()?.model?.preUrl = "http://img.videocc.net/uimage/2/26de49f8c2/9/26de49f8c273bbc8f6812d1422a11b39_1.jpg"
         getPresent()?.process()
     }
 
-    override fun update(o: MediaViewObservable<*>, event: Event) {
-        getPresent()?.handleReceiveEvent(o, event)
-    }
-
-    private fun play() {
-        getPresent()?.prepareAsync()
-        getPresent()?.notifyObservers()
-    }
 }
 
 

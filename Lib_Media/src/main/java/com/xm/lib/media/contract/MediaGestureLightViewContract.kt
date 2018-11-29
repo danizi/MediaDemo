@@ -40,11 +40,11 @@ class MediaGestureLightViewContract {
                 when (eventMethod) {
                     EventConstant.VALUE_METHOD_ONLIGHT -> {
                         view?.getView()?.progress?.progress = getLightPresent(view?.getView()?.progress,event)
-                        view?.showView()
+                        view?.getView()?.show()
                     }
 
                     EventConstant.VALUE_METHOD_UP -> {
-                        view?.hideView()
+                        view?.getView()?.hide()
                         resetCurProgress()
                     }
                 }

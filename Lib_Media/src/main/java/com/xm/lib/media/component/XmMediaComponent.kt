@@ -14,16 +14,25 @@ import com.xm.lib.media.watcher.Observer
  * 播放器组件
  */
 class XmMediaComponent(context: Context?, attrs: AttributeSet?) : MediaViewObservable<XmMediaContract.Present>(context!!, attrs), XmMediaContract.View, Observer {
+    /**
+     * 播放的功能
+     */
+    class Action {
+        companion object {
+            val setDisplay = "setDisplay"
+            val prepareAsync = "prepareAsync"
+            val start = "start"
+            val pause = "pause"
+            val stop = "stop"
+            val getDuration = "getDuration"
+            val getCurrentPosition = "getCurrentPosition"
+            val seekTo = "seekTo"
+            val release = "release"
+        }
+    }
+
     override fun getMedia(): AbsMediaCore {
         return getPresent()?.getMediaCore()!!
-    }
-
-    override fun showView() {
-        show()
-    }
-
-    override fun hideView() {
-        hide()
     }
 
     override fun getView(): XmMediaComponent {
@@ -40,7 +49,7 @@ class XmMediaComponent(context: Context?, attrs: AttributeSet?) : MediaViewObser
     }
 
     override fun setDisplay(dataSource: String?): XmMediaComponent {
-        getPresent()?.setDisplay(dataSource!!)
+        getPresent()?.action(Action.setDisplay, dataSource)
         return this
     }
 
@@ -55,39 +64,35 @@ class XmMediaComponent(context: Context?, attrs: AttributeSet?) : MediaViewObser
     }
 
     override fun prepareAsync() {
-        getPresent()?.prepareAsync()
+        getPresent()?.action(Action.prepareAsync)
     }
 
     override fun start() {
-        getPresent()?.start()
+        getPresent()?.action(Action.start)
     }
 
     override fun pause() {
-        getPresent()?.pause()
+        getPresent()?.action(Action.pause)
     }
 
     override fun stop() {
-        getPresent()?.stop()
+        getPresent()?.action(Action.stop)
     }
 
     override fun getDuration(): Long {
-        return getPresent()?.getDuration()!!
+        return getPresent()?.action(Action.getDuration) as Long
     }
 
     override fun getCurrentPosition(): Long {
-        return getPresent()?.getCurrentPosition()!!
+        return getPresent()?.action(Action.getCurrentPosition) as Long
     }
 
     override fun seekTo(msec: Long) {
-        getPresent()?.seekTo(msec)
+        getPresent()?.action(Action.seekTo, msec)
     }
 
     override fun release() {
-        getPresent()?.release()
-    }
-
-    override fun update(o: MediaViewObservable<*>, event: Event) {
-        getPresent()?.handleReceiveEvent(o, event)
+        getPresent()?.action(Action.release)
     }
 
     override fun build() {
@@ -96,17 +101,5 @@ class XmMediaComponent(context: Context?, attrs: AttributeSet?) : MediaViewObser
 
     @Deprecated("使用setup方法替代")
     override fun init() {
-    }
-
-    @Deprecated("暂不使用")
-    override fun findViews() {
-    }
-
-    @Deprecated("暂不使用")
-    override fun initListenner() {
-    }
-
-    @Deprecated("暂不使用")
-    override fun initData() {
     }
 }

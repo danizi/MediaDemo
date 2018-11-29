@@ -81,10 +81,10 @@ class MediaControlViewContract {
             when (eventMethod) {
                 EventConstant.VALUE_METHOD_CLICK -> {
                     model?.visibilityFlag = if (model?.visibilityFlag == android.view.View.GONE) {
-                        view?.showView()
+                        view?.getView()?.show()
                         android.view.View.VISIBLE
                     } else {
-                        view?.hideView()
+                        view?.getView()?.hide()
                         android.view.View.GONE
                     }
                 }
@@ -122,32 +122,14 @@ class MediaControlViewContract {
         }
 
         fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-//            view?.getView()?.notifyObservers(
-//                    Event().setEventType(EnumMediaEventType.VIEW)
-//                            .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_CONTROLVIEW)
-//                            .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONPROGRESSCHANGED)
-//                            .setParameter("seekBar", seekBar!!)
-//                            .setParameter("progress", progress)
-//                            .setParameter("fromUser", fromUser))
         }
 
         fun onStartTrackingTouch(seekBar: SeekBar?) {
-//            view?.getView()?.notifyObservers(
-//                    Event().setEventType(EnumMediaEventType.VIEW)
-//                            .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_CONTROLVIEW)
-//                            .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONSTARTTRACKINGTOUCH)
-//                            .setParameter("seekBar", seekBar!!))
         }
 
         fun onStopTrackingTouch(seekBar: SeekBar?) {
             val msec: Long = (seekBar?.progress!!.toFloat() / 100F * mediaView?.getDuration()!! as Long).toLong()
             mediaView?.seekTo(msec)
-            //拖动了进度条,通知加载页面
-//            view?.getView()?.notifyObservers(
-//                    Event().setEventType(EnumMediaEventType.VIEW)
-//                            .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_CONTROLVIEW)
-//                            .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONSTOPTRACKINGTOUCH)
-//                            .setParameter("progress",seekBar?.progress!! ))
         }
 
         private fun obtainMedia() {

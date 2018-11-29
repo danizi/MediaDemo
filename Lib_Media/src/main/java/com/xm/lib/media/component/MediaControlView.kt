@@ -1,6 +1,7 @@
 package com.xm.lib.media.component
 
 import android.content.Context
+import android.view.View
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
@@ -21,6 +22,14 @@ class MediaControlView(context: Context?, layoutID: Int?) : MediaViewObservable<
         return MediaControlViewContract.Present(context, this)
     }
 
+    override fun findViews(contentView: View?) {
+        imgPlayPause = contentView?.findViewById(R.id.img_play_pause)
+        tvCurrentPosition = contentView?.findViewById(R.id.tv_currentPosition)
+        seekBar = contentView?.findViewById(R.id.seekBar)
+        tvDuration = contentView?.findViewById(R.id.tv_duration)
+        imgScreenMode = contentView?.findViewById(R.id.img_screen_mode)
+    }
+
     override fun initListenner() {
         imgPlayPause?.setOnClickListener {
             getPresent()?.startOrPause()
@@ -28,8 +37,6 @@ class MediaControlView(context: Context?, layoutID: Int?) : MediaViewObservable<
 
         imgScreenMode?.setOnClickListener {
             getPresent()?.fullOrSmall()
-            //切换移除横向view
-            //
         }
 
         seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -51,28 +58,8 @@ class MediaControlView(context: Context?, layoutID: Int?) : MediaViewObservable<
         getPresent()?.process()
     }
 
-    override fun showView() {
-        show()
-    }
-
-    override fun hideView() {
-        hide()
-    }
-
     override fun getView(): MediaControlView {
         return this
-    }
-
-    override fun findViews() {
-        imgPlayPause = contentView?.findViewById(R.id.img_play_pause)
-        tvCurrentPosition = contentView?.findViewById(R.id.tv_currentPosition)
-        seekBar = contentView?.findViewById(R.id.seekBar)
-        tvDuration = contentView?.findViewById(R.id.tv_duration)
-        imgScreenMode = contentView?.findViewById(R.id.img_screen_mode)
-    }
-
-    override fun update(o: MediaViewObservable<*>, event: Event) {
-        getPresent()?.handleReceiveEvent(o, event)
     }
 }
 
