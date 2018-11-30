@@ -64,7 +64,7 @@ class GestureContract {
         }
 
         /**
-         * 重置进度条
+         * 重置进度条进度
          */
         fun resetCurProgress() {
             curProgress = DEFUAT

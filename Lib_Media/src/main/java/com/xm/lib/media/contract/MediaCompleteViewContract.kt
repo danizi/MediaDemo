@@ -7,16 +7,13 @@ import com.xm.lib.media.event.Event
 import com.xm.lib.media.watcher.MediaViewObservable
 
 class MediaCompleteViewContract {
-    interface View : BaseMediaContract.View<MediaCompleteView> {
+    interface View : BaseMediaContract.View<MediaCompleteView>
 
-    }
-
-    class Model : BaseMediaContract.Model() {
-
-    }
+    class Model : BaseMediaContract.Model()
 
     class Present(context: Context, view: View) : BaseMediaContract.Present(context) {
-        val model:Model? = null
+        val model: Model? = null
+
         override fun process() {
         }
 

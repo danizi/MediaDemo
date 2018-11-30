@@ -15,4 +15,5 @@ class MediaErrorView(context: Context?, layoutID: Int?) : MediaViewObservable<Me
     override fun createPresent(): MediaErrorViewContract.Present {
         return MediaErrorViewContract.Present(context, this)
     }
+    
 }

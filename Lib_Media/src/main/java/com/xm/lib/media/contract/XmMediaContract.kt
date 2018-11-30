@@ -31,6 +31,7 @@ class XmMediaContract {
         fun setDisplay(dataSource: String?): XmMediaComponent
         fun setup(): XmMediaComponent
         fun core(absMediaCore: AbsMediaCore?): XmMediaComponent
+        fun getPlayerState(): EnumMediaState
         fun build()
     }
 
@@ -39,26 +40,21 @@ class XmMediaContract {
         var addViewMap: HashMap<EnumViewType, MediaViewObservable<*>>? = HashMap()
         var xmMediaFirstW: Int? = -1
         var xmMediaFirstH: Int? = -1
-        var screen_mode: String? = EventConstant.VALUE_SCREEN_SMALL
+        var player: AbsMediaCore? = null
     }
 
     class Present(context: Context?, val view: View?) : BaseMediaContract.Present(context) {
-
         private var model: Model? = Model()
-        private var player: AbsMediaCore? = null
         private var gestureDetector: GestureDetector? = null
 
-        /**
-         * 播放器相关动作
-         */
         fun action(action: String?, vararg params: Any?): Any? {
             var result: Any? = Any()
             when (action) {
                 XmMediaComponent.Action.release -> {
-                    player?.release()
+                    model?.player?.release()
                 }
                 XmMediaComponent.Action.seekTo -> {
-                    player?.seekTo(msec = params[0] as Long)
+                    model?.player?.seekTo(msec = params[0] as Long)
                     //更新消息主要是为了通知消息给加载页面
                     view?.getView()?.notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
@@ -66,44 +62,48 @@ class XmMediaContract {
                                     .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_SEEKTO))
                 }
                 XmMediaComponent.Action.getDuration -> {
-                    result = player?.getDuration()!!
+                    result = model?.player?.getDuration()!!
                 }
                 XmMediaComponent.Action.getCurrentPosition -> {
-                    result = player?.getCurrentPosition()!!
+                    result = model?.player?.getCurrentPosition()!!
                 }
                 XmMediaComponent.Action.stop -> {
-                    player?.stop()
+                    model?.player?.stop()
                 }
                 XmMediaComponent.Action.pause -> {
-                    player?.pause()
+                    model?.player?.pause()
                 }
                 XmMediaComponent.Action.start -> {
-                    player?.start()
+                    model?.player?.start()
                 }
                 XmMediaComponent.Action.setDisplay -> {
                     model?.dataSource = params[0] as String?
                 }
                 XmMediaComponent.Action.prepareAsync -> {
-                    player?.prepareAsync()
+                    model?.player?.prepareAsync()
                 }
             }
             return result
         }
 
         fun setup() {
-            player?.init()
+            model?.player?.init()
         }
 
         fun core(absMediaCore: AbsMediaCore) {
-            player = absMediaCore
-            player?.model = model
-            player?.view = view
-            player?.context = context
-            player?.tagerView = view?.getView()
+            model?.player = absMediaCore
+            model?.player?.model = model
+            model?.player?.view = view
+            model?.player?.context = context
+            model?.player?.tagerView = view?.getView()
         }
 
         fun addViewToMedia(enumViewType: EnumViewType, viewGroup: MediaViewObservable<*>) {
             model?.addViewMap?.put(enumViewType, viewGroup)
+        }
+
+        fun getPlayState(): EnumMediaState {
+            return model?.player?.playerState!!
         }
 
         @SuppressLint("ClickableViewAccessibility")
@@ -115,9 +115,6 @@ class XmMediaContract {
             processGestureDetector()
         }
 
-        /**
-         * 注册观察者
-         */
         private fun addObserver() {
             for (v1 in model?.addViewMap?.entries!!) {
                 view?.getView()?.addObserver(v1.value)
@@ -130,35 +127,26 @@ class XmMediaContract {
                     }
                 }
             }
-            view?.getView()?.addObserver(view?.getView())
+            view?.getView()?.addObserver(view.getView())
         }
 
-        /**
-         * 播放器对象创建完成，通知给各个视图
-         */
         private fun createMediaNotifyObservers() {
             view?.getView()?.notifyObservers( //todo 废弃，最好使用下面的播放组件对象
                     Event().setEventType(EnumMediaEventType.MEDIA)
                             .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
                             .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_CORE)
-                            .setParameter("mp", player!!)
+                            .setParameter("mp", model?.player!!)
                             .setParameter("mediaComponent", view.getView()))
         }
 
-        /**
-         * 添加view
-         */
         private fun addViews() {
             for (e in model?.addViewMap?.entries!!) {
                 view?.getView()?.addView(model?.addViewMap?.get(e.key))
             }
         }
 
-        /**
-         * 初始化播放器监听
-         */
         private fun setupMediaLisenter() {
-            player?.setOnLisenter(object : AbsMediaCoreOnLisenter() {
+            model?.player?.setOnLisenter(object : AbsMediaCoreOnLisenter() {
                 override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
                     view?.getView()?.notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
@@ -188,7 +176,7 @@ class XmMediaContract {
                             Event().setEventType(EnumMediaEventType.MEDIA)
                                     .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONPREPARED)
                                     .setParameter("mp", mp))
-                    player?.start()
+                    model?.player?.start()
                 }
 
                 override fun onCompletion(mp: AbsMediaCore) {
@@ -233,9 +221,6 @@ class XmMediaContract {
                     return false
                 }
 
-                /**
-                 * 播放的状态
-                 */
                 override fun onInfo(mp: AbsMediaCore, what: Int, extra: Int): Boolean {
                     view?.getView()?.notifyObservers(
                             Event().setEventType(EnumMediaEventType.MEDIA)
@@ -256,9 +241,6 @@ class XmMediaContract {
             })
         }
 
-        /**
-         * 手势相关的处理
-         */
         @SuppressLint("ClickableViewAccessibility")
         private fun processGestureDetector() {
             var enumGestureState: EnumGestureState? = null
@@ -303,7 +285,7 @@ class XmMediaContract {
             }))
             view?.getView()?.setOnTouchListener { _, event ->
                 if (event.action == MotionEvent.ACTION_UP) { //通知所有手势视图隐藏
-                    var event: Event = Event()
+                    val event: Event = Event()
                     event.setEventType(EnumMediaEventType.VIEW)
                             .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
                             .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_UP)
@@ -355,10 +337,5 @@ class XmMediaContract {
                 }
             }
         }
-
-        fun getPlayState(): EnumMediaState {
-            return player?.playerState!!
-        }
-
     }
 }

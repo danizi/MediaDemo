@@ -7,13 +7,9 @@ import com.xm.lib.media.event.Event
 import com.xm.lib.media.watcher.MediaViewObservable
 
 class MediaErrorViewContract {
-    interface View : BaseMediaContract.View<MediaErrorView> {
+    interface View : BaseMediaContract.View<MediaErrorView>
 
-    }
-
-    class Model : BaseMediaContract.Model() {
-
-    }
+    class Model : BaseMediaContract.Model()
 
     class Present(context: Context?, view: View?) : BaseMediaContract.Present(context) {
         var model:Model?=null

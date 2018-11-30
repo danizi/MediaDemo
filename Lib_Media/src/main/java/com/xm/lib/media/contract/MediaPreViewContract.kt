@@ -17,8 +17,7 @@ class MediaPreViewContract {
         var preUrl: String? = null
     }
 
-    class Present(context: Context?, view: View?) : BaseMediaContract.Present(context) {
-        var view: View? = view
+    class Present(context: Context?, val view: View?) : BaseMediaContract.Present(context) {
         var model: Model? = Model()
 
         override fun process() {

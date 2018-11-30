@@ -9,7 +9,7 @@ import com.xm.lib.media.event.EventConstant
 import com.xm.lib.media.watcher.MediaViewObservable
 
 class MediaGestureVolumeViewContract {
-    interface View : GestureContract.View<MediaGestureVolumeView> {}
+    interface View : GestureContract.View<MediaGestureVolumeView>
 
     class Model : GestureContract.Model() {
         val volumeResID: Int? = R.mipmap.media_volume

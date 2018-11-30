@@ -87,7 +87,7 @@ class MediaControlViewContract {
          * 暂停&播放
          */
         fun startOrPause() {
-            if (mediaView?.getPlayState() == EnumMediaState.PLAYING) {
+            if (mediaView?.getPlayerState() == EnumMediaState.PLAYING) {
                 mediaView?.pause()
                 view?.getView()?.imgPlayPause?.setImageResource(model?.startResId!!)
             } else {
@@ -117,8 +117,7 @@ class MediaControlViewContract {
         fun onStartTrackingTouch(seekBar: SeekBar?) {}
 
         fun onStopTrackingTouch(seekBar: SeekBar?) {
-            val msec: Long = (seekBar?.progress!!.toFloat() / 100F * mediaView?.getDuration()!! as Long).toLong()
-            mediaView?.seekTo(msec)
+            mediaView?.seekTo((seekBar?.progress!!.toFloat() / 100F * mediaView?.getDuration()!!).toLong())
         }
     }
 }

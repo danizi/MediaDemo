@@ -13,9 +13,8 @@ class MediaLoadingViewContract {
 
     class Model : BaseMediaContract.Model()
 
-    class Present(context: Context?, view: View?) : BaseMediaContract.Present(context) {
+    class Present(context: Context?, var view: View?) : BaseMediaContract.Present(context) {
         var model: Model? = Model()
-        var view: View? = view
 
         override fun process() {
 

@@ -10,9 +10,7 @@ import com.xm.lib.media.event.EventConstant
 import com.xm.lib.media.watcher.MediaViewObservable
 
 class MediaGestureProgressViewContract {
-    interface View : GestureContract.View<MediaGestureProgressView> {
-
-    }
+    interface View : GestureContract.View<MediaGestureProgressView>
 
     class Model : GestureContract.Model() {
         var fastBackwardResID: Int = R.mipmap.media_fast_backward  //快退

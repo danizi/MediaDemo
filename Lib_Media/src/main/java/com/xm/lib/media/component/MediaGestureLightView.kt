@@ -26,5 +26,4 @@ class MediaGestureLightView(context: Context?, layoutID: Int?) : MediaViewObserv
     override fun getView(): MediaGestureLightView {
         return this
     }
-
 }

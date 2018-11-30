@@ -1,6 +1,5 @@
 package com.xm.lib.ijkplayer
 
-import android.support.v7.widget.CardView
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.ViewGroup
@@ -45,7 +44,6 @@ class IJKPlayer : AbsMediaCore() {
             absMediaCoreOnLisenter?.onBufferingUpdate(this, p1)
         }
         player?.setOnSeekCompleteListener { _ ->
-            // todo 不准确
             playerState = EnumMediaState.SEEKCOMPLETE
         }
         player?.setOnVideoSizeChangedListener { _, width, height, sar_num, sar_den ->

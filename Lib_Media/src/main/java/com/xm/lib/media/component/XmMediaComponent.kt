@@ -15,6 +15,8 @@ import com.xm.lib.media.watcher.Observer
  * 播放器组件
  */
 class XmMediaComponent(context: Context?, attrs: AttributeSet?) : MediaViewObservable<XmMediaContract.Present>(context!!, attrs), XmMediaContract.View, Observer {
+
+
     /**
      * 播放的功能
      */
@@ -100,7 +102,7 @@ class XmMediaComponent(context: Context?, attrs: AttributeSet?) : MediaViewObser
     override fun init() {
     }
 
-    fun getPlayState():EnumMediaState {
+    override fun getPlayerState(): EnumMediaState {
         return getPresent()?.getPlayState()!!
     }
 }
