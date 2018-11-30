@@ -14,17 +14,12 @@ class MediaGestureProgressView(context: Context?, layoutID: Int?) : MediaViewObs
     var iv: ImageView? = null
     var progress: ProgressBar? = null
 
-
     override fun createPresent(): MediaGestureProgressViewContract.Present {
         return MediaGestureProgressViewContract.Present(context, this)
     }
     override fun findViews(contentView: View?) {
         iv =  contentView?.findViewById(R.id.iv)
         progress =  contentView?.findViewById(R.id.progress)
-    }
-
-    override fun initData() {
-        getPresent()?.process()
     }
 
     override fun getView(): MediaGestureProgressView {

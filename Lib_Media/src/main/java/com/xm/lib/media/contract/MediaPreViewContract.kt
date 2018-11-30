@@ -27,11 +27,11 @@ class MediaPreViewContract {
         }
 
         fun prepareAsync() {
-            model?.media?.prepareAsync()
+            mediaView?.prepareAsync()
         }
 
         fun notifyObservers() {
-            var event = Event()
+            val event = Event()
                     .setEventType(EnumMediaEventType.VIEW)
                     .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_PREVIEW)
                     .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_CLICK)
@@ -39,23 +39,8 @@ class MediaPreViewContract {
         }
 
         override fun handleMediaEvent(o: MediaViewObservable<*>?, event: Event?) {
-            obtainMedia()
-
             if (EventConstant.VALUE_METHOD_ONPREPARED == event?.parameter?.get(EventConstant.KEY_METHOD)) {
                 view?.getView()?.hide()
-            }
-
-        }
-
-        private fun obtainMedia() {
-            if (null == model?.media && media != null) {
-                model?.media = media
-            }
-        }
-
-        private fun obtainMediaView() {
-            if (null == model?.mediaView && mediaView != null) {
-                model?.mediaView = mediaView
             }
         }
     }

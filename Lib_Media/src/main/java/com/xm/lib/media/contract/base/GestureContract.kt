@@ -3,11 +3,12 @@ package com.xm.lib.media.contract.base
 import android.content.Context
 import android.widget.ProgressBar
 import com.xm.lib.media.AbsMediaCore
+import com.xm.lib.media.component.XmMediaComponent
 import com.xm.lib.media.event.Event
 import com.xm.lib.media.help.LightHelper
 import com.xm.lib.media.help.VolumeHelper
 
-class BaseGestureContract {
+class GestureContract {
     interface View<T> : BaseMediaContract.View<T>
 
     open class Model : BaseMediaContract.Model() {
@@ -18,8 +19,7 @@ class BaseGestureContract {
         val DEFUAT: Float = -1F
         var curProgress: Float? = DEFUAT
         val PERCENT: String = "percent"
-
-        val tag: String? = "BaseGestureContract"
+        val tag: String? = "GestureContract"
 
         /**
          * 音频
@@ -55,7 +55,7 @@ class BaseGestureContract {
          * 进度
          * @return 返回0~100
          */
-        fun getProgresPresent(processBar: ProgressBar?, event: Event?, media: AbsMediaCore?): Int {
+        fun getProgresPresent(processBar: ProgressBar?, event: Event?, media: XmMediaComponent?): Int {
             if (curProgress == DEFUAT) {
                 curProgress = media?.getCurrentPosition()?.toFloat()!! / media.getDuration().toFloat()
             }

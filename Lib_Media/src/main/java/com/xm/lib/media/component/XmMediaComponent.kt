@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import com.xm.lib.media.AbsMediaCore
 import com.xm.lib.media.contract.XmMediaContract
+import com.xm.lib.media.enum_.EnumMediaState
 import com.xm.lib.media.enum_.EnumViewType
 import com.xm.lib.media.event.Event
 import com.xm.lib.media.watcher.MediaViewObservable
@@ -29,10 +30,6 @@ class XmMediaComponent(context: Context?, attrs: AttributeSet?) : MediaViewObser
             val seekTo = "seekTo"
             val release = "release"
         }
-    }
-
-    override fun getMedia(): AbsMediaCore {
-        return getPresent()?.getMediaCore()!!
     }
 
     override fun getView(): XmMediaComponent {
@@ -101,5 +98,9 @@ class XmMediaComponent(context: Context?, attrs: AttributeSet?) : MediaViewObser
 
     @Deprecated("使用setup方法替代")
     override fun init() {
+    }
+
+    fun getPlayState():EnumMediaState {
+        return getPresent()?.getPlayState()!!
     }
 }

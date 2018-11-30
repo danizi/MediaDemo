@@ -1,6 +1,7 @@
 package com.xm.lib.media.contract.base
 
 import android.content.Context
+import android.util.Log
 import com.xm.lib.media.AbsMediaCore
 import com.xm.lib.media.component.XmMediaComponent
 import com.xm.lib.media.enum_.EnumMediaEventType
@@ -14,31 +15,34 @@ class BaseMediaContract {
     }
 
     open class Model {
-        var mediaView: XmMediaComponent? = null
-        @Deprecated("请使用mediaView")
-        var media: AbsMediaCore? = null
+//        var mediaView: XmMediaComponent? = null
+////        @Deprecated("请使用mediaView")
+////        var media: AbsMediaCore? = null
     }
 
     abstract class Present(context: Context?) {
         val context: Context? = context
         var eventFrom: String? = "eventFrom"
         var eventMethod: String? = "eventMethod"
+        @Deprecated("废弃了mediaView替代")
         var media: AbsMediaCore? = null
         var mediaView: XmMediaComponent? = null
+
 
         /**
          * 数据初始化处理
          */
         abstract fun process()
 
-        /**
-         * 分派接受的事件
+        /* ------------------
+         * 观察者接受事件处理
          */
         open fun handleReceiveEvent(o: MediaViewObservable<*>?, event: Event?) {
             eventFrom = event?.parameter?.get(EventConstant.KEY_FROM) as String?
             eventMethod = event?.parameter?.get(EventConstant.KEY_METHOD) as String?
-            getMedia(event)
+
             getMediaView(event)
+            //getMediaView(event)
             if (event?.eventType == EnumMediaEventType.MEDIA) {
                 handleMediaEvent(o!!, event)
             }
@@ -50,53 +54,41 @@ class BaseMediaContract {
             }
         }
 
-        /**
-         * 播放器事件
-         */
         open fun handleMediaEvent(o: MediaViewObservable<*>?, event: Event?) {
 
         }
 
-        /**
-         * 控件事件
-         */
         open fun handleViewEvent(o: MediaViewObservable<*>?, event: Event?) {}
 
-        /**
-         * 其他事件
-         */
         open fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?) {}
 
-        /**
-         * 获取播放抽象对象
-         */
-        private fun getMedia(event: Event?) {
-            if (eventFrom == EventConstant.VALUE_FROM_MEDIACOMPONENT) {
-                when (eventMethod) {
-                    EventConstant.VALUE_METHOD_CORE -> {
-                        if (null != (event?.parameter?.get("mp") as AbsMediaCore?)) {
-                            media = (event?.parameter?.get("mp") as AbsMediaCore?)
-                        }
-                    }
-                }
-            }
-        }
-
-        /**
-         * 获取播放组件
-         */
         private fun getMediaView(event: Event?) {
             if (eventFrom == EventConstant.VALUE_FROM_MEDIACOMPONENT) {
                 when (eventMethod) {
                     EventConstant.VALUE_METHOD_CORE -> {
-                        if (event?.parameter?.get("mediaComponent") != null) {
-                            if (null != event?.parameter?.get("mediaComponent") as XmMediaComponent) {
-                                mediaView = event?.parameter?.get("mediaComponent") as XmMediaComponent
-                            }
+                        if (null != (event?.parameter?.get("mp") as AbsMediaCore?)) { //获取播放器接口 todo 废弃了
+                            media = (event?.parameter?.get("mp") as AbsMediaCore?)
+                        }
+                        if (null != event?.parameter?.get("mediaComponent") as XmMediaComponent) {//获取播放器View对象
+                            mediaView = event?.parameter?.get("mediaComponent") as XmMediaComponent
                         }
                     }
                 }
             }
         }
+
+//        private fun getMediaView(event: Event?) {
+//            if (eventFrom == EventConstant.VALUE_FROM_MEDIACOMPONENT) {
+//                when (eventMethod) {
+//                    EventConstant.VALUE_METHOD_CORE -> {
+//                        if (event?.parameter?.get("mediaComponent") != null) {
+//                            if (null != event?.parameter?.get("mediaComponent") as XmMediaComponent) {
+//                                mediaView = event?.parameter?.get("mediaComponent") as XmMediaComponent
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 }

@@ -28,16 +28,6 @@ class MediaCompleteViewContract {
 
         override fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?) {
         }
-        private fun obtainMedia() {
 
-            if (null == model?.media && media != null) {
-                model?.media = media
-            }
-        }
-        private fun obtainMediaView() {
-            if (null == model?.mediaView && mediaView != null) {
-                model?.mediaView = mediaView
-            }
-        }
     }
 }

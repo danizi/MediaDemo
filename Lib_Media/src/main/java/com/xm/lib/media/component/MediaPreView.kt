@@ -40,9 +40,8 @@ class MediaPreView(context: Context?, layoutID: Int?, preUrl: String?) : MediaVi
 
     override fun initData() {
         getPresent()?.model?.preUrl = "http://img.videocc.net/uimage/2/26de49f8c2/9/26de49f8c273bbc8f6812d1422a11b39_1.jpg"
-        getPresent()?.process()
+        super.initData()
     }
-
 }
 
 

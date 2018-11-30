@@ -15,8 +15,4 @@ class MediaCompleteView(context: Context?, layoutID: Int?) : MediaViewObservable
     override fun createPresent(): MediaCompleteViewContract.Present {
         return MediaCompleteViewContract.Present(context, this)
     }
-
-    override fun update(o: MediaViewObservable<*>, event: Event) {
-        getPresent()?.handleReceiveEvent(o, event)
-    }
 }

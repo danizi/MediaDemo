@@ -11,12 +11,6 @@ class MediaLoadingView(context: Context?, layoutID: Int?) : MediaViewObservable<
         return MediaLoadingViewContract.Present(context, this)
     }
 
-    override fun initListenner() {}
-
-    override fun initData() {
-        getPresent()?.process()
-    }
-
     override fun getView(): MediaLoadingView {
         return this
     }

@@ -23,10 +23,6 @@ class MediaGestureLightView(context: Context?, layoutID: Int?) : MediaViewObserv
         progress =  contentView?.findViewById(R.id.progress)
     }
 
-    override fun initData() {
-        getPresent()?.process()
-    }
-
     override fun getView(): MediaGestureLightView {
         return this
     }

@@ -19,11 +19,9 @@ class MediaControlViewContract {
     class Model : BaseMediaContract.Model() {
         var startResId: Int? = R.mipmap.media_play
         var pauseResId: Int? = R.mipmap.media_pause
-
         var visibilityFlag: Int? = android.view.View.GONE             //显示标识位,是否显示控制视图
         var prepared: Boolean? = false                                //准备状态标志位
         var curScreenMode: String = EventConstant.VALUE_SCREEN_SMALL  //当前窗口模式 全屏/小窗口
-
     }
 
     class Present(context: Context?, val view: View?) : BaseMediaContract.Present(context) {
@@ -34,10 +32,6 @@ class MediaControlViewContract {
         }
 
         override fun handleMediaEvent(o: MediaViewObservable<*>?, event: Event?) {
-            if (null == model?.media && null != media) {
-                model?.media = media
-            }
-
             when (event?.parameter?.get(EventConstant.KEY_METHOD)) {
                 EventConstant.VALUE_METHOD_ONPREPARED -> {
                     model?.prepared = true
@@ -57,14 +51,14 @@ class MediaControlViewContract {
          */
         private fun timer() {
             view?.getView()?.seekBar?.max = 100
-            view?.getView()?.tvDuration?.text = ToolUtil.formatTime(model?.media?.getDuration())
+            view?.getView()?.tvDuration?.text = ToolUtil.formatTime(mediaView?.getDuration())
             val timer = Timer()
             val timerTask = object : TimerTask() {
                 override fun run() {
                     view?.getView()?.seekBar?.post {
                         try {
-                            view.getView().tvCurrentPosition?.text = ToolUtil.formatTime(model?.media?.getCurrentPosition())
-                            var percentF = model?.media?.getCurrentPosition()?.toFloat()!! / model?.media?.getDuration()!!
+                            view.getView().tvCurrentPosition?.text = ToolUtil.formatTime(mediaView?.getCurrentPosition())
+                            val percentF = mediaView?.getCurrentPosition()?.toFloat()!! / mediaView?.getDuration()!!
                             view.getView().seekBar?.progress = (percentF * 100).toInt()
                         } catch (e: Exception) {
                             e.printStackTrace()
@@ -76,8 +70,6 @@ class MediaControlViewContract {
         }
 
         override fun handleViewEvent(o: MediaViewObservable<*>?, event: Event?) {
-            var eventFrom = event?.parameter?.get(EventConstant.KEY_FROM)
-            var eventMethod = event?.parameter?.get(EventConstant.KEY_METHOD)
             when (eventMethod) {
                 EventConstant.VALUE_METHOD_CLICK -> {
                     model?.visibilityFlag = if (model?.visibilityFlag == android.view.View.GONE) {
@@ -91,19 +83,15 @@ class MediaControlViewContract {
             }
         }
 
-        override fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?) {
-
-        }
-
         /**
          * 暂停&播放
          */
         fun startOrPause() {
-            if (model?.media?.playerState == EnumMediaState.PLAYING) {
-                model?.media?.pause()
+            if (mediaView?.getPlayState() == EnumMediaState.PLAYING) {
+                mediaView?.pause()
                 view?.getView()?.imgPlayPause?.setImageResource(model?.startResId!!)
             } else {
-                model?.media?.start()
+                mediaView?.start()
                 view?.getView()?.imgPlayPause?.setImageResource(model?.pauseResId!!)
             }
         }
@@ -121,27 +109,16 @@ class MediaControlViewContract {
             }
         }
 
-        fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-        }
+        /*-------
+         * SeekBar监听
+         */
+        fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {}
 
-        fun onStartTrackingTouch(seekBar: SeekBar?) {
-        }
+        fun onStartTrackingTouch(seekBar: SeekBar?) {}
 
         fun onStopTrackingTouch(seekBar: SeekBar?) {
             val msec: Long = (seekBar?.progress!!.toFloat() / 100F * mediaView?.getDuration()!! as Long).toLong()
             mediaView?.seekTo(msec)
-        }
-
-        private fun obtainMedia() {
-            if (null == model?.media && media != null) {
-                model?.media = media
-            }
-        }
-
-        private fun obtainMediaView() {
-            if (null == model?.mediaView && mediaView != null) {
-                model?.mediaView = mediaView
-            }
         }
     }
 }

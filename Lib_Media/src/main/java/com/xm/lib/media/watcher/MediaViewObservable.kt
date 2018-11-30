@@ -11,26 +11,15 @@ import com.xm.lib.media.event.Event
 import com.xm.lib.media.imp.IInit
 
 /**
- *
- * 事件驱动   ->  视图
- *
- * 外部事件   ：网络变化,横竖切屏
- * 播放器事件 ：各种播放的监听事件
- * 视图事件   ：触控事件(手势,点击,长按)
- *
- * 1 所以视图是事件生产者也是消费者，所以在这里加了观察者-被观察者
- * 2 所有的视图都相互绑定了，即事件会一一全部下发
- *
+ * 所有播放视图的基类
+ * 1 采用mvp模式编写,对外提供获取控制层方法
+ * 2 播放视图既要发送事件又要处理事件,所有在这里采用观察者模式，所以播放视图即是一个观察者又是被观察者
  */
-abstract class MediaViewObservable<T :BaseMediaContract.Present> : FrameLayout, Observer {
-    private var present: T? = null
-    private var contentView: View? = null
-    private var observers: ArrayList<Observer>? = ArrayList()
-    private var layoutID: Int? = null
+abstract class MediaViewObservable<T : BaseMediaContract.Present> : FrameLayout, Observer {
 
     constructor(context: Context, layoutID: Int) : super(context) {
         present = createPresent()
-        contentView = getContentView(layoutID)      // todo 为非播放控件提供
+        contentView = getContentView(layoutID)
         addView(contentView)
         hide()
         findViews(contentView)
@@ -50,36 +39,44 @@ abstract class MediaViewObservable<T :BaseMediaContract.Present> : FrameLayout, 
      * -------
      * 初始化
      */
-    open fun findViews(contentView: View?) {
+    private var contentView: View? = null
 
-    }
+    private var layoutID: Int? = null
 
-    open fun initListenner() {
+    open fun findViews(contentView: View?) {}
 
-    }
+    open fun initListenner() {}
 
     open fun initData() {
-
+        getPresent()?.process()
     }
 
     /*
      * -------
      * 创建P层
      */
+    private var present: T? = null
+
     abstract fun createPresent(): T
 
     fun getPresent(): T? {
         return present
     }
 
+    /*
+     * -------
+     * 观察者接受信息
+     */
     override fun update(o: MediaViewObservable<*>, event: Event) {
         getPresent()?.handleReceiveEvent(o, event)
     }
 
     /*
      * -------
-     * 被观察者
+     * 被观察者相关
      */
+    private var observers: ArrayList<Observer>? = ArrayList()
+
     @Synchronized
     fun addObserver(o: Observer?) {
         if (o == null)
@@ -94,6 +91,7 @@ abstract class MediaViewObservable<T :BaseMediaContract.Present> : FrameLayout, 
         observers?.remove(o)
     }
 
+    @Synchronized
     fun notifyObservers(event: Event) {
         for (obs in this!!.observers!!) {
             obs.update(this, event)
@@ -107,7 +105,7 @@ abstract class MediaViewObservable<T :BaseMediaContract.Present> : FrameLayout, 
 
     /*
      * -------
-     * 内容装载控件相关处理
+     * 内容装载控件相关
      */
     private fun getContentView(layoutID: Int, root: ViewGroup, attachToRoot: Boolean): View {
         return LayoutInflater.from(context).inflate(layoutID, root, attachToRoot)

@@ -13,6 +13,7 @@ import com.xm.lib.media.component.XmMediaComponent
 import com.xm.lib.media.contract.base.BaseMediaContract
 import com.xm.lib.media.enum_.EnumGestureState
 import com.xm.lib.media.enum_.EnumMediaEventType
+import com.xm.lib.media.enum_.EnumMediaState
 import com.xm.lib.media.enum_.EnumViewType
 import com.xm.lib.media.event.Event
 import com.xm.lib.media.event.EventConstant
@@ -31,8 +32,6 @@ class XmMediaContract {
         fun setup(): XmMediaComponent
         fun core(absMediaCore: AbsMediaCore?): XmMediaComponent
         fun build()
-        @Deprecated("")
-        fun getMedia(): AbsMediaCore
     }
 
     class Model : BaseMediaContract.Model() {
@@ -67,7 +66,7 @@ class XmMediaContract {
                                     .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_SEEKTO))
                 }
                 XmMediaComponent.Action.getDuration -> {
-                    result = player?.getCurrentPosition()!!
+                    result = player?.getDuration()!!
                 }
                 XmMediaComponent.Action.getCurrentPosition -> {
                     result = player?.getCurrentPosition()!!
@@ -143,7 +142,7 @@ class XmMediaContract {
                             .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
                             .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_CORE)
                             .setParameter("mp", player!!)
-                            .setParameter("mediaComponent",  view.getView()))
+                            .setParameter("mediaComponent", view.getView()))
         }
 
         /**
@@ -357,8 +356,9 @@ class XmMediaContract {
             }
         }
 
-        fun getMediaCore(): AbsMediaCore {
-            return model?.media!!
+        fun getPlayState(): EnumMediaState {
+            return player?.playerState!!
         }
+
     }
 }

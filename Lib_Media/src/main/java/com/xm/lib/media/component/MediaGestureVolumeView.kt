@@ -23,14 +23,6 @@ class MediaGestureVolumeView(context: Context?, layoutID: Int?) : MediaViewObser
         progress =  contentView?.findViewById(R.id.progress)
     }
 
-    override fun initData() {
-        getPresent()?.process()
-    }
-
-    override fun update(o: MediaViewObservable<*>, event: Event) {
-        getPresent()?.handleReceiveEvent(o, event)
-    }
-
     override fun getView(): MediaGestureVolumeView {
         return this
     }

@@ -54,10 +54,6 @@ class MediaControlView(context: Context?, layoutID: Int?) : MediaViewObservable<
         })
     }
 
-    override fun initData() {
-        getPresent()?.process()
-    }
-
     override fun getView(): MediaControlView {
         return this
     }
