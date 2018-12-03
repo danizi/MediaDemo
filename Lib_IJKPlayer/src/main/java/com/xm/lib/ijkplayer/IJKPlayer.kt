@@ -10,6 +10,8 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer
 
 class IJKPlayer : AbsMediaCore() {
 
+    var player: IjkMediaPlayer? = null
+
     private val SO_LIB_NAME = "libijkplayer.so"
     private val FRAMEDROP = "framedrop"
     private val START_ON_PREPARED = "start-on-prepared"
@@ -20,18 +22,13 @@ class IJKPlayer : AbsMediaCore() {
     private val MEDIACODEC_AUTO_ROTATE = "mediacodec-auto-rotate"
     private val MEDIACODEC_HANDLE_RESOLUTION_CHANGE = "mediacodec-handle-resolution-change"
 
-    var player: IjkMediaPlayer? = null
-
     override fun init() {
         playerConfig()
         addSurfaceViewAndListener()
-        setUpPlayerListener()
+        initPlayerListener()
     }
 
-    /**
-     * 设置监听
-     */
-    fun setUpPlayerListener() {
+    private fun initPlayerListener() {
         player?.setOnPreparedListener {
             playerState = EnumMediaState.PLAYING
             absMediaCoreOnLisenter?.onPrepared(this)
@@ -57,7 +54,7 @@ class IJKPlayer : AbsMediaCore() {
             if (701 == what) {//视频缓存中
 
             } else if (702 == what) { //视频缓存完成
-                player?.setSpeed(4/10f)
+                player?.setSpeed(4 / 10f)
                 absMediaCoreOnLisenter?.onSeekComplete(this)
                 playerState = EnumMediaState.PLAYING
             }
@@ -68,9 +65,6 @@ class IJKPlayer : AbsMediaCore() {
         }
     }
 
-    /**
-     * 添加画布并设置画布监听
-     */
     private fun addSurfaceViewAndListener() {
         mSurfaceView = createSurfaceView()
         mSurfaceView?.holder?.addCallback(object : SurfaceHolder.Callback {
@@ -89,9 +83,6 @@ class IJKPlayer : AbsMediaCore() {
         tagerView?.addView(mSurfaceView, 0)
     }
 
-    /**
-     *  初始化相关配置
-     */
     private fun playerConfig() {
         IjkMediaPlayer.loadLibrariesOnce(null)
         IjkMediaPlayer.native_profileBegin(SO_LIB_NAME)
@@ -106,7 +97,6 @@ class IJKPlayer : AbsMediaCore() {
         player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, MEDIACODEC_HANDLE_RESOLUTION_CHANGE, 1)
     }
 
-
     private fun createSurfaceView(): SurfaceView {
         val surfaceView = SurfaceView(context)
         val layoutParams: ViewGroup.LayoutParams = ViewGroup.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
@@ -115,6 +105,10 @@ class IJKPlayer : AbsMediaCore() {
     }
 
     override fun prepareAsync() {
+        //回收资源
+        //player?.stop()
+        //player?.release()
+
         player?.setLogEnabled(true)
         player?.setDisplay(mSurfaceView!!.holder)
         player?.setScreenOnWhilePlaying(true)

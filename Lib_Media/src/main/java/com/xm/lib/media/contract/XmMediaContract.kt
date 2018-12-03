@@ -38,8 +38,8 @@ class XmMediaContract {
     class Model : BaseMediaContract.Model() {
         var dataSource: String? = null
         var addViewMap: HashMap<EnumViewType, MediaViewObservable<*>>? = HashMap()
-        var xmMediaFirstW: Int? = -1
-        var xmMediaFirstH: Int? = -1
+//        var xmMediaFirstW: Int? = -1
+//        var xmMediaFirstH: Int? = -1
         var player: AbsMediaCore? = null
     }
 
@@ -301,28 +301,6 @@ class XmMediaContract {
 
         override fun process() {
 
-        }
-
-        override fun handleViewEvent(o: MediaViewObservable<*>?, event: Event?) {
-
-            if (EventConstant.VALUE_SCREEN_FULL == (event?.parameter?.get(EventConstant.KEY_SCREEN_MODE))) {
-                if (model?.xmMediaFirstW == -1 && model?.xmMediaFirstH == -1) {
-                    //记录原有的view的宽高
-                    model?.xmMediaFirstW = view?.getView()?.measuredWidth
-                    model?.xmMediaFirstH = view?.getView()?.measuredHeight
-                }
-
-                PolyvScreenUtils.hideStatusBar(context as Activity)
-                PolyvScreenUtils.setLandscape(context)
-                view?.getView()?.layoutParams?.width = PolyvScreenUtils.getNormalWH(context)[0]
-                view?.getView()?.layoutParams?.height = PolyvScreenUtils.getNormalWH(context)[1]
-
-            } else if (EventConstant.VALUE_SCREEN_SMALL == ((event?.parameter?.get(EventConstant.KEY_SCREEN_MODE)))) {
-                PolyvScreenUtils.hideStatusBar(context as Activity)
-                PolyvScreenUtils.setPortrait(context)
-                view?.getView()?.layoutParams?.width = model?.xmMediaFirstW!!
-                view?.getView()?.layoutParams?.height = model?.xmMediaFirstH!!
-            }
         }
 
         override fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?) {

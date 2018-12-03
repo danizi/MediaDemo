@@ -10,6 +10,7 @@ import com.xm.lib.media.event.Event
 import com.xm.lib.media.event.EventConstant
 import common.xm.com.xmcommon.R
 import com.xm.lib.media.component.*
+import com.xm.lib.media.component.control.MediaControlView
 
 class ActMedia : AppCompatActivity() {
     //播放器

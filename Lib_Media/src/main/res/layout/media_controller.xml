@@ -3,19 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <!--横屏布局-->
+    android:layout_height="match_parent"
+    android:id="@+id/cl_container"
+    >
 
-    <!--竖屏布局-->
-    <LinearLayout
-        android:id="@+id/ll_controller_v"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <include layout="@layout/media_controller_v" />
-
-    </LinearLayout>
-
+    <!--控制器容器-->
+    <!--<LinearLayout-->
+    <!--android:id="@+id/ll_container"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--android:orientation="horizontal" />-->
 
 </android.support.constraint.ConstraintLayout>

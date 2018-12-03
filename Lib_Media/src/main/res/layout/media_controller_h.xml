@@ -3,40 +3,69 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <!--横屏布局-->
-    <!--竖屏布局-->
+    android:layout_height="match_parent"
+    android:background="@drawable/media_shape_gradient">
 
-    <!--top layout-->
-    <!--bottom layout-->
     <TextView
-        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="全屏" />
+
+    <ImageView
+        android:id="@+id/img_play_pause"
+        android:layout_width="22dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="20dp"
+        android:src="@mipmap/media_pause"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_currentPosition"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginLeft="10dp"
+        android:text="00:00"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/img_play_pause"
+        app:layout_constraintStart_toEndOf="@+id/img_play_pause"
+        app:layout_constraintTop_toTopOf="@+id/img_play_pause"
         tools:ignore="MissingConstraints" />
 
     <SeekBar
         android:id="@+id/seekBar"
         android:layout_width="0dp"
-        android:layout_height="31dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/textView2"
-        app:layout_constraintStart_toEndOf="@+id/textView"
+        android:layout_height="0dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        app:layout_constraintBottom_toBottomOf="@+id/img_play_pause"
+        app:layout_constraintEnd_toStartOf="@+id/tv_duration"
+        app:layout_constraintStart_toEndOf="@+id/tv_currentPosition"
+        app:layout_constraintTop_toTopOf="@+id/img_play_pause"
         tools:ignore="MissingConstraints" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/tv_duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginRight="10dp"
+        android:text="03:00"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/img_screen_mode"
+        app:layout_constraintEnd_toStartOf="@+id/img_screen_mode"
+        app:layout_constraintTop_toTopOf="@+id/img_screen_mode"
         tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/img_screen_mode"
+        android:layout_width="22dp"
+        android:layout_height="30dp"
+        android:layout_marginRight="20dp"
+        android:src="@mipmap/media_screen_mode"
+        app:layout_constraintBottom_toBottomOf="@+id/img_play_pause"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/img_play_pause"
+        tools:ignore="MissingConstraints" />
+
 
 </android.support.constraint.ConstraintLayout>

@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/media_shape_gradient">
+    android:background="@drawable/media_shape_gradient"
+    app:layout_constraintBottom_toBottomOf="parent">
 
     <ImageView
         android:id="@+id/img_play_pause"
@@ -13,8 +14,7 @@
         android:layout_marginLeft="20dp"
         android:src="@mipmap/media_pause"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/tv_currentPosition"

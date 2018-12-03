@@ -1,4 +1,4 @@
-package com.xm.lib.media.component
+package com.xm.lib.media.component.control
 
 import android.content.Context
 import android.view.View
@@ -6,11 +6,10 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import com.xm.lib.media.R
-import com.xm.lib.media.event.Event
 import com.xm.lib.media.watcher.MediaViewObservable
-import common.xm.com.xmcommon.media.mediaview.contract.MediaControlViewContract
+import common.xm.com.xmcommon.media.mediaview.contract.MediaVControlViewContract
 
-class MediaControlView(context: Context?, layoutID: Int?) : MediaViewObservable<MediaControlViewContract.Present>(context!!, layoutID!!), MediaControlViewContract.View {
+class MediaVControlView(context: Context?, layoutID: Int?) : MediaViewObservable<MediaVControlViewContract.Present>(context!!, layoutID!!), MediaVControlViewContract.View {
 
     var imgPlayPause: ImageView? = null
     var tvCurrentPosition: TextView? = null
@@ -18,8 +17,8 @@ class MediaControlView(context: Context?, layoutID: Int?) : MediaViewObservable<
     var tvDuration: TextView? = null
     var imgScreenMode: ImageView? = null
 
-    override fun createPresent(): MediaControlViewContract.Present {
-        return MediaControlViewContract.Present(context, this)
+    override fun createPresent(): MediaVControlViewContract.Present {
+        return MediaVControlViewContract.Present(context, this)
     }
 
     override fun findViews(contentView: View?) {
@@ -41,7 +40,7 @@ class MediaControlView(context: Context?, layoutID: Int?) : MediaViewObservable<
 
         seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                getPresent()?.onProgressChanged(seekBar, progress, fromUser)
+                getPresent()?.onProgressChanged(progress, fromUser)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -54,8 +53,9 @@ class MediaControlView(context: Context?, layoutID: Int?) : MediaViewObservable<
         })
     }
 
-    override fun getView(): MediaControlView {
+    override fun getView(): MediaVControlView {
         return this
     }
+
 }
 

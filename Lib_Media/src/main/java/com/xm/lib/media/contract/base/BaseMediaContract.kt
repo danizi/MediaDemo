@@ -14,24 +14,14 @@ class BaseMediaContract {
         fun getView(): T
     }
 
-    open class Model {
-//        var mediaView: XmMediaComponent? = null
-////        @Deprecated("请使用mediaView")
-////        var media: AbsMediaCore? = null
-    }
+    open class Model
 
     abstract class Present(context: Context?) {
         val context: Context? = context
         var eventFrom: String? = "eventFrom"
         var eventMethod: String? = "eventMethod"
-        @Deprecated("废弃了mediaView替代")
-        var media: AbsMediaCore? = null
         var mediaView: XmMediaComponent? = null
 
-
-        /**
-         * 数据初始化处理
-         */
         abstract fun process()
 
         /* ------------------
@@ -40,9 +30,7 @@ class BaseMediaContract {
         open fun handleReceiveEvent(o: MediaViewObservable<*>?, event: Event?) {
             eventFrom = event?.parameter?.get(EventConstant.KEY_FROM) as String?
             eventMethod = event?.parameter?.get(EventConstant.KEY_METHOD) as String?
-
             getMediaView(event)
-            //getMediaView(event)
             if (event?.eventType == EnumMediaEventType.MEDIA) {
                 handleMediaEvent(o!!, event)
             }
@@ -66,9 +54,6 @@ class BaseMediaContract {
             if (eventFrom == EventConstant.VALUE_FROM_MEDIACOMPONENT) {
                 when (eventMethod) {
                     EventConstant.VALUE_METHOD_CORE -> {
-                        if (null != (event?.parameter?.get("mp") as AbsMediaCore?)) { //获取播放器接口 todo 废弃了
-                            media = (event?.parameter?.get("mp") as AbsMediaCore?)
-                        }
                         if (null != event?.parameter?.get("mediaComponent") as XmMediaComponent) {//获取播放器View对象
                             mediaView = event?.parameter?.get("mediaComponent") as XmMediaComponent
                         }
@@ -76,19 +61,5 @@ class BaseMediaContract {
                 }
             }
         }
-
-//        private fun getMediaView(event: Event?) {
-//            if (eventFrom == EventConstant.VALUE_FROM_MEDIACOMPONENT) {
-//                when (eventMethod) {
-//                    EventConstant.VALUE_METHOD_CORE -> {
-//                        if (event?.parameter?.get("mediaComponent") != null) {
-//                            if (null != event?.parameter?.get("mediaComponent") as XmMediaComponent) {
-//                                mediaView = event?.parameter?.get("mediaComponent") as XmMediaComponent
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
     }
 }

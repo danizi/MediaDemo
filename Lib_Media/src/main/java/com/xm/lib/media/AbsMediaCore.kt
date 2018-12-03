@@ -26,4 +26,6 @@ abstract class AbsMediaCore : IMediaCore {
     fun setOnLisenter(absMediaCoreOnLisenter: AbsMediaCoreOnLisenter) {
         this.absMediaCoreOnLisenter = absMediaCoreOnLisenter
     }
+
+
 }
