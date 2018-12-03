@@ -2,6 +2,9 @@ package common.xm.com.xmcommon.media
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.ListView
+import android.widget.SimpleAdapter
 import com.xm.lib.ijkplayer.IJKPlayer
 import com.xm.lib.media.component.XmMediaComponent
 import com.xm.lib.media.enum_.EnumMediaEventType
@@ -34,6 +37,33 @@ class ActMedia : AppCompatActivity() {
                     .addViewToMedia(EnumViewType.GESTURE_VOLUME, MediaGestureVolumeView(this, R.layout.media_gesture_volume))        //绑定手势滑动声音视图
                     .setDisplay("http://hls.videocc.net/26de49f8c2/9/26de49f8c273bbc8f6812d1422a11b39_2.m3u8")                                 //设置播放资源
                     .build()                                                                                                                   //构建
+        }
+
+
+        val listView = findViewById<ListView>(R.id.list)
+        val data: ArrayList<Map<String, String>> = ArrayList()
+        val map1: HashMap<String, String> = HashMap()
+        val map2: HashMap<String, String> = HashMap()
+        val map3: HashMap<String, String> = HashMap()
+        val map4: HashMap<String, String> = HashMap()
+        map1.put("name", "切换播放地址")
+        map2.put("name", "切换播放器")
+        map3.put("name", "切换画布")
+        map4.put("name", "移除控制View")
+        data.add(map1)
+        data.add(map2)
+        data.add(map3)
+        data.add(map4)
+
+        listView.adapter = SimpleAdapter(this, data, R.layout.item_simple, arrayOf("name"), intArrayOf(R.id.tv))
+        listView.setOnItemClickListener { parent, view, position, id ->
+            when (position) {
+                0 -> {
+                    xmMediaComponent?.setDisplay("http://v.ysbang.cn//data/video/2015/rkb/2015rkb01.mp4")
+                    xmMediaComponent?.prepareAsync()
+                }
+            }
+            Log.d("", "")
         }
     }
 

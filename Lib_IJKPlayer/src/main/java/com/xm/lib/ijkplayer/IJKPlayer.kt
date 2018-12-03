@@ -54,7 +54,6 @@ class IJKPlayer : AbsMediaCore() {
             if (701 == what) {//视频缓存中
 
             } else if (702 == what) { //视频缓存完成
-                player?.setSpeed(4 / 10f)
                 absMediaCoreOnLisenter?.onSeekComplete(this)
                 playerState = EnumMediaState.PLAYING
             }
@@ -105,10 +104,6 @@ class IJKPlayer : AbsMediaCore() {
     }
 
     override fun prepareAsync() {
-        //回收资源
-        //player?.stop()
-        //player?.release()
-
         player?.setLogEnabled(true)
         player?.setDisplay(mSurfaceView!!.holder)
         player?.setScreenOnWhilePlaying(true)
@@ -147,8 +142,8 @@ class IJKPlayer : AbsMediaCore() {
 
     override fun release() {
         player?.reset()
-        player?.release()
-        player = null
+//        player?.release()
+//        player = null
         playerState = EnumMediaState.RELEASE
     }
 }

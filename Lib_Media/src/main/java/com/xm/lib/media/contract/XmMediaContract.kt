@@ -80,6 +80,8 @@ class XmMediaContract {
                     model?.dataSource = params[0] as String?
                 }
                 XmMediaComponent.Action.prepareAsync -> {
+                    //重置播放状态
+                    model?.player?.release()
                     model?.player?.prepareAsync()
                 }
             }
