@@ -1,14 +1,15 @@
 package com.xm.lib.media.component
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
 import android.widget.ImageView
 import com.xm.lib.media.R
-import com.xm.lib.media.event.Event
 import com.xm.lib.media.watcher.MediaViewObservable
 import common.xm.com.xmcommon.media.mediaview.contract.MediaPreViewContract
 
 
+@SuppressLint("ViewConstructor")
 class MediaPreView(context: Context?, layoutID: Int?, preUrl: String?) : MediaViewObservable<MediaPreViewContract.Present>(context!!, layoutID!!), MediaPreViewContract.View {
     var preUrl: String? = preUrl
     var ivPre: ImageView? = null

@@ -1,5 +1,6 @@
 package com.xm.lib.media.component.control
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
 import android.widget.ImageView
@@ -9,6 +10,7 @@ import com.xm.lib.media.R
 import com.xm.lib.media.watcher.MediaViewObservable
 import common.xm.com.xmcommon.media.mediaview.contract.MediaVControlViewContract
 
+@SuppressLint("ViewConstructor")
 class MediaVControlView(context: Context?, layoutID: Int?) : MediaViewObservable<MediaVControlViewContract.Present>(context!!, layoutID!!), MediaVControlViewContract.View {
 
     var imgPlayPause: ImageView? = null

@@ -13,13 +13,5 @@ class MediaControlView(context: Context?, layoutID: Int?) : MediaViewObservable<
     override fun getView(): MediaControlView {
         return this
     }
-
-    fun setV(){
-
-    }
-
-    fun setH(){
-
-    }
 }
 

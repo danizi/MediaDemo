@@ -27,5 +27,5 @@ abstract class AbsMediaCore : IMediaCore {
         this.absMediaCoreOnLisenter = absMediaCoreOnLisenter
     }
 
-
+    abstract fun reset()
 }

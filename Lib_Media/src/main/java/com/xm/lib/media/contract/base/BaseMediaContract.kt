@@ -1,8 +1,6 @@
 package com.xm.lib.media.contract.base
 
 import android.content.Context
-import android.util.Log
-import com.xm.lib.media.AbsMediaCore
 import com.xm.lib.media.component.XmMediaComponent
 import com.xm.lib.media.enum_.EnumMediaEventType
 import com.xm.lib.media.event.Event
@@ -16,8 +14,7 @@ class BaseMediaContract {
 
     open class Model
 
-    abstract class Present(context: Context?) {
-        val context: Context? = context
+    abstract class Present(val context: Context?) {
         var eventFrom: String? = "eventFrom"
         var eventMethod: String? = "eventMethod"
         var mediaView: XmMediaComponent? = null
@@ -54,9 +51,7 @@ class BaseMediaContract {
             if (eventFrom == EventConstant.VALUE_FROM_MEDIACOMPONENT) {
                 when (eventMethod) {
                     EventConstant.VALUE_METHOD_CORE -> {
-                        if (null != event?.parameter?.get("mediaComponent") as XmMediaComponent) {//获取播放器View对象
-                            mediaView = event?.parameter?.get("mediaComponent") as XmMediaComponent
-                        }
+                        mediaView = event?.parameter?.get("mediaComponent") as XmMediaComponent
                     }
                 }
             }

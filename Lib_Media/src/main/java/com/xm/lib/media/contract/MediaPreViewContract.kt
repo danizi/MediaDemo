@@ -3,6 +3,7 @@ package common.xm.com.xmcommon.media.mediaview.contract
 import android.content.Context
 import com.bumptech.glide.Glide
 import com.xm.lib.media.component.MediaPreView
+import com.xm.lib.media.component.XmMediaComponent
 import com.xm.lib.media.contract.base.BaseMediaContract
 import com.xm.lib.media.enum_.EnumMediaEventType
 import com.xm.lib.media.event.Event
@@ -26,15 +27,16 @@ class MediaPreViewContract {
         }
 
         fun prepareAsync() {
-            mediaView?.prepareAsync()
+            //mediaView?.prepareAsync()
+            mediaView?.action(XmMediaComponent.Action.prepareAsync)
         }
 
         fun notifyObservers() {
-            val event = Event()
+            val event:Event? = Event()
                     .setEventType(EnumMediaEventType.VIEW)
                     .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_PREVIEW)
                     .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_CLICK)
-            view?.getView()?.notifyObservers(event)
+            view?.getView()?.notifyObservers(event!!)
         }
 
         override fun handleMediaEvent(o: MediaViewObservable<*>?, event: Event?) {

@@ -1,4 +1,4 @@
-package common.xm.com.xmcommon.media.mediaview.contract
+package com.xm.lib.media.contract.control
 
 import android.app.Activity
 import android.content.Context

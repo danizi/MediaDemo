@@ -1,5 +1,6 @@
 package common.xm.com.xmcommon.media
 
+import android.content.res.Configuration
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -25,8 +26,7 @@ class ActMedia : AppCompatActivity() {
         xmMediaComponent = findViewById(R.id.media)
         if (xmMediaComponent != null) {
             xmMediaComponent!!
-                    .core(IJKPlayer())                                                                                                        //使用的播放器引擎
-                    .setup()                                                                                                                  //播放器初始化
+                    .core(IJKPlayer())                                                                                                        //使用的播放器引擎&播放器初始化
                     .addViewToMedia(EnumViewType.PREVIEW, MediaPreView(this, R.layout.media_preview, preUrl))                        //绑定预览视图
                     .addViewToMedia(EnumViewType.LOADING, MediaLoadingView(this, R.layout.media_loading))                            //绑定加载视图
                     .addViewToMedia(EnumViewType.CONTROLLER, MediaControlView(this, R.layout.media_controller))                      //绑定控制视图
@@ -39,7 +39,11 @@ class ActMedia : AppCompatActivity() {
                     .build()                                                                                                                   //构建
         }
 
-
+        /**
+         * 播放器事件 :
+         * 外部事件   : 手机来电、手机息屏
+         * 控件事件   : 点击,进度条滑动,等其他
+         */
         val listView = findViewById<ListView>(R.id.list)
         val data: ArrayList<Map<String, String>> = ArrayList()
         val map1: HashMap<String, String> = HashMap()
@@ -60,11 +64,25 @@ class ActMedia : AppCompatActivity() {
             when (position) {
                 0 -> {
                     xmMediaComponent?.setDisplay("http://v.ysbang.cn//data/video/2015/rkb/2015rkb01.mp4")
-                    xmMediaComponent?.prepareAsync()
+                    xmMediaComponent?.action(XmMediaComponent.Action.setDisplay, "http://v.ysbang.cn//data/video/2015/rkb/2015rkb01.mp4")
+                    xmMediaComponent?.action(XmMediaComponent.Action.prepareAsync)
                 }
             }
             Log.d("", "")
         }
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        notifyObservers("Activity", "onRestart")
+    }
+
+    override fun onStart() {
+        super.onStart()
+    }
+
+    override fun onStop() {
+        super.onStop()
     }
 
     override fun onResume() {
@@ -80,6 +98,10 @@ class ActMedia : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         notifyObservers("Activity", "onDestroy")
+    }
+
+    override fun applyOverrideConfiguration(overrideConfiguration: Configuration?) {
+        super.applyOverrideConfiguration(overrideConfiguration)
     }
 
     private fun notifyObservers(from: String?, method: String?) {

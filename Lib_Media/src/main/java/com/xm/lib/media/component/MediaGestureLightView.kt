@@ -1,14 +1,15 @@
 package com.xm.lib.media.component
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import com.xm.lib.media.R
-import com.xm.lib.media.event.Event
 import com.xm.lib.media.watcher.MediaViewObservable
 import common.xm.com.xmcommon.media.mediaview.contract.MediaGestureLightViewContract
 
+@SuppressLint("ViewConstructor")
 class MediaGestureLightView(context: Context?, layoutID: Int?) : MediaViewObservable<MediaGestureLightViewContract.Present>(context!!,layoutID!!), MediaGestureLightViewContract.View {
 
     var iv: ImageView? = null

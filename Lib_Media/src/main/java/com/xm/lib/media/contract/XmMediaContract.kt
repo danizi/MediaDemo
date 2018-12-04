@@ -1,23 +1,29 @@
 package com.xm.lib.media.contract
-
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import com.xm.lib.media.AbsMediaCore
-import com.xm.lib.media.PolyvScreenUtils
 import com.xm.lib.media.component.XmMediaComponent
+import com.xm.lib.media.component.XmMediaComponent.Action.Companion.getCurrentPosition
+import com.xm.lib.media.component.XmMediaComponent.Action.Companion.getDuration
+import com.xm.lib.media.component.XmMediaComponent.Action.Companion.getPlayState
+import com.xm.lib.media.component.XmMediaComponent.Action.Companion.pause
+import com.xm.lib.media.component.XmMediaComponent.Action.Companion.prepareAsync
+import com.xm.lib.media.component.XmMediaComponent.Action.Companion.release
+import com.xm.lib.media.component.XmMediaComponent.Action.Companion.replay
+import com.xm.lib.media.component.XmMediaComponent.Action.Companion.seekTo
+import com.xm.lib.media.component.XmMediaComponent.Action.Companion.setDisplay
+import com.xm.lib.media.component.XmMediaComponent.Action.Companion.start
+import com.xm.lib.media.component.XmMediaComponent.Action.Companion.stop
 import com.xm.lib.media.contract.base.BaseMediaContract
 import com.xm.lib.media.enum_.EnumGestureState
 import com.xm.lib.media.enum_.EnumMediaEventType
-import com.xm.lib.media.enum_.EnumMediaState
 import com.xm.lib.media.enum_.EnumViewType
 import com.xm.lib.media.event.Event
 import com.xm.lib.media.event.EventConstant
-import com.xm.lib.media.imp.IMediaCore
 import com.xm.lib.media.lisenter.AbsMediaCoreOnLisenter
 import com.xm.lib.media.lisenter.MediaGestureListener
 import com.xm.lib.media.watcher.MediaViewObservable
@@ -26,21 +32,19 @@ import java.util.*
 
 class XmMediaContract {
 
-    interface View : BaseMediaContract.View<XmMediaComponent>, IMediaCore {
+    interface View : BaseMediaContract.View<XmMediaComponent>/*, IMediaCore */ {
         fun addViewToMedia(enumViewType: EnumViewType?, viewGroup: MediaViewObservable<*>?): XmMediaComponent
+        fun action(action: String?, vararg params: Any?): Any?
         fun setDisplay(dataSource: String?): XmMediaComponent
-        fun setup(): XmMediaComponent
         fun core(absMediaCore: AbsMediaCore?): XmMediaComponent
-        fun getPlayerState(): EnumMediaState
         fun build()
     }
 
     class Model : BaseMediaContract.Model() {
         var dataSource: String? = null
         var addViewMap: HashMap<EnumViewType, MediaViewObservable<*>>? = HashMap()
-//        var xmMediaFirstW: Int? = -1
-//        var xmMediaFirstH: Int? = -1
         var player: AbsMediaCore? = null
+        var curPos: Long? = -1
     }
 
     class Present(context: Context?, val view: View?) : BaseMediaContract.Present(context) {
@@ -50,10 +54,10 @@ class XmMediaContract {
         fun action(action: String?, vararg params: Any?): Any? {
             var result: Any? = Any()
             when (action) {
-                XmMediaComponent.Action.release -> {
+                release -> {
                     model?.player?.release()
                 }
-                XmMediaComponent.Action.seekTo -> {
+                seekTo -> {
                     model?.player?.seekTo(msec = params[0] as Long)
                     //更新消息主要是为了通知消息给加载页面
                     view?.getView()?.notifyObservers(
@@ -61,35 +65,67 @@ class XmMediaContract {
                                     .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
                                     .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_SEEKTO))
                 }
-                XmMediaComponent.Action.getDuration -> {
+                getDuration -> {
                     result = model?.player?.getDuration()!!
                 }
-                XmMediaComponent.Action.getCurrentPosition -> {
+                getCurrentPosition -> {
                     result = model?.player?.getCurrentPosition()!!
                 }
-                XmMediaComponent.Action.stop -> {
+                stop -> {
                     model?.player?.stop()
                 }
-                XmMediaComponent.Action.pause -> {
+                pause -> {
                     model?.player?.pause()
                 }
-                XmMediaComponent.Action.start -> {
+                start -> {
                     model?.player?.start()
                 }
-                XmMediaComponent.Action.setDisplay -> {
+                setDisplay -> {
                     model?.dataSource = params[0] as String?
                 }
-                XmMediaComponent.Action.prepareAsync -> {
+                prepareAsync -> {
                     //重置播放状态
-                    model?.player?.release()
+                    model?.player?.reset()
                     model?.player?.prepareAsync()
+                }
+                replay -> {
+                    model?.player?.rePlay()
+                }
+                getPlayState -> {
+                    result = model?.player?.playerState!!
                 }
             }
             return result
         }
 
-        fun setup() {
-            model?.player?.init()
+        override fun process() {
+
+        }
+
+        override fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?) {
+            val eventFrom = event?.parameter?.get(EventConstant.KEY_FROM)
+            val eventMethod = event?.parameter?.get(EventConstant.KEY_METHOD)
+            if (eventFrom == "Activity") {
+                when (eventMethod) {
+                    "onDestroy" -> {
+                        model?.curPos = -1
+                        model?.curPos = model?.player?.getCurrentPosition()
+                        action("stop")
+                        action("release")
+                    }
+
+                    "onPause" -> {
+                        //不可见状态
+                        model?.player?.pause()
+                        model?.curPos = model?.player?.getCurrentPosition()
+                    }
+
+                    "onRestart" -> {
+                        //恢复状态
+                        model?.player?.rePlay()
+                    }
+                }
+            }
         }
 
         fun core(absMediaCore: AbsMediaCore) {
@@ -98,14 +134,11 @@ class XmMediaContract {
             model?.player?.view = view
             model?.player?.context = context
             model?.player?.tagerView = view?.getView()
+            model?.player?.init()
         }
 
         fun addViewToMedia(enumViewType: EnumViewType, viewGroup: MediaViewObservable<*>) {
             model?.addViewMap?.put(enumViewType, viewGroup)
-        }
-
-        fun getPlayState(): EnumMediaState {
-            return model?.player?.playerState!!
         }
 
         @SuppressLint("ClickableViewAccessibility")
@@ -164,6 +197,7 @@ class XmMediaContract {
                             Event().setEventType(EnumMediaEventType.MEDIA)
                                     .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_SURFACEDESTROYED)
                                     .setParameter("holder", holder!!))
+
                 }
 
                 override fun surfaceCreated(holder: SurfaceHolder?) {
@@ -178,7 +212,11 @@ class XmMediaContract {
                             Event().setEventType(EnumMediaEventType.MEDIA)
                                     .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONPREPARED)
                                     .setParameter("mp", mp))
-                    model?.player?.start()
+
+                    if (model?.curPos != (-1).toLong()) {
+                        model?.player?.seekTo(model?.curPos!!)
+                        model?.player?.start()
+                    }
                 }
 
                 override fun onCompletion(mp: AbsMediaCore) {
@@ -186,6 +224,7 @@ class XmMediaContract {
                             Event().setEventType(EnumMediaEventType.MEDIA)
                                     .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_ONCOMPLETION)
                                     .setParameter("mp", mp))
+                    model?.curPos = -1
                 }
 
                 override fun onBufferingUpdate(mp: AbsMediaCore, percent: Int) {
@@ -287,34 +326,17 @@ class XmMediaContract {
             }))
             view?.getView()?.setOnTouchListener { _, event ->
                 if (event.action == MotionEvent.ACTION_UP) { //通知所有手势视图隐藏
-                    val event: Event = Event()
-                    event.setEventType(EnumMediaEventType.VIEW)
-                            .setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
-                            .setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_UP)
+                    val event: Event? = Event()
+                    event?.setEventType(EnumMediaEventType.VIEW)
+                            ?.setParameter(EventConstant.KEY_FROM, EventConstant.VALUE_FROM_MEDIACOMPONENT)
+                            ?.setParameter(EventConstant.KEY_METHOD, EventConstant.VALUE_METHOD_UP)
                     if (null != enumGestureState) {
-                        event.setParameter(EventConstant.KEY_GESTURE_STATE, enumGestureState!!)
+                        event?.setParameter(EventConstant.KEY_GESTURE_STATE, enumGestureState!!)
                     }
-                    view.getView().notifyObservers(event)
+                    view.getView().notifyObservers(event!!)
                     enumGestureState = EnumGestureState.NONE
                 }
                 gestureDetector?.onTouchEvent(event)!!
-            }
-        }
-
-        override fun process() {
-
-        }
-
-        override fun handleOtherEvent(o: MediaViewObservable<*>?, event: Event?) {
-            val eventFrom = event?.parameter?.get(EventConstant.KEY_FROM)
-            val eventMethod = event?.parameter?.get(EventConstant.KEY_METHOD)
-            if (eventFrom == "Activity") {
-                when (eventMethod) {
-                    "onDestroy" -> {
-                        action("stop")
-                        action("release")
-                    }
-                }
             }
         }
     }

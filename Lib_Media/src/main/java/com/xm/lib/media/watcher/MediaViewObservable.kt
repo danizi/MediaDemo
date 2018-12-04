@@ -67,7 +67,7 @@ abstract class MediaViewObservable<T : BaseMediaContract.Present> : FrameLayout,
      * -------
      * 观察者接受信息
      */
-    override fun update(o: MediaViewObservable<*>, event: Event) {
+    override fun update(o: MediaViewObservable<*>?, event: Event?) {
         getPresent()?.handleReceiveEvent(o, event)
     }
 
@@ -87,14 +87,14 @@ abstract class MediaViewObservable<T : BaseMediaContract.Present> : FrameLayout,
     }
 
     @Synchronized
-    fun deleteObserver(o: Observer) {
+    fun deleteObserver(o: Observer?) {
         observers?.remove(o)
     }
 
     @Synchronized
-    fun notifyObservers(event: Event) {
+    fun notifyObservers(event: Event?) {
         for (obs in this!!.observers!!) {
-            obs.update(this, event)
+            obs.update(this, event!!)
         }
     }
 

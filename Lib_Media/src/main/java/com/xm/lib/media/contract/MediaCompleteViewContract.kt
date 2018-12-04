@@ -1,4 +1,4 @@
-package common.xm.com.xmcommon.media.mediaview.contract
+package com.xm.lib.media.contract
 
 import android.content.Context
 import com.xm.lib.media.component.MediaCompleteView
@@ -11,7 +11,7 @@ class MediaCompleteViewContract {
 
     class Model : BaseMediaContract.Model()
 
-    class Present(context: Context, view: View) : BaseMediaContract.Present(context) {
+    class Present(context: Context?, view: View?) : BaseMediaContract.Present(context) {
         val model: Model? = null
 
         override fun process() {

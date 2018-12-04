@@ -1,4 +1,4 @@
-package common.xm.com.xmcommon.media.mediaview.contract
+package com.xm.lib.media.contract
 
 import android.content.Context
 import com.xm.lib.media.R
@@ -28,7 +28,7 @@ class MediaGestureVolumeViewContract {
             if (eventFrom == EventConstant.VALUE_FROM_MEDIACOMPONENT) {
                 when (eventMethod) {
                     EventConstant.VALUE_METHOD_ONVOLUME -> {
-                        view?.getView()?.progress?.progress = getVolumePresent(view?.getView()?.progress, event)
+                        view?.getView()?.progress?.progress = getVolumePresent(event)
                         view?.getView()?.show()
                     }
 

@@ -9,7 +9,6 @@ import com.xm.lib.media.enum_.EnumMediaState
 import tv.danmaku.ijk.media.player.IjkMediaPlayer
 
 class IJKPlayer : AbsMediaCore() {
-
     var player: IjkMediaPlayer? = null
 
     private val SO_LIB_NAME = "libijkplayer.so"
@@ -26,6 +25,20 @@ class IJKPlayer : AbsMediaCore() {
         playerConfig()
         addSurfaceViewAndListener()
         initPlayerListener()
+    }
+
+    private fun playerConfig() {
+        IjkMediaPlayer.loadLibrariesOnce(null)
+        IjkMediaPlayer.native_profileBegin(SO_LIB_NAME)
+        player = IjkMediaPlayer()
+        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, FRAMEDROP, 1)
+        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, START_ON_PREPARED, 0)
+        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, HTTP_DETECT_RANGE_SUPPORT, 1)
+        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, SKIP_LOOP_FILTER, 48)
+        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, OPENSLES, 1)
+        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, MEDIACODEC, 1)
+        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, MEDIACODEC_AUTO_ROTATE, 1)
+        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, MEDIACODEC_HANDLE_RESOLUTION_CHANGE, 1)
     }
 
     private fun initPlayerListener() {
@@ -73,6 +86,7 @@ class IJKPlayer : AbsMediaCore() {
 
             override fun surfaceDestroyed(holder: SurfaceHolder?) {
                 absMediaCoreOnLisenter?.surfaceDestroyed(holder)
+                //获取播放的内容
             }
 
             override fun surfaceCreated(holder: SurfaceHolder?) {
@@ -82,25 +96,43 @@ class IJKPlayer : AbsMediaCore() {
         tagerView?.addView(mSurfaceView, 0)
     }
 
-    private fun playerConfig() {
-        IjkMediaPlayer.loadLibrariesOnce(null)
-        IjkMediaPlayer.native_profileBegin(SO_LIB_NAME)
-        player = IjkMediaPlayer()
-        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, FRAMEDROP, 1)
-        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, START_ON_PREPARED, 0)
-        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, HTTP_DETECT_RANGE_SUPPORT, 1)
-        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, SKIP_LOOP_FILTER, 48)
-        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, OPENSLES, 1)
-        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, MEDIACODEC, 1)
-        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, MEDIACODEC_AUTO_ROTATE, 1)
-        player!!.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, MEDIACODEC_HANDLE_RESOLUTION_CHANGE, 1)
-    }
-
     private fun createSurfaceView(): SurfaceView {
         val surfaceView = SurfaceView(context)
         val layoutParams: ViewGroup.LayoutParams = ViewGroup.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
         surfaceView.layoutParams = layoutParams
         return surfaceView
+    }
+
+    override fun rePlay() {
+        if (mSurfaceView != null) {
+            try {
+                tagerView?.removeView(mSurfaceView)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        mSurfaceView = createSurfaceView()
+        mSurfaceView?.holder?.addCallback(object : SurfaceHolder.Callback {
+            override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
+                absMediaCoreOnLisenter?.surfaceChanged(holder, format, width, height)
+            }
+
+            override fun surfaceDestroyed(holder: SurfaceHolder?) {
+                absMediaCoreOnLisenter?.surfaceDestroyed(holder)
+                //获取播放的内容
+            }
+
+            override fun surfaceCreated(holder: SurfaceHolder?) {
+                absMediaCoreOnLisenter?.surfaceCreated(holder)
+                reset()
+                if (model?.curPos != (-1).toLong()) {
+                    model?.player?.seekTo(model?.curPos!!)
+                    model?.player?.start()
+                }
+                prepareAsync()
+            }
+        })
+        tagerView?.addView(mSurfaceView, 0)
     }
 
     override fun prepareAsync() {
@@ -142,8 +174,14 @@ class IJKPlayer : AbsMediaCore() {
 
     override fun release() {
         player?.reset()
-//        player?.release()
-//        player = null
+        player?.release()
+        player = null
+        tagerView?.removeView(mSurfaceView)
         playerState = EnumMediaState.RELEASE
     }
+
+    override fun reset() {
+        player?.reset()
+    }
+
 }

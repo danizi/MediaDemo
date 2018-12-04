@@ -49,9 +49,6 @@ class EventConstant {
         val VALUE_METHOD_ONVOLUME: String = "onVolume"                              //音量
         val VALUE_METHOD_ONLIGHT: String = "onLight"                                //亮度
         val VALUE_METHOD_ONPROGRESS: String = "onProgress"                          //进度
-//        val VALUE_METHOD_ONPROGRESSCHANGED: String = "onProgressChanged"            //seekbar停止滑动
-//        val VALUE_METHOD_ONSTARTTRACKINGTOUCH: String = "onStartTrackingTouch"      //seekbar停止滑动
-//        val VALUE_METHOD_ONSTOPTRACKINGTOUCH: String = "onStoptrackingtouch"        //seekbar停止滑动
 
         /*=======================================================================================
          * 其他

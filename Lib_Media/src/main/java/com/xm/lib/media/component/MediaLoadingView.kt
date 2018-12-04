@@ -1,10 +1,11 @@
 package com.xm.lib.media.component
 
+import android.annotation.SuppressLint
 import android.content.Context
-import com.xm.lib.media.event.Event
+import com.xm.lib.media.contract.MediaLoadingViewContract
 import com.xm.lib.media.watcher.MediaViewObservable
-import common.xm.com.xmcommon.media.mediaview.contract.MediaLoadingViewContract
 
+@SuppressLint("ViewConstructor")
 class MediaLoadingView(context: Context?, layoutID: Int?) : MediaViewObservable<MediaLoadingViewContract.Present>(context!!, layoutID!!), MediaLoadingViewContract.View {
 
     override fun createPresent(): MediaLoadingViewContract.Present {

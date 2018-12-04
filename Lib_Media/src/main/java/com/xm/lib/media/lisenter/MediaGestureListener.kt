@@ -36,8 +36,8 @@ class MediaGestureListener(context: Context, gestureListener: GestureListener) :
     var context: Context? = context
     var gestureState: EnumGestureState? = null
     var gestureListener: GestureListener? = gestureListener
-    var w = PolyvScreenUtils.getNormalWH(context as Activity)[0]
-    var h = PolyvScreenUtils.getNormalWH(context as Activity)[1]
+    var w:Int? = PolyvScreenUtils.getNormalWH(context as Activity)[0]
+    var h:Int? = PolyvScreenUtils.getNormalWH(context as Activity)[1]
 
     override fun onDown(e: MotionEvent?): Boolean {
         gestureState = EnumGestureState.NONE
@@ -74,9 +74,9 @@ class MediaGestureListener(context: Context, gestureListener: GestureListener) :
             log("offsetX:" + offsetX + "gestureState:" + gestureState)
             gestureState = EnumGestureState.PROGRESS
         } else {
-            if (e1?.x!! > w / 2) {
+            if (e1?.x!! > w!! / 2) {
                 gestureState = EnumGestureState.LIGHT
-            } else if (e1.x < w / 2) {
+            } else if (e1.x < w!! / 2) {
                 gestureState = EnumGestureState.VOLUME
             }
             log("offsetY:" + offsetY + "gestureState:" + gestureState)

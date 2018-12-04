@@ -1,4 +1,4 @@
-package common.xm.com.xmcommon.media.mediaview.contract
+package com.xm.lib.media.contract
 
 import android.content.Context
 import com.xm.lib.media.component.MediaErrorView

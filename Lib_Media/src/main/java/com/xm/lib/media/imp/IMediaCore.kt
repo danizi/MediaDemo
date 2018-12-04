@@ -10,4 +10,5 @@ interface IMediaCore {
     fun getCurrentPosition(): Long
     fun seekTo(msec: Long)
     fun release()
+    fun rePlay()
 }

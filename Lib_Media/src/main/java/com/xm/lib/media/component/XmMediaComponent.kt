@@ -3,20 +3,25 @@ package com.xm.lib.media.component
 import android.content.Context
 import android.util.AttributeSet
 import com.xm.lib.media.AbsMediaCore
+import com.xm.lib.media.component.XmMediaComponent.Action.Companion.getCurrentPosition
+import com.xm.lib.media.component.XmMediaComponent.Action.Companion.getDuration
+import com.xm.lib.media.component.XmMediaComponent.Action.Companion.getPlayState
+import com.xm.lib.media.component.XmMediaComponent.Action.Companion.pause
+import com.xm.lib.media.component.XmMediaComponent.Action.Companion.prepareAsync
+import com.xm.lib.media.component.XmMediaComponent.Action.Companion.release
+import com.xm.lib.media.component.XmMediaComponent.Action.Companion.replay
+import com.xm.lib.media.component.XmMediaComponent.Action.Companion.seekTo
+import com.xm.lib.media.component.XmMediaComponent.Action.Companion.start
+import com.xm.lib.media.component.XmMediaComponent.Action.Companion.stop
 import com.xm.lib.media.contract.XmMediaContract
-import com.xm.lib.media.enum_.EnumMediaState
 import com.xm.lib.media.enum_.EnumViewType
-import com.xm.lib.media.event.Event
 import com.xm.lib.media.watcher.MediaViewObservable
-import com.xm.lib.media.watcher.Observer
 
 
 /**
  * 播放器组件
  */
-class XmMediaComponent(context: Context?, attrs: AttributeSet?) : MediaViewObservable<XmMediaContract.Present>(context!!, attrs), XmMediaContract.View, Observer {
-
-
+class XmMediaComponent(context: Context?, attrs: AttributeSet?) : MediaViewObservable<XmMediaContract.Present>(context!!, attrs), XmMediaContract.View {
     /**
      * 播放的功能
      */
@@ -31,6 +36,8 @@ class XmMediaComponent(context: Context?, attrs: AttributeSet?) : MediaViewObser
             val getCurrentPosition = "getCurrentPosition"
             val seekTo = "seekTo"
             val release = "release"
+            val replay = "replay"
+            val getPlayState = "getPlayState"
         }
     }
 
@@ -47,62 +54,56 @@ class XmMediaComponent(context: Context?, attrs: AttributeSet?) : MediaViewObser
         return this
     }
 
-    override fun setDisplay(dataSource: String?): XmMediaComponent {
-        getPresent()?.action(Action.setDisplay, dataSource)
-        return this
-    }
-
     override fun core(absMediaCore: AbsMediaCore?): XmMediaComponent {
         getPresent()?.core(absMediaCore!!)
         return this
     }
 
-    override fun setup(): XmMediaComponent {
-        getPresent()?.setup()
+    @Synchronized
+    override fun setDisplay(dataSource: String?): XmMediaComponent {
+        getPresent()?.action(Action.setDisplay, dataSource)
         return this
     }
 
-    override fun prepareAsync() {
-        getPresent()?.action(Action.prepareAsync)
-    }
-
-    override fun start() {
-        getPresent()?.action(Action.start)
-    }
-
-    override fun pause() {
-        getPresent()?.action(Action.pause)
-    }
-
-    override fun stop() {
-        getPresent()?.action(Action.stop)
-    }
-
-    override fun getDuration(): Long {
-        return getPresent()?.action(Action.getDuration) as Long
-    }
-
-    override fun getCurrentPosition(): Long {
-        return getPresent()?.action(Action.getCurrentPosition) as Long
-    }
-
-    override fun seekTo(msec: Long) {
-        getPresent()?.action(Action.seekTo, msec)
-    }
-
-    override fun release() {
-        getPresent()?.action(Action.release)
+    @Synchronized
+    override fun action(action: String?, vararg params: Any?): Any? {
+        var result: Any? = Any()
+        when (action) {
+            release -> {
+                getPresent()?.action(action)
+            }
+            seekTo -> {
+                getPresent()?.action(action, params[0] as Long)
+            }
+            getDuration -> {
+                result = getPresent()?.action(action)
+            }
+            getCurrentPosition -> {
+                result = getPresent()?.action(action)
+            }
+            stop -> {
+                getPresent()?.action(action)
+            }
+            pause -> {
+                getPresent()?.action(action)
+            }
+            start -> {
+                getPresent()?.action(action)
+            }
+            prepareAsync -> {
+                getPresent()?.action(action)
+            }
+            replay -> {
+                getPresent()?.action(action)
+            }
+            getPlayState -> {
+                result = getPresent()?.action(action)
+            }
+        }
+        return result
     }
 
     override fun build() {
         getPresent()?.build()
-    }
-
-    @Deprecated("使用setup方法替代")
-    override fun init() {
-    }
-
-    override fun getPlayerState(): EnumMediaState {
-        return getPresent()?.getPlayState()!!
     }
 }
