@@ -1,6 +1,7 @@
 package com.xm.lib.media.event
 
 import com.xm.lib.media.enum_.EnumMediaEventType
+import java.util.*
 
 /**
  * 事件描述类,携带参数说明

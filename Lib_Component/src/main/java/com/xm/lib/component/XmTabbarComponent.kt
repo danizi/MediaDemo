@@ -10,7 +10,13 @@ import com.xm.lib.abs.AbsTabbarCore
 import com.xm.lib.contract.XmTabbarContract
 
 class XmTabbarComponent(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs), XmTabbarContract.View {
-    override fun addCore(core: AbsTabbarCore) : XmTabbarComponent {
+    private var presenter: XmTabbarContract.Presenter? = null
+
+    init {
+        presenter = XmTabbarContract.Presenter(getContext(), this)
+    }
+
+    override fun addCore(core: AbsTabbarCore): XmTabbarComponent {
         presenter!!.model().core = core
         return this
     }
@@ -18,12 +24,6 @@ class XmTabbarComponent(context: Context, attrs: AttributeSet?) : FrameLayout(co
     override fun bindViewPager(viewPager: ViewPager): XmTabbarComponent {
         presenter!!.model().viewPager = viewPager
         return this
-    }
-
-    private var presenter: XmTabbarContract.Presenter? = null
-
-    init {
-        presenter = XmTabbarContract.Presenter(getContext(), this)
     }
 
     override fun setColor(beforeColorID: Int, afterColorID: Int): XmTabbarComponent {
@@ -69,7 +69,6 @@ class XmTabbarComponent(context: Context, attrs: AttributeSet?) : FrameLayout(co
     override fun getXmTabbar(): XmTabbarComponent {
         return this
     }
-
 }
 
 

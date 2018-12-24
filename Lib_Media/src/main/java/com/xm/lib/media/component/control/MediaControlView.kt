@@ -1,8 +1,9 @@
 package com.xm.lib.media.component.control
 
 import android.content.Context
+import com.xm.lib.media.contract.control.MediaControlViewContract
 import com.xm.lib.media.watcher.MediaViewObservable
-import common.xm.com.xmcommon.media.mediaview.contract.MediaControlViewContract
+
 
 class MediaControlView(context: Context?, layoutID: Int?) : MediaViewObservable<MediaControlViewContract.Present>(context!!, layoutID!!), MediaControlViewContract.View {
 

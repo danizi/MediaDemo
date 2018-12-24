@@ -15,6 +15,7 @@ import com.xm.lib.media.event.EventConstant
 import common.xm.com.xmcommon.R
 import com.xm.lib.media.component.*
 import com.xm.lib.media.component.control.MediaControlView
+import java.util.*
 
 class ActMedia : AppCompatActivity() {
     //播放器

@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.xm.lib.media.contract.base.BaseMediaContract
 import com.xm.lib.media.event.Event
-import com.xm.lib.media.imp.IInit
+import java.util.*
 
 /**
  * 所有播放视图的基类

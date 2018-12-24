@@ -6,8 +6,8 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import com.xm.lib.media.R
+import com.xm.lib.media.contract.MediaGestureLightViewContract
 import com.xm.lib.media.watcher.MediaViewObservable
-import common.xm.com.xmcommon.media.mediaview.contract.MediaGestureLightViewContract
 
 @SuppressLint("ViewConstructor")
 class MediaGestureLightView(context: Context?, layoutID: Int?) : MediaViewObservable<MediaGestureLightViewContract.Present>(context!!,layoutID!!), MediaGestureLightViewContract.View {

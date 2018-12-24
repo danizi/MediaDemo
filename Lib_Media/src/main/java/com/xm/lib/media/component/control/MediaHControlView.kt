@@ -6,8 +6,8 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import com.xm.lib.media.R
+import com.xm.lib.media.contract.control.MediaHControlViewContract
 import com.xm.lib.media.watcher.MediaViewObservable
-import common.xm.com.xmcommon.media.mediaview.contract.MediaHControlViewContract
 
 class MediaHControlView(context: Context?, layoutID: Int?) : MediaViewObservable<MediaHControlViewContract.Present>(context!!, layoutID!!), MediaHControlViewContract.View {
 

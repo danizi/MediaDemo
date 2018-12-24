@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
-import android.widget.SimpleAdapter;
 
 import common.xm.com.xmcommon.media.ActMedia;
 import common.xm.com.xmcommon.tabar.ActTabbar;
@@ -33,5 +32,26 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+//        ListView listView = findViewById(R.id.list);
+//        List<? extends Map<String, ?>> data = new ArrayList();
+//
+//        HashMap<String, Object> map = new HashMap<String, Object>();
+//
+//        String[] from = new String[]{"cover", "integral", "date", "pb"};
+//        int[] to = new int[]{R.id.iv_cover, R.id.tv_integral_num, R.id.tv_date, R.id.progress};
+//        ListAdapter adapter = new SimpleAdapter(this, data, R.layout.signin_item, from, to);
+//        listView.setAdapter(adapter);
+//        listView.setSelection(0);
+//        listView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
     }
 }

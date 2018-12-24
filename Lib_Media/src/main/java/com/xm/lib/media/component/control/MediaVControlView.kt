@@ -7,8 +7,9 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import com.xm.lib.media.R
+import com.xm.lib.media.contract.control.MediaVControlViewContract
 import com.xm.lib.media.watcher.MediaViewObservable
-import common.xm.com.xmcommon.media.mediaview.contract.MediaVControlViewContract
+
 
 @SuppressLint("ViewConstructor")
 class MediaVControlView(context: Context?, layoutID: Int?) : MediaViewObservable<MediaVControlViewContract.Present>(context!!, layoutID!!), MediaVControlViewContract.View {
