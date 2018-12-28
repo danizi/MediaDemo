@@ -13,7 +13,7 @@ import com.xm.lib.media.core.AbsMediaCore
 
 class ActivityIjkplayer : AppCompatActivity(), View.OnClickListener {
     private val tag = "ActivityIjkplayer"
-    private var player: IJKPlayer? = null
+    private var player: AbsMediaCore? = IJKPlayer()
     private var sh: SurfaceHolder? = null
     private var sv: SurfaceView? = null
     private var btnStart: Button? = null
@@ -27,9 +27,6 @@ class ActivityIjkplayer : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ijkplayer)
         findViews()
-
-        player = IJKPlayer()
-        player?.init()
         sh = sv?.holder
         sh?.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
@@ -42,10 +39,10 @@ class ActivityIjkplayer : AppCompatActivity(), View.OnClickListener {
 
             override fun surfaceCreated(holder: SurfaceHolder?) {
                 Log.e(tag, "surfaceCreated")
+                player?.setDisplay(holder)
             }
         })
         player?.setDataSource("http://hls.videocc.net/26de49f8c2/9/26de49f8c273bbc8f6812d1422a11b39_2.m3u8")
-        player?.setDisplay(sh)
         player?.setOnPreparedListener(object : AbsMediaCore.OnPreparedListener {
             override fun onPrepared(mp: AbsMediaCore) {
                 player?.start()
@@ -76,14 +73,19 @@ class ActivityIjkplayer : AppCompatActivity(), View.OnClickListener {
                 player?.prepareAsync()
             }
             v === btnPause -> {
+
             }
             v === btnStop -> {
+
             }
             v === btnSpeed -> {
+                player?.setSpeed(0.4f)
             }
             v === btnSeek -> {
+
             }
             v === tate -> {
+
             }
         }
     }

@@ -12,6 +12,10 @@ class IJKPlayer : AbsMediaCore() {
 
     var player: IjkMediaPlayer? = null
 
+    init {
+        init()
+    }
+
     override fun init() {
         playerConfig()
         //addSurfaceViewAndListener()
@@ -137,10 +141,7 @@ class IJKPlayer : AbsMediaCore() {
     }
 
     override fun prepareAsync() {
-//        player?.setLogEnabled(true)
-//        player?.setDisplay(mSurfaceView!!.holder)
-//        player?.setScreenOnWhilePlaying(true)
-//        player?.dataSource = model?.dataSource
+        player?.setScreenOnWhilePlaying(true)
         player?.prepareAsync()
     }
 
