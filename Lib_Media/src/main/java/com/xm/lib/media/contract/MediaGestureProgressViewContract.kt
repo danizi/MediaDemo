@@ -33,7 +33,7 @@ class MediaGestureProgressViewContract {
                 when (event?.parameter?.get(EventConstant.KEY_METHOD)) {
 
                     EventConstant.VALUE_METHOD_ONPROGRESS -> {
-                        view?.getView()?.progress?.progress = getProgresPresent( event, mediaView)
+                        view?.getView()?.progress?.progress = getProgresPresent(event, mediaView)
                         view?.getView()?.show()
                     }
 
@@ -42,13 +42,12 @@ class MediaGestureProgressViewContract {
                         resetCurProgress()
                         if (event.parameter?.get(EventConstant.KEY_GESTURE_STATE) == EnumGestureState.PROGRESS) {
                             val duration: Long = mediaView?.action(getDuration) as Long
-                            val progress:Float = view?.getView()?.progress?.progress!!.toFloat() / 100F
+                            val progress: Float = view?.getView()?.progress?.progress!!.toFloat() / 100F
                             mediaView?.action(seekTo, (progress * duration).toLong())
                         }
                     }
                 }
             }
         }
-
     }
 }

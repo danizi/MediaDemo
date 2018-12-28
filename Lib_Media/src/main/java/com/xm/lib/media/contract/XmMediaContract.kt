@@ -1,11 +1,11 @@
 package com.xm.lib.media.contract
+
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.SurfaceHolder
-import com.xm.lib.media.AbsMediaCore
 import com.xm.lib.media.component.XmMediaComponent
 import com.xm.lib.media.component.XmMediaComponent.Action.Companion.getCurrentPosition
 import com.xm.lib.media.component.XmMediaComponent.Action.Companion.getDuration
@@ -19,12 +19,13 @@ import com.xm.lib.media.component.XmMediaComponent.Action.Companion.setDisplay
 import com.xm.lib.media.component.XmMediaComponent.Action.Companion.start
 import com.xm.lib.media.component.XmMediaComponent.Action.Companion.stop
 import com.xm.lib.media.contract.base.BaseMediaContract
+import com.xm.lib.media.core.AbsMediaCore
+import com.xm.lib.media.core.AbsMediaCoreOnLisenter
 import com.xm.lib.media.enum_.EnumGestureState
 import com.xm.lib.media.enum_.EnumMediaEventType
 import com.xm.lib.media.enum_.EnumViewType
 import com.xm.lib.media.event.Event
 import com.xm.lib.media.event.EventConstant
-import com.xm.lib.media.lisenter.AbsMediaCoreOnLisenter
 import com.xm.lib.media.lisenter.MediaGestureListener
 import com.xm.lib.media.watcher.MediaViewObservable
 import java.util.*
@@ -32,7 +33,7 @@ import java.util.*
 
 class XmMediaContract {
 
-    interface View : BaseMediaContract.View<XmMediaComponent>/*, IMediaCore */ {
+    interface View : BaseMediaContract.View<XmMediaComponent> {
         fun addViewToMedia(enumViewType: EnumViewType?, viewGroup: MediaViewObservable<*>?): XmMediaComponent
         fun action(action: String?, vararg params: Any?): Any?
         fun setDisplay(dataSource: String?): XmMediaComponent

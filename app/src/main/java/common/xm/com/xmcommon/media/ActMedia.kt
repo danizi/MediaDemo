@@ -1,9 +1,11 @@
 package common.xm.com.xmcommon.media
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.ListView
 import android.widget.SimpleAdapter
 import com.xm.lib.ijkplayer.IJKPlayer
@@ -40,37 +42,44 @@ class ActMedia : AppCompatActivity() {
                     .build()                                                                                                                   //构建
         }
 
+        val btnIjkplayer: Button? = findViewById(R.id.btn_ijkplayer)
+        btnIjkplayer?.setOnClickListener {
+            startActivity(Intent(this, ActivityIjkplayer::class.java))
+        }
+    }
+
+    private fun action() {
         /**
          * 播放器事件 :
          * 外部事件   : 手机来电、手机息屏
          * 控件事件   : 点击,进度条滑动,等其他
          */
-        val listView = findViewById<ListView>(R.id.list)
-        val data: ArrayList<Map<String, String>> = ArrayList()
-        val map1: HashMap<String, String> = HashMap()
-        val map2: HashMap<String, String> = HashMap()
-        val map3: HashMap<String, String> = HashMap()
-        val map4: HashMap<String, String> = HashMap()
-        map1.put("name", "切换播放地址")
-        map2.put("name", "切换播放器")
-        map3.put("name", "切换画布")
-        map4.put("name", "移除控制View")
-        data.add(map1)
-        data.add(map2)
-        data.add(map3)
-        data.add(map4)
-
-        listView.adapter = SimpleAdapter(this, data, R.layout.item_simple, arrayOf("name"), intArrayOf(R.id.tv))
-        listView.setOnItemClickListener { parent, view, position, id ->
-            when (position) {
-                0 -> {
-                    xmMediaComponent?.setDisplay("http://v.ysbang.cn//data/video/2015/rkb/2015rkb01.mp4")
-                    xmMediaComponent?.action(XmMediaComponent.Action.setDisplay, "http://v.ysbang.cn//data/video/2015/rkb/2015rkb01.mp4")
-                    xmMediaComponent?.action(XmMediaComponent.Action.prepareAsync)
-                }
-            }
-            Log.d("", "")
-        }
+//        val listView = findViewById<ListView>(R.id.list)
+//        val data: ArrayList<Map<String, String>> = ArrayList()
+//        val map1: HashMap<String, String> = HashMap()
+//        val map2: HashMap<String, String> = HashMap()
+//        val map3: HashMap<String, String> = HashMap()
+//        val map4: HashMap<String, String> = HashMap()
+//        map1.put("name", "切换播放地址")
+//        map2.put("name", "切换播放器")
+//        map3.put("name", "切换画布")
+//        map4.put("name", "移除控制View")
+//        data.add(map1)
+//        data.add(map2)
+//        data.add(map3)
+//        data.add(map4)
+//
+//        listView.adapter = SimpleAdapter(this, data, R.layout.item_simple, arrayOf("name"), intArrayOf(R.id.tv))
+//        listView.setOnItemClickListener { parent, view, position, id ->
+//            when (position) {
+//                0 -> {
+//                    xmMediaComponent?.setDisplay("http://v.ysbang.cn//data/video/2015/rkb/2015rkb01.mp4")
+//                    xmMediaComponent?.action(XmMediaComponent.Action.setDisplay, "http://v.ysbang.cn//data/video/2015/rkb/2015rkb01.mp4")
+//                    xmMediaComponent?.action(XmMediaComponent.Action.prepareAsync)
+//                }
+//            }
+//            Log.d("", "")
+//        }
     }
 
     override fun onRestart() {

@@ -1,7 +1,6 @@
-package com.xm.lib.media.lisenter
+package com.xm.lib.media.core
 
 import android.view.SurfaceHolder
-import com.xm.lib.media.AbsMediaCore
 
 abstract class AbsMediaCoreOnLisenter {
 

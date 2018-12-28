@@ -2,7 +2,6 @@ package com.xm.lib.media.component
 
 import android.content.Context
 import android.util.AttributeSet
-import com.xm.lib.media.AbsMediaCore
 import com.xm.lib.media.component.XmMediaComponent.Action.Companion.getCurrentPosition
 import com.xm.lib.media.component.XmMediaComponent.Action.Companion.getDuration
 import com.xm.lib.media.component.XmMediaComponent.Action.Companion.getPlayState
@@ -14,6 +13,7 @@ import com.xm.lib.media.component.XmMediaComponent.Action.Companion.seekTo
 import com.xm.lib.media.component.XmMediaComponent.Action.Companion.start
 import com.xm.lib.media.component.XmMediaComponent.Action.Companion.stop
 import com.xm.lib.media.contract.XmMediaContract
+import com.xm.lib.media.core.AbsMediaCore
 import com.xm.lib.media.enum_.EnumViewType
 import com.xm.lib.media.watcher.MediaViewObservable
 
@@ -59,13 +59,11 @@ class XmMediaComponent(context: Context?, attrs: AttributeSet?) : MediaViewObser
         return this
     }
 
-    @Synchronized
     override fun setDisplay(dataSource: String?): XmMediaComponent {
         getPresent()?.action(Action.setDisplay, dataSource)
         return this
     }
 
-    @Synchronized
     override fun action(action: String?, vararg params: Any?): Any? {
         var result: Any? = Any()
         when (action) {

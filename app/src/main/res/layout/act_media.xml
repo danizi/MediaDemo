@@ -7,32 +7,38 @@
     tools:context=".media.ActMedia">
 
     <!--设置样式-->
-    <android.support.v7.widget.CardView
-        android:id="@+id/cardView"
+    <!--<android.support.v7.widget.CardView-->
+    <!--android:id="@+id/cardView"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--app:cardCornerRadius="40dp"-->
+    <!--app:cardPreventCornerOverlap="false">-->
+
+    <com.xm.lib.media.component.XmMediaComponent
+        android:id="@+id/media"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="40dp"
-        app:cardPreventCornerOverlap="false">
+        android:layout_height="200dp" />
 
-        <com.xm.lib.media.component.XmMediaComponent
-            android:id="@+id/media"
-            android:layout_width="match_parent"
-            android:layout_height="200dp" />
-
-    </android.support.v7.widget.CardView>
+    <!--</android.support.v7.widget.CardView>-->
 
     <!--切换画布-->
     <!--切换播放引擎,重新更换了-->
     <!--播放速度-->
     <!--移除控件-->
     <!--播放列表-->
-    <ListView
-        android:id="@+id/list"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView" />
+    <!--<ListView-->
+    <!--android:id="@+id/list"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="0dp"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/cardView" />-->
+
+    <Button
+        android:text="ijkPPlayer"
+        android:id="@+id/btn_ijkplayer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </android.support.constraint.ConstraintLayout>

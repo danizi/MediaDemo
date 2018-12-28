@@ -8,6 +8,7 @@ import com.xm.lib.media.event.EventConstant
 import com.xm.lib.media.watcher.MediaViewObservable
 
 class BaseMediaContract {
+
     interface View<T> {
         fun getView(): T
     }

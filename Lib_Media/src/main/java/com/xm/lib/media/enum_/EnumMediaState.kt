@@ -11,5 +11,6 @@ enum class EnumMediaState {
     ERROR,
     LOADING,
     RELEASE,
-    SEEKCOMPLETE
+    SEEKCOMPLETE,
+    PREPARED
 }
