@@ -1,8 +1,7 @@
-package com.xm.lib.media
+package com.xm.lib.ijkplayer
 
 import android.content.Context
 import android.util.AttributeSet
-import com.xm.lib.ijkplayer.IJKPlayer
 import com.xm.lib.media.core.AbsMediaCore
 import com.xm.lib.media.core.AbsVideoView
 import com.xm.lib.media.core.attach.factory.MediaAttachLayoutFactory

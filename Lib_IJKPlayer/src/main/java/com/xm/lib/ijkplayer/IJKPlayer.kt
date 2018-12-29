@@ -147,18 +147,17 @@ class IJKPlayer : AbsMediaCore() {
 
     override fun start() {
         player?.start()
+        super.start()
     }
 
     override fun pause() {
-        if (playerState == EnumMediaState.PLAYING) {
-            player?.pause()
-            playerState = EnumMediaState.PAUSE
-        }
+        player?.pause()
+        super.pause()
     }
 
     override fun stop() {
         player?.stop()
-        playerState = EnumMediaState.STOP
+        super.stop()
     }
 
     override fun getDuration(): Long {
@@ -183,10 +182,12 @@ class IJKPlayer : AbsMediaCore() {
         player = null
         tagerView?.removeView(mSurfaceView)
         playerState = EnumMediaState.RELEASE
+        super.release()
     }
 
     override fun reset() {
         player?.reset()
+        super.reset()
     }
 
     override fun getVideoHeight(): Int? {
@@ -209,12 +210,17 @@ class IJKPlayer : AbsMediaCore() {
         player?.setSpeed(speed)
     }
 
+    override fun getSpeed(): Float? {
+        return player?.getSpeed(11f)
+    }
+
     override fun setDisplay(sh: SurfaceHolder?) {
         player?.setDisplay(sh)
     }
 
     override fun setDataSource(path: String) {
         player?.dataSource = path
+        super.setDataSource(path)
     }
 
     override fun getTcpSpeed(): Long? {
@@ -223,6 +229,7 @@ class IJKPlayer : AbsMediaCore() {
 
     override fun setOnCompletionListener(listener: OnCompletionListener) {
         player?.setOnCompletionListener {
+            super.setOnCompletionListener(listener)
             listener.onCompletion(this)
         }
     }
@@ -234,6 +241,7 @@ class IJKPlayer : AbsMediaCore() {
     }
 
     override fun setOnSeekCompleteListener(listener: OnSeekCompleteListener) {
+
         player?.setOnSeekCompleteListener { listener.onSeekComplete(this) }
     }
 
@@ -245,6 +253,7 @@ class IJKPlayer : AbsMediaCore() {
 
     override fun setOnErrorListener(listener: OnErrorListener) {
         player?.setOnErrorListener { _, what, extra ->
+            super.setOnErrorListener(listener)
             listener.onError(this, what, extra)
         }
     }
@@ -263,6 +272,7 @@ class IJKPlayer : AbsMediaCore() {
 
     override fun setOnPreparedListener(listener: OnPreparedListener) {
         player?.setOnPreparedListener {
+            super.setOnPreparedListener(listener)
             listener.onPrepared(this)
         }
     }

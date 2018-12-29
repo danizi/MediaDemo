@@ -28,7 +28,8 @@
             android:name=".tabar.ActTabbar"
             android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".media.ActivityIjkplayer"></activity>
+        <activity android:name=".media.ActivityIjkplayer" />
+        <activity android:name=".media.ActivityIjkPlayerViewVideo"></activity>
     </application>
 
 </manifest>

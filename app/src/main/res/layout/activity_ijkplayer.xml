@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".media.ActivityIjkplayer"
-    tools:ignore="MissingConstraints">
+    tools:ignore="MissingConstraints"
+    tools:layout_editor_absoluteY="81dp">
 
     <SurfaceView
         android:id="@+id/sv"
@@ -13,69 +14,38 @@
         android:layout_height="200dp" />
 
 
-    <Button
-        android:id="@+id/btn_start"
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.AppCompatSeekBar
+        android:id="@+id/seekbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:text="播放"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sv" />
 
-    <Button
-        android:id="@+id/btn_pause"
-        android:layout_width="wrap_content"
-        android:layout_height="49dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:text="暂停"
-        app:layout_constraintStart_toEndOf="@+id/btn_stop"
-        app:layout_constraintTop_toTopOf="@+id/btn_start" />
-
-    <Button
-        android:id="@+id/btn_stop"
+    <TextView
+        android:id="@+id/tv_pos"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:text="停止"
-        app:layout_constraintStart_toEndOf="@+id/btn_start"
-        app:layout_constraintTop_toTopOf="@+id/btn_start" />
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:text="pos"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/seekbar" />
 
-    <Button
-        android:id="@+id/btn_speed"
+    <TextView
+        android:id="@+id/tv_duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:text="播放速度 * 2"
-        app:layout_constraintStart_toStartOf="@+id/btn_start"
-        app:layout_constraintTop_toBottomOf="@+id/btn_start" />
+        android:layout_marginTop="10dp"
+        android:text="duration"
+        app:layout_constraintStart_toStartOf="@+id/tv_pos"
+        app:layout_constraintTop_toBottomOf="@+id/tv_pos" />
 
-    <Button
-        android:id="@+id/btn_seek"
+    <TextView
+        android:id="@+id/tv_tcp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:text="进度 5s"
-        app:layout_constraintStart_toEndOf="@+id/btn_pause"
-        app:layout_constraintTop_toTopOf="@+id/btn_start" />
-
-    <Button
-        android:id="@+id/tate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:text="当前状态"
-        app:layout_constraintStart_toEndOf="@+id/btn_speed"
-        app:layout_constraintTop_toTopOf="@+id/btn_speed" />
+        android:layout_marginTop="10dp"
+        android:text="传输速度"
+        app:layout_constraintStart_toStartOf="@+id/tv_pos"
+        app:layout_constraintTop_toBottomOf="@+id/tv_duration" />
 
 </android.support.constraint.ConstraintLayout>

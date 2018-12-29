@@ -16,12 +16,17 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-        debug {
-            minifyEnabled true
-            useProguard true
-            shrinkResources false
-        }
+//        debug {
+//            minifyEnabled true
+//            useProguard true
+//            shrinkResources false
+//        }
     }
+
+    dexOptions {
+        preDexLibraries = false
+    }
+
     packagingOptions {
         exclude 'META-INF/rxjava.properties'
     }
@@ -34,4 +39,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation project(':Lib_Component')
     implementation project(':Lib_Common')
+    implementation project(':Lib_IJKPlayer')
 }
