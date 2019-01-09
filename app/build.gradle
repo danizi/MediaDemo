@@ -39,5 +39,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation project(':Lib_Component')
     implementation project(':Lib_Common')
-    implementation project(':Lib_IJKPlayer')
+    api project(':Lib_IJKPlayer')
 }

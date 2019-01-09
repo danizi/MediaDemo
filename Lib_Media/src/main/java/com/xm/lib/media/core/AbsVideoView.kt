@@ -2,9 +2,17 @@ package com.xm.lib.media.core
 
 import android.content.Context
 import android.util.AttributeSet
+import android.widget.FrameLayout
 import com.xm.lib.media.core.attach.factory.MediaAttachLayoutFactory
 
-abstract class AbsVideoView(context: Context?, attrs: AttributeSet?) {
+abstract class AbsVideoView(context: Context?, attrs: AttributeSet?) : FrameLayout(context, attrs) {
+
+    init {
+        init(context, attrs)
+    }
+
+    abstract fun init(context: Context?, attrs: AttributeSet?)
+
     /**
      * 是否正在播放
      */

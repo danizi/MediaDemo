@@ -5,11 +5,9 @@ import android.view.SurfaceView
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.xm.lib.media.core.AbsMediaCore
-import com.xm.lib.media.enum_.EnumMediaState
 import tv.danmaku.ijk.media.player.IjkMediaPlayer
 
 class IJKPlayer : AbsMediaCore() {
-
     var player: IjkMediaPlayer? = null
 
     init {
@@ -47,24 +45,20 @@ class IJKPlayer : AbsMediaCore() {
 
     private fun initPlayerListener() {
         player?.setOnPreparedListener {
-            playerState = EnumMediaState.PREPARED
             absMediaCoreOnLisenter?.onPrepared(this)
         }
         player?.setOnCompletionListener {
-            playerState = EnumMediaState.COMPLETION
             absMediaCoreOnLisenter?.onCompletion(this)
         }
         player?.setOnBufferingUpdateListener { _, p1 ->
             absMediaCoreOnLisenter?.onBufferingUpdate(this, p1)
         }
         player?.setOnSeekCompleteListener { _ ->
-            playerState = EnumMediaState.SEEKCOMPLETE
         }
         player?.setOnVideoSizeChangedListener { _, width, height, sar_num, sar_den ->
             absMediaCoreOnLisenter?.onVideoSizeChanged(this, width, height, sar_num, sar_den)
         }
         player?.setOnErrorListener { _, what, extra ->
-            playerState = EnumMediaState.ERROR
             absMediaCoreOnLisenter?.onError(this, what, extra)!!
         }
         player?.setOnInfoListener { _, what, extra ->
@@ -72,7 +66,6 @@ class IJKPlayer : AbsMediaCore() {
 
             } else if (702 == what) { //视频缓存完成
                 absMediaCoreOnLisenter?.onSeekComplete(this)
-                playerState = EnumMediaState.PLAYING
                 //player?.setSpeed(20 / 10f)
             }
             absMediaCoreOnLisenter?.onInfo(this, what, extra)!!
@@ -109,35 +102,35 @@ class IJKPlayer : AbsMediaCore() {
     }
 
     override fun rePlay() {
-        if (mSurfaceView != null) {
-            try {
-                tagerView?.removeView(mSurfaceView)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-        mSurfaceView = createSurfaceView()
-        mSurfaceView?.holder?.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
-                absMediaCoreOnLisenter?.surfaceChanged(holder, format, width, height)
-            }
-
-            override fun surfaceDestroyed(holder: SurfaceHolder?) {
-                absMediaCoreOnLisenter?.surfaceDestroyed(holder)
-                //获取播放的内容
-            }
-
-            override fun surfaceCreated(holder: SurfaceHolder?) {
-                absMediaCoreOnLisenter?.surfaceCreated(holder)
-                reset()
-                if (model?.curPos != (-1).toLong()) {
-                    model?.player?.seekTo(model?.curPos!!)
-                    model?.player?.start()
-                }
-                prepareAsync()
-            }
-        })
-        tagerView?.addView(mSurfaceView, 0)
+//        if (mSurfaceView != null) {
+//            try {
+//                tagerView?.removeView(mSurfaceView)
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+//        }
+//        mSurfaceView = createSurfaceView()
+//        mSurfaceView?.holder?.addCallback(object : SurfaceHolder.Callback {
+//            override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
+//                absMediaCoreOnLisenter?.surfaceChanged(holder, format, width, height)
+//            }
+//
+//            override fun surfaceDestroyed(holder: SurfaceHolder?) {
+//                absMediaCoreOnLisenter?.surfaceDestroyed(holder)
+//                //获取播放的内容
+//            }
+//
+//            override fun surfaceCreated(holder: SurfaceHolder?) {
+//                absMediaCoreOnLisenter?.surfaceCreated(holder)
+//                reset()
+//                if (model?.curPos != (-1).toLong()) {
+//                    model?.player?.seekTo(model?.curPos!!)
+//                    model?.player?.start()
+//                }
+//                prepareAsync()
+//            }
+//        })
+//        tagerView?.addView(mSurfaceView, 0)
     }
 
     override fun prepareAsync() {
@@ -181,7 +174,6 @@ class IJKPlayer : AbsMediaCore() {
         player?.release()
         player = null
         tagerView?.removeView(mSurfaceView)
-        playerState = EnumMediaState.RELEASE
         super.release()
     }
 

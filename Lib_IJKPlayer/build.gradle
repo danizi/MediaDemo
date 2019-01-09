@@ -29,4 +29,8 @@ dependencies {
     api fileTree(include: ['*.jar'], dir: 'libs')
     api project(':Lib_IJKPlayer_Sdk')
     api project(':Lib_Media')
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }

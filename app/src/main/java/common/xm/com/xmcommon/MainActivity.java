@@ -18,6 +18,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        startActivity(new Intent(this, ActMedia.class));
+
         findViewById(R.id.btn_media).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

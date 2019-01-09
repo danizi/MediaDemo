@@ -29,10 +29,12 @@ class MediaAttachLayoutFactory {
      */
     enum class EnumMediaView {
         PRE,
+        CONTROLLER,
         LOADING,
         GESTURE,
         COMPLETE,
-        ERROR
+        ERROR,
+        TIP
     }
 
     /**
