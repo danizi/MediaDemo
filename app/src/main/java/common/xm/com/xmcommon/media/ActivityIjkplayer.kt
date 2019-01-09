@@ -9,7 +9,8 @@ import android.view.*
 import android.widget.*
 import com.xm.lib.ijkplayer.IJKPlayer
 import com.xm.lib.media.core.AbsMediaCore
-import com.xm.lib.media.core.attach.MediaGestureListener
+import com.xm.lib.media.core.listener.MediaGestureListener
+import com.xm.lib.media.core.listener.MediaListener
 import com.xm.lib.media.core.constant.Constant
 import com.xm.lib.media.core.utils.TimerManager
 import com.xm.lib.media.core.utils.Util
@@ -67,7 +68,6 @@ class ActivityIjkplayer : AppCompatActivity() {
         tvPos = findViewById(R.id.tv_pos)
         tvDuration = findViewById(R.id.tv_duration)
         tvTcp = findViewById(R.id.tv_tcp)
-
         gestureDetectorView = getGestureDetectorView()
         gestureDetectorView?.visibility = View.GONE
         iv = gestureDetectorView?.findViewById(R.id.iv)
@@ -357,40 +357,38 @@ class ActivityIjkplayer : AppCompatActivity() {
     }
 
     private fun addMediaLisenter() {
-        player?.setOnPreparedListener(object : AbsMediaCore.OnPreparedListener {
+        player?.setOnPreparedListener(object : MediaListener.OnPreparedListener {
             override fun onPrepared(mp: AbsMediaCore) {
-                player?.start()
                 prepared(mp)
             }
         })
-        player?.setOnErrorListener(object : AbsMediaCore.OnErrorListener {
+        player?.setOnErrorListener(object : MediaListener.OnErrorListener {
             override fun onError(mp: AbsMediaCore, what: Int, extra: Int): Boolean {
                 error(mp, what, extra)
                 return false
             }
         })
-        player?.setOnBufferingUpdateListener(object : AbsMediaCore.OnBufferingUpdateListener {
+        player?.setOnBufferingUpdateListener(object : MediaListener.OnBufferingUpdateListener {
             override fun onBufferingUpdate(mp: AbsMediaCore, percent: Int) {
                 bufferingUpdate(mp, percent)
-
             }
         })
-        player?.setOnCompletionListener(object : AbsMediaCore.OnCompletionListener {
+        player?.setOnCompletionListener(object : MediaListener.OnCompletionListener {
             override fun onCompletion(mp: AbsMediaCore) {
                 completion(mp)
             }
         })
-        player?.setOnInfoListener(object : AbsMediaCore.OnInfoListener {
+        player?.setOnInfoListener(object : MediaListener.OnInfoListener {
             override fun onInfo(mp: AbsMediaCore, what: Int, extra: Int): Boolean {
                 return info(mp, what, extra)
             }
         })
-        player?.setOnVideoSizeChangedListener(object : AbsMediaCore.OnVideoSizeChangedListener {
+        player?.setOnVideoSizeChangedListener(object : MediaListener.OnVideoSizeChangedListener {
             override fun onVideoSizeChanged(mp: AbsMediaCore, width: Int, height: Int, sar_num: Int, sar_den: Int) {
                 videoSizeChanged(mp, width, height, sar_num, sar_den)
             }
         })
-        player?.setOnTimedTextListener(object : AbsMediaCore.OnTimedTextListener {
+        player?.setOnTimedTextListener(object : MediaListener.OnTimedTextListener {
             override fun onTimedText(mp: AbsMediaCore, text: String) {
                 timedText(mp, text)
             }
@@ -399,6 +397,7 @@ class ActivityIjkplayer : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun prepared(mp: AbsMediaCore?) {
+        player?.start()
         if (savaPos!! >= 0 && savaPos!! < player?.getDuration()!!) {
             player?.seekTo(savaPos)
             savaPos = savaPosDefuat

@@ -15,5 +15,6 @@ class ActivityIjkPlayerViewVideo : AppCompatActivity() {
         videoView?.setAttachLayout(MediaAttachLayoutFactory.create(MediaAttachLayoutFactory.EnumMediaView.CONTROLLER, this, R.layout.media_controller))
         videoView?.setAttachLayout(MediaAttachLayoutFactory.create(MediaAttachLayoutFactory.EnumMediaView.GESTURE, this, R.layout.media_gesture_common))
         videoView?.setAttachLayout(MediaAttachLayoutFactory.create(MediaAttachLayoutFactory.EnumMediaView.TIP, this, R.layout.media_gesture_common))
+        videoView?.start()
     }
 }

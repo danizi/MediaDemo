@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import com.xm.lib.media.core.attach.factory.MediaAttachLayoutFactory
+import com.xm.lib.media.core.listener.MediaListener
 
 abstract class AbsVideoView(context: Context?, attrs: AttributeSet?) : FrameLayout(context, attrs) {
 
@@ -11,85 +12,74 @@ abstract class AbsVideoView(context: Context?, attrs: AttributeSet?) : FrameLayo
         init(context, attrs)
     }
 
-    abstract fun init(context: Context?, attrs: AttributeSet?)
+    open fun init(context: Context?, attrs: AttributeSet?) {}
 
-    /**
-     * 是否正在播放
-     */
-    abstract fun isPlaying(): Boolean?
+    open fun isPlaying(): Boolean? {
+        //是否正在播放
+        return false
+    }
 
-    /**
-     * 是否暂停
-     */
-    abstract fun canPause(): Boolean?
+    open fun canPause(): Boolean? {
+        //是否暂停
+        return false
+    }
 
-    /**
-     * 进度能够后退
-     */
-    abstract fun canSeekBackward(): Boolean?
+    open fun canSeekBackward(): Boolean? {
+        //进度能够后退
+        return false
+    }
 
-    /**
-     * 进度能否前进
-     */
-    abstract fun canSeekForward(): Boolean?
+    open fun canSeekForward(): Boolean? {
+        //进度能否前进
+        return false
+    }
 
-    /**
-     * 总时长
-     */
-    abstract fun getCurrentPosition(): Long?
+    open fun getCurrentPosition(): Long? {
+        //总时长
+        return 0
+    }
 
-    /**
-     * 暂停
-     */
-    abstract fun pause()
+    open fun pause() {
+        //暂停
+    }
 
-    /**
-     * 恢复播放
-     */
-    abstract fun resume()
+    open fun resume() {
+        //恢复播放
+    }
 
-    /**
-     * 设置进度
-     */
-    abstract fun seekTo(msec: Int)
+    open fun seekTo(msec: Int) {
+        //设置进度
+    }
 
-    /**
-     * 播放
-     */
-    abstract fun start()
+    open fun start() {
+        //播放
+    }
 
-    /**
-     * 释放资源
-     */
-    abstract fun realse()
+    open fun realse() {
+        //释放资源
+    }
 
-    /**
-     * 设置播放资源
-     */
-    abstract fun setVideoPath(path: String?)
+    open fun setVideoPath(path: String?) {
+        //设置播放资源
+    }
 
-    /**
-     * 添加控制器
-     */
-    abstract fun setAttachLayout(attachLayout: MediaAttachLayoutFactory.IAttachLayout?)
+    open fun setAttachLayout(attachLayout: MediaAttachLayoutFactory.IAttachLayout?) {
+        //添加控制器
+    }
 
-    /**
-     * 播放完成监听
-     */
-    abstract fun setOnCompletionListener(l: AbsMediaCore.OnCompletionListener)
+    open fun setOnCompletionListener(l: MediaListener.OnCompletionListener) {
+        //播放完成监听
+    }
 
-    /**
-     * 播放错误监听
-     */
-    abstract fun setOnErrorListener(l: AbsMediaCore.OnErrorListener)
+    open fun setOnErrorListener(l: MediaListener.OnErrorListener) {
+        //播放错误监听
+    }
 
-    /**
-     * 播放信息监听
-     */
-    abstract fun setOnInfoListener(l: AbsMediaCore.OnInfoListener)
+    open fun setOnInfoListener(l: MediaListener.OnInfoListener) {
+        //播放信息监听
+    }
 
-    /**
-     * 播放资源完成监听
-     */
-    abstract fun setOnPreparedListener(l: AbsMediaCore.OnPreparedListener)
+    open fun setOnPreparedListener(l: MediaListener.OnPreparedListener) {
+        //播放资源完成监听
+    }
 }

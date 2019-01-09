@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import com.xm.lib.media.core.AbsMediaCore
 import com.xm.lib.media.core.AbsVideoView
+import com.xm.lib.media.core.listener.MediaListener
 import com.xm.lib.media.core.attach.factory.MediaAttachLayoutFactory
 import com.xm.lib.media.core.constant.Constant
 
@@ -78,19 +79,19 @@ class VideoView(context: Context?, attrs: AttributeSet?) : AbsVideoView(context,
         }
     }
 
-    override fun setOnCompletionListener(l: AbsMediaCore.OnCompletionListener) {
+    override fun setOnCompletionListener(l: MediaListener.OnCompletionListener) {
         player?.setOnCompletionListener(l)
     }
 
-    override fun setOnErrorListener(l: AbsMediaCore.OnErrorListener) {
+    override fun setOnErrorListener(l: MediaListener.OnErrorListener) {
         player?.setOnErrorListener(l)
     }
 
-    override fun setOnInfoListener(l: AbsMediaCore.OnInfoListener) {
+    override fun setOnInfoListener(l: MediaListener.OnInfoListener) {
         player?.setOnInfoListener(l)
     }
 
-    override fun setOnPreparedListener(l: AbsMediaCore.OnPreparedListener) {
+    override fun setOnPreparedListener(l: MediaListener.OnPreparedListener) {
         player?.setOnPreparedListener(l)
     }
 }

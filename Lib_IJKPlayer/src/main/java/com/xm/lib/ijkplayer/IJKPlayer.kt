@@ -1,136 +1,29 @@
 package com.xm.lib.ijkplayer
 
 import android.view.SurfaceHolder
-import android.view.SurfaceView
-import android.view.ViewGroup
-import android.widget.FrameLayout
 import com.xm.lib.media.core.AbsMediaCore
+import com.xm.lib.media.core.listener.MediaListener
 import tv.danmaku.ijk.media.player.IjkMediaPlayer
 
 class IJKPlayer : AbsMediaCore() {
+
     var player: IjkMediaPlayer? = null
 
-    init {
-        init()
-    }
-
     override fun init() {
-        playerConfig()
-        //addSurfaceViewAndListener()
-        //initPlayerListener()
-    }
+        super.init()
 
-    private fun playerConfig() {
-        val SO_LIB_NAME = "libijkplayer.so"
-        val FRAMEDROP = "framedrop"
-        val START_ON_PREPARED = "start-on-prepared"
-        val HTTP_DETECT_RANGE_SUPPORT = "http-detect-range-support"
-        val SKIP_LOOP_FILTER = "skip_loop_filter"
-        val OPENSLES = "opensles"
-        val MEDIACODEC = "mediacodec"
-        val MEDIACODEC_AUTO_ROTATE = "mediacodec-auto-rotate"
-        val MEDIACODEC_HANDLE_RESOLUTION_CHANGE = "mediacodec-handle-resolution-change"
         IjkMediaPlayer.loadLibrariesOnce(null)
-        IjkMediaPlayer.native_profileBegin(SO_LIB_NAME)
+        IjkMediaPlayer.native_profileBegin("libijkplayer.so")
+
         player = IjkMediaPlayer()
-        player?.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, FRAMEDROP, 1)
-        player?.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, START_ON_PREPARED, 0)
-        player?.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, HTTP_DETECT_RANGE_SUPPORT, 1)
-        player?.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, SKIP_LOOP_FILTER, 48)
-        player?.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, OPENSLES, 1)
-        player?.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, MEDIACODEC, 1)
-        player?.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, MEDIACODEC_AUTO_ROTATE, 1)
-        player?.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, MEDIACODEC_HANDLE_RESOLUTION_CHANGE, 1)
-    }
-
-    private fun initPlayerListener() {
-        player?.setOnPreparedListener {
-            absMediaCoreOnLisenter?.onPrepared(this)
-        }
-        player?.setOnCompletionListener {
-            absMediaCoreOnLisenter?.onCompletion(this)
-        }
-        player?.setOnBufferingUpdateListener { _, p1 ->
-            absMediaCoreOnLisenter?.onBufferingUpdate(this, p1)
-        }
-        player?.setOnSeekCompleteListener { _ ->
-        }
-        player?.setOnVideoSizeChangedListener { _, width, height, sar_num, sar_den ->
-            absMediaCoreOnLisenter?.onVideoSizeChanged(this, width, height, sar_num, sar_den)
-        }
-        player?.setOnErrorListener { _, what, extra ->
-            absMediaCoreOnLisenter?.onError(this, what, extra)!!
-        }
-        player?.setOnInfoListener { _, what, extra ->
-            if (701 == what) {//视频缓存中
-
-            } else if (702 == what) { //视频缓存完成
-                absMediaCoreOnLisenter?.onSeekComplete(this)
-                //player?.setSpeed(20 / 10f)
-            }
-            absMediaCoreOnLisenter?.onInfo(this, what, extra)!!
-        }
-        player?.setOnTimedTextListener { _, _ ->
-            absMediaCoreOnLisenter?.onTimedText(this)
-        }
-    }
-
-    private fun addSurfaceViewAndListener() {
-        mSurfaceView = createSurfaceView()
-        mSurfaceView?.holder?.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
-                absMediaCoreOnLisenter?.surfaceChanged(holder, format, width, height)
-            }
-
-            override fun surfaceDestroyed(holder: SurfaceHolder?) {
-                absMediaCoreOnLisenter?.surfaceDestroyed(holder)
-                //获取播放的内容
-            }
-
-            override fun surfaceCreated(holder: SurfaceHolder?) {
-                absMediaCoreOnLisenter?.surfaceCreated(holder)
-            }
-        })
-        tagerView?.addView(mSurfaceView, 0)
-    }
-
-    private fun createSurfaceView(): SurfaceView {
-        val surfaceView = SurfaceView(context)
-        val layoutParams: ViewGroup.LayoutParams = ViewGroup.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
-        surfaceView.layoutParams = layoutParams
-        return surfaceView
-    }
-
-    override fun rePlay() {
-//        if (mSurfaceView != null) {
-//            try {
-//                tagerView?.removeView(mSurfaceView)
-//            } catch (e: Exception) {
-//                e.printStackTrace()
-//            }
-//        }
-//        mSurfaceView = createSurfaceView()
-//        mSurfaceView?.holder?.addCallback(object : SurfaceHolder.Callback {
-//            override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
-//                absMediaCoreOnLisenter?.surfaceChanged(holder, format, width, height)
-//            }
-//
-//            override fun surfaceDestroyed(holder: SurfaceHolder?) {
-//                absMediaCoreOnLisenter?.surfaceDestroyed(holder)
-//                //获取播放的内容
-//            }
-//
-//            override fun surfaceCreated(holder: SurfaceHolder?) {
-//                absMediaCoreOnLisenter?.surfaceCreated(holder)
-//                reset()
-//                if (model?.curPos != (-1).toLong()) {
-//                    model?.player?.seekTo(model?.curPos!!)
-//                    model?.player?.start()
-//                }
-//                prepareAsync()
-//            }
-//        })
-//        tagerView?.addView(mSurfaceView, 0)
+        player?.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "libijkplayer.so", 1)
+        player?.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "framedrop", 0)
+        player?.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "start-on-prepared", 1)
+        player?.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 48)
+        player?.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "opensles", 1)
+        player?.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1)
+        player?.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1)
+        player?.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 1)
     }
 
     override fun prepareAsync() {
@@ -139,18 +32,18 @@ class IJKPlayer : AbsMediaCore() {
     }
 
     override fun start() {
-        player?.start()
         super.start()
+        player?.start()
     }
 
     override fun pause() {
-        player?.pause()
         super.pause()
+        player?.pause()
     }
 
     override fun stop() {
-        player?.stop()
         super.stop()
+        player?.stop()
     }
 
     override fun getDuration(): Long {
@@ -170,10 +63,8 @@ class IJKPlayer : AbsMediaCore() {
     }
 
     override fun release() {
-        player?.reset()
         player?.release()
         player = null
-        tagerView?.removeView(mSurfaceView)
         super.release()
     }
 
@@ -211,58 +102,57 @@ class IJKPlayer : AbsMediaCore() {
     }
 
     override fun setDataSource(path: String) {
-        player?.dataSource = path
         super.setDataSource(path)
+        player?.dataSource = path
     }
 
     override fun getTcpSpeed(): Long? {
         return player?.tcpSpeed
     }
 
-    override fun setOnCompletionListener(listener: OnCompletionListener) {
+    override fun setOnCompletionListener(listener: MediaListener.OnCompletionListener) {
         player?.setOnCompletionListener {
             super.setOnCompletionListener(listener)
             listener.onCompletion(this)
         }
     }
 
-    override fun setOnBufferingUpdateListener(listener: OnBufferingUpdateListener) {
+    override fun setOnBufferingUpdateListener(listener: MediaListener.OnBufferingUpdateListener) {
         player?.setOnBufferingUpdateListener { _, percent ->
             listener.onBufferingUpdate(this, percent)
         }
     }
 
-    override fun setOnSeekCompleteListener(listener: OnSeekCompleteListener) {
-
+    override fun setOnSeekCompleteListener(listener: MediaListener.OnSeekCompleteListener) {
         player?.setOnSeekCompleteListener { listener.onSeekComplete(this) }
     }
 
-    override fun setOnVideoSizeChangedListener(listener: OnVideoSizeChangedListener) {
+    override fun setOnVideoSizeChangedListener(listener: MediaListener.OnVideoSizeChangedListener) {
         player?.setOnVideoSizeChangedListener { _, width, height, sar_num, sar_den ->
             listener.onVideoSizeChanged(this, width, height, sar_num, sar_den)
         }
     }
 
-    override fun setOnErrorListener(listener: OnErrorListener) {
+    override fun setOnErrorListener(listener: MediaListener.OnErrorListener) {
         player?.setOnErrorListener { _, what, extra ->
             super.setOnErrorListener(listener)
             listener.onError(this, what, extra)
         }
     }
 
-    override fun setOnInfoListener(listener: OnInfoListener) {
+    override fun setOnInfoListener(listener: MediaListener.OnInfoListener) {
         player?.setOnInfoListener { _, what, extra ->
             listener.onInfo(this, what, extra)
         }
     }
 
-    override fun setOnTimedTextListener(listener: OnTimedTextListener) {
+    override fun setOnTimedTextListener(listener: MediaListener.OnTimedTextListener) {
         player?.setOnTimedTextListener { _, text ->
             listener.onTimedText(this, text.text)
         }
     }
 
-    override fun setOnPreparedListener(listener: OnPreparedListener) {
+    override fun setOnPreparedListener(listener: MediaListener.OnPreparedListener) {
         player?.setOnPreparedListener {
             super.setOnPreparedListener(listener)
             listener.onPrepared(this)
