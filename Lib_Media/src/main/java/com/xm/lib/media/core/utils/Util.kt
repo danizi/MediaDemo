@@ -10,7 +10,7 @@ import android.media.AudioManager
 import android.os.Build
 import android.provider.Settings
 import android.util.DisplayMetrics
-import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
@@ -28,7 +28,7 @@ class Util {
         }
 
         fun showLog(msg: String?) {
-            Log.e("Media", msg)
+            LogUtil.d("", msg)
         }
 
         @SuppressLint("SimpleDateFormat")
@@ -264,6 +264,26 @@ class Util {
                 (percent * audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)).toInt()
             }
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, index!!, AudioManager.FLAG_PLAY_SOUND)
+        }
+
+        /*------------------------------------------------
+         * view相关
+         */
+        @SuppressLint("InflateParams")
+        fun getView(context: Context?, resID: Int): View? {
+            return LayoutInflater.from(context).inflate(resID, null, false)
+        }
+
+        fun show(view: View?) {
+            if (view?.visibility == View.GONE) {
+                view.visibility = View.VISIBLE
+            }
+        }
+
+        fun hide(view: View?) {
+            if (view?.visibility == View.VISIBLE) {
+                view.visibility = View.GONE
+            }
         }
     }
 }

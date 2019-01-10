@@ -3,7 +3,7 @@ package com.xm.lib.media.core
 import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
-import com.xm.lib.media.core.attach.factory.MediaAttachLayoutFactory
+import com.xm.lib.media.core.attach.AbsAttachLayout
 import com.xm.lib.media.core.listener.MediaListener
 
 abstract class AbsVideoView(context: Context?, attrs: AttributeSet?) : FrameLayout(context, attrs) {
@@ -63,7 +63,7 @@ abstract class AbsVideoView(context: Context?, attrs: AttributeSet?) : FrameLayo
         //设置播放资源
     }
 
-    open fun setAttachLayout(attachLayout: MediaAttachLayoutFactory.IAttachLayout?) {
+    open fun setAttachLayout(attachLayout: AbsAttachLayout?) {
         //添加控制器
     }
 

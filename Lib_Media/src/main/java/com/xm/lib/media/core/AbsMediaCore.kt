@@ -2,7 +2,6 @@ package com.xm.lib.media.core
 
 import android.content.Context
 import android.view.SurfaceHolder
-import android.view.ViewGroup
 import com.xm.lib.media.core.constant.Constant
 import com.xm.lib.media.core.listener.MediaListener
 
@@ -11,7 +10,6 @@ import com.xm.lib.media.core.listener.MediaListener
  */
 abstract class AbsMediaCore {
     var context: Context? = null
-    var tagerView: ViewGroup? = null
     var mediaLifeState: Constant.MediaLifeState? = Constant.MediaLifeState.Idle
 
     init {
@@ -24,9 +22,33 @@ abstract class AbsMediaCore {
 
     open fun start() {
         //播放
-        if (mediaLifeState == Constant.MediaLifeState.Prepared || mediaLifeState == Constant.MediaLifeState.Paused) {
-            mediaLifeState = Constant.MediaLifeState.Started
-        }
+//        if (canStart()) {
+//            mediaLifeState = Constant.MediaLifeState.Started
+//        }
+    }
+
+    open fun isPlaying(): Boolean {
+        return mediaLifeState == Constant.MediaLifeState.Started
+    }
+
+    open fun canStart(): Boolean {
+        return (mediaLifeState == Constant.MediaLifeState.Prepared || mediaLifeState == Constant.MediaLifeState.Paused)
+    }
+
+    open fun canPause(): Boolean {
+        return mediaLifeState != Constant.MediaLifeState.Stop && mediaLifeState != Constant.MediaLifeState.Idle
+    }
+
+    open fun canStop(): Boolean {
+        return (mediaLifeState == Constant.MediaLifeState.Started || mediaLifeState == Constant.MediaLifeState.Paused)
+    }
+
+    open fun canSeekTo(msec: Long?, duration: Long): Boolean {
+        return (msec!! > 0 && msec!! < duration) && canSeekTo()
+    }
+
+    open fun canSeekTo(): Boolean {
+        return canStart() || canPause()
     }
 
     open fun prepareAsync() {
@@ -35,16 +57,16 @@ abstract class AbsMediaCore {
 
     open fun pause() {
         //暂停播放
-        if (mediaLifeState != Constant.MediaLifeState.Stop) {
-            mediaLifeState = Constant.MediaLifeState.Paused
-        }
+//        if (canPause()) {
+//            mediaLifeState = Constant.MediaLifeState.Paused
+//        }
     }
 
     open fun stop() {
         //停止播放
-        if (mediaLifeState == Constant.MediaLifeState.Started || mediaLifeState == Constant.MediaLifeState.Paused) {
-            mediaLifeState = Constant.MediaLifeState.Stop
-        }
+//        if (canStop()) {
+//            mediaLifeState = Constant.MediaLifeState.Stop
+//        }
     }
 
     open fun getDuration(): Long? {
@@ -63,12 +85,12 @@ abstract class AbsMediaCore {
 
     open fun release() {
         //释放资源
-        mediaLifeState = Constant.MediaLifeState.End
+//        mediaLifeState = Constant.MediaLifeState.End
     }
 
     open fun reset() {
         //重置状态
-        mediaLifeState = Constant.MediaLifeState.Idle
+//        mediaLifeState = Constant.MediaLifeState.Idle
     }
 
     open fun getVideoHeight(): Int? {
@@ -104,7 +126,7 @@ abstract class AbsMediaCore {
 
     open fun setDataSource(path: String) {
         //设置播放资源
-        mediaLifeState = Constant.MediaLifeState.Initialized
+//        mediaLifeState = Constant.MediaLifeState.Initialized
     }
 
     open fun getTcpSpeed(): Long? {
@@ -114,12 +136,12 @@ abstract class AbsMediaCore {
 
     open fun setOnPreparedListener(listener: MediaListener.OnPreparedListener) {
         //资源准备完成监听
-        mediaLifeState = Constant.MediaLifeState.Prepared
+//        mediaLifeState = Constant.MediaLifeState.Prepared
     }
 
     open fun setOnCompletionListener(listener: MediaListener.OnCompletionListener) {
         //播放完成监听
-        mediaLifeState = Constant.MediaLifeState.PlaybackCompleted
+//        mediaLifeState = Constant.MediaLifeState.PlaybackCompleted
     }
 
     open fun setOnBufferingUpdateListener(listener: MediaListener.OnBufferingUpdateListener) {
@@ -136,7 +158,7 @@ abstract class AbsMediaCore {
 
     open fun setOnErrorListener(listener: MediaListener.OnErrorListener) {
         //播放错误监听
-        mediaLifeState = Constant.MediaLifeState.Error
+//        mediaLifeState = Constant.MediaLifeState.Error
     }
 
     open fun setOnInfoListener(listener: MediaListener.OnInfoListener) {

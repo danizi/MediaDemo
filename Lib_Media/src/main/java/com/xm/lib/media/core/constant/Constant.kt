@@ -6,6 +6,19 @@ package com.xm.lib.media.core.constant
 class Constant {
 
     /**
+     * 附着在播放上的View的类型
+     */
+    enum class EnumMediaView {
+        PRE,
+        CONTROLLER,
+        LOADING,
+        GESTURE,
+        COMPLETE,
+        ERROR,
+        TIP
+    }
+
+    /**
      * 播放器的生命状态
      */
     enum class MediaLifeState {

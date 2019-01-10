@@ -8,7 +8,7 @@ import java.util.*
 /**
  * 播放器定时器管理类
  */
-class TimerManager {
+class TimerUtil {
     private val handler = Handler(Looper.getMainLooper())
     //开启一个定时器显示当前播放时长
     private var task: TimerTask? = null
@@ -37,8 +37,8 @@ class TimerManager {
     }
 
     companion object {
-        fun getInstance(): TimerManager {
-            return TimerManager()
+        fun getInstance(): TimerUtil {
+            return TimerUtil()
         }
     }
 

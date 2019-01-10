@@ -9,10 +9,10 @@ import android.view.*
 import android.widget.*
 import com.xm.lib.ijkplayer.IJKPlayer
 import com.xm.lib.media.core.AbsMediaCore
+import com.xm.lib.media.core.constant.Constant
 import com.xm.lib.media.core.listener.MediaGestureListener
 import com.xm.lib.media.core.listener.MediaListener
-import com.xm.lib.media.core.constant.Constant
-import com.xm.lib.media.core.utils.TimerManager
+import com.xm.lib.media.core.utils.TimerUtil
 import com.xm.lib.media.core.utils.Util
 import com.xm.lib.media.core.utils.Util.Companion.hhmmss
 import common.xm.com.xmcommon.R
@@ -60,6 +60,7 @@ class ActivityIjkplayer : AppCompatActivity() {
         urls?.add("http://hls.videocc.net/26de49f8c2/9/26de49f8c273bbc8f6812d1422a11b39_2.m3u8")
         urls?.add("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4")
         initPlayer()
+        player?.setDataSource(urls!![urlIndex])
     }
 
     private fun findViews() {
@@ -85,7 +86,6 @@ class ActivityIjkplayer : AppCompatActivity() {
                 restart()
             }
             R.id.menu_prepareAsync -> {
-                player?.setDataSource(urls!![urlIndex])
                 player?.prepareAsync()
             }
             R.id.menu_start -> {
@@ -284,9 +284,9 @@ class ActivityIjkplayer : AppCompatActivity() {
         seekBar?.progress = 0
         tvPos?.text = "0"
         //移除计时器重新
-        TimerManager.getInstance().stop()
+        TimerUtil.getInstance().stop()
         //启动计时器
-        TimerManager.getInstance().start(object : TimerManager.PeriodListenner {
+        TimerUtil.getInstance().start(object : TimerUtil.PeriodListenner {
             override fun onPeriodListenner() {
                 period()
             }
@@ -322,7 +322,6 @@ class ActivityIjkplayer : AppCompatActivity() {
     }
 
     private fun addSurfaceView(viewGroup: ViewGroup?, surfaceView: SurfaceView?) {
-        this.surfaceView = surfaceView
         viewGroup?.addView(surfaceView)
     }
 
@@ -405,7 +404,7 @@ class ActivityIjkplayer : AppCompatActivity() {
         seekBar?.max = player?.getDuration()?.toInt()!!
         tvDuration?.text = "视频总时长:" + Util.hhmmss(player?.getDuration())
         //开启定时器
-        TimerManager.getInstance().start(object : TimerManager.PeriodListenner {
+        TimerUtil.getInstance().start(object : TimerUtil.PeriodListenner {
             override fun onPeriodListenner() {
                 period()
             }
@@ -423,8 +422,9 @@ class ActivityIjkplayer : AppCompatActivity() {
     private fun completion(mp: AbsMediaCore) {
         Util.showToast(this, "播放完成")
         if (playWay == Constant.EnumPlayWay.LIST_LOOP) {
-            urlIndex++
-            restart()
+            if (++urlIndex < urls?.size!!) {
+                restart()
+            }
         }
     }
 

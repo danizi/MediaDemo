@@ -7,7 +7,7 @@ class MediaListener {
      * 播放资源播准备完成监听
      */
     interface OnPreparedListener {
-        open fun onPrepared(mp: AbsMediaCore) {}
+        fun onPrepared(mp: AbsMediaCore)
     }
 
     /**
