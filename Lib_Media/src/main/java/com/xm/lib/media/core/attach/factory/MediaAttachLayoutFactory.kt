@@ -1,7 +1,7 @@
 package com.xm.lib.media.core.attach.factory
 
 import android.content.Context
-import com.xm.lib.media.core.attach.AbsAttachLayout
+import com.xm.lib.media.core.AbsAttachLayout
 import com.xm.lib.media.core.attach.layout.AttachCompleteLayout
 import com.xm.lib.media.core.attach.layout.AttachErrorLayout
 import com.xm.lib.media.core.attach.layout.AttachGestureLayout

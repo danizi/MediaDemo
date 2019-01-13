@@ -10,10 +10,9 @@ import android.media.AudioManager
 import android.os.Build
 import android.provider.Settings
 import android.util.DisplayMetrics
-import android.view.LayoutInflater
-import android.view.View
-import android.view.WindowManager
+import android.view.*
 import android.widget.Toast
+import freemarker.template.utility.DateUtil
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -28,14 +27,39 @@ class Util {
         }
 
         fun showLog(msg: String?) {
-            LogUtil.d("", msg)
+            LogUtil.d("xm media", msg)
         }
 
         @SuppressLint("SimpleDateFormat")
         fun hhmmss(ms: Long?): String {
             val format = SimpleDateFormat("hh:mm:ss")
             Calendar.getInstance().timeInMillis = ms!!
-            return format.format(Calendar.getInstance().time)
+            //return format.format(Calendar.getInstance().time)
+            return getTimeStrBySecond(ms / 1000)
+        }
+
+        fun getTimeStrBySecond(second: Long): String {
+            val HOUR_SECOND = 60 * 60
+            val MINUTE_SECOND = 60
+            var second = second
+            if (second <= 0) {
+                return "00:00:00"
+            }
+
+            val sb = StringBuilder()
+            val hours = second / HOUR_SECOND
+            if (hours > 0) {
+                second -= hours * HOUR_SECOND
+            }
+
+            val minutes = second / MINUTE_SECOND
+            if (minutes > 0) {
+                second -= minutes * MINUTE_SECOND
+            }
+            return (if (hours >= 10) (hours).toString() + ""
+            else
+                "0$hours" + ":" + (if (minutes >= 10) (minutes).toString() + "" else "0$minutes") + ":"
+                        + if (second >= 10) (second).toString() + "" else "0$second")
         }
 
         @SuppressLint("ObsoleteSdkInt")
@@ -269,6 +293,11 @@ class Util {
         /*------------------------------------------------
          * view相关
          */
+        fun setDisplaySize(view: View?, width: Int, height: Int) {
+            view?.layoutParams?.width = width
+            view?.layoutParams?.height = height
+        }
+
         @SuppressLint("InflateParams")
         fun getView(context: Context?, resID: Int): View? {
             return LayoutInflater.from(context).inflate(resID, null, false)
@@ -284,6 +313,13 @@ class Util {
             if (view?.visibility == View.VISIBLE) {
                 view.visibility = View.GONE
             }
+        }
+
+        private fun createSurfaceView(context: Context?, width: Int, height: Int): SurfaceView? {
+            val surfaceView = SurfaceView(context)
+            surfaceView.holder?.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS)
+            surfaceView.layoutParams = ViewGroup.LayoutParams(width, height)
+            return surfaceView
         }
     }
 }

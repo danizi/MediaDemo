@@ -35,7 +35,10 @@
             android:name=".media.ActivityIjkplayer"
             android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard" />
 
-        <activity android:name=".media.ActivityIjkPlayerViewVideo"></activity>
+        <activity
+            android:name=".media.ActivityIjkPlayerViewVideo"
+            android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
 
     </application>
 

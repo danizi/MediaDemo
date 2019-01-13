@@ -17,7 +17,8 @@ import common.xm.com.xmcommon.R
 class ActMedia : AppCompatActivity() {
     //播放器
     var preUrl = "http://img.videocc.net/uimage/2/26de49f8c2/9/26de49f8c273bbc8f6812d1422a11b39_1.jpg"
-//    var xmMediaComponent: XmMediaComponent? = null
+
+    //    var xmMediaComponent: XmMediaComponent? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.act_media)
@@ -38,8 +39,12 @@ class ActMedia : AppCompatActivity() {
 //        }
 //
         val btnIjkplayer: Button? = findViewById(R.id.btn_ijkplayer)
+        val btnIjkplayer2: Button? = findViewById(R.id.btn_ijkplayer2)
         btnIjkplayer?.setOnClickListener {
             startActivity(Intent(this, ActivityIjkplayer::class.java))
+        }
+        btnIjkplayer2?.setOnClickListener {
+            startActivity(Intent(this, ActivityIjkPlayerViewVideo::class.java))
         }
     }
 

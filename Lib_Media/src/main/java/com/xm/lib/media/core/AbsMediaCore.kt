@@ -12,14 +12,6 @@ abstract class AbsMediaCore {
     var context: Context? = null
     var mediaLifeState: Constant.MediaLifeState? = Constant.MediaLifeState.Idle
 
-    init {
-        init()
-    }
-
-    open fun init() {
-        //初始化
-    }
-
     open fun start() {
         //播放
 //        if (canStart()) {
@@ -27,7 +19,7 @@ abstract class AbsMediaCore {
 //        }
     }
 
-    open fun isPlaying(): Boolean {
+    open fun isPlaying(): Boolean ?{
         return mediaLifeState == Constant.MediaLifeState.Started
     }
 

@@ -11,7 +11,7 @@ class LogUtil {
         /**
          * 从高到底排列 I > D > W >E
          */
-        var level: Int = E
+        var level: Int = D
 
         fun i(tag: String?, msg: String?) {
             if (level >= I) {

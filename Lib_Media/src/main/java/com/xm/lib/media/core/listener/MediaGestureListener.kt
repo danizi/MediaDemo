@@ -134,6 +134,4 @@ open class MediaGestureListener(private val view: ViewGroup?, private var gestur
          */
         abstract fun onClickListener()
     }
-
-
 }

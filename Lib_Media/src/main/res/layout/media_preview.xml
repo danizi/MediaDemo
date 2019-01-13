@@ -18,10 +18,20 @@
         android:id="@+id/img_play"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:src="@mipmap/ic_launcher"
+        android:src="@mipmap/media_play"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/img_preview" />
+
+    <android.support.v7.widget.AppCompatSeekBar
+        android:id="@+id/seekbar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/img_preview"
+        app:layout_constraintEnd_toEndOf="@+id/img_preview"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

@@ -13,8 +13,7 @@ class IJKPlayer : AbsMediaCore() {
     private var tag: String? = "IJKPlayer"
     private var player: IjkMediaPlayer? = null
 
-    override fun init() {
-        super.init()
+    init {
         IjkMediaPlayer.loadLibrariesOnce(null)
         IjkMediaPlayer.native_profileBegin("libijkplayer.so")
 
@@ -30,6 +29,7 @@ class IJKPlayer : AbsMediaCore() {
 
         LogUtil.d(tag, "player setup")
     }
+
 
     override fun prepareAsync() {
         super.prepareAsync()
@@ -71,20 +71,20 @@ class IJKPlayer : AbsMediaCore() {
         }
     }
 
-    override fun getDuration(): Long {
-        val duration = player?.duration!!
+    override fun getDuration(): Long? {
+        val duration = player?.duration
         LogUtil.i(tag, "duration:$duration")
         return duration
     }
 
-    override fun getCurrentPosition(): Long {
-        val currentPosition = player?.currentPosition!!
+    override fun getCurrentPosition(): Long? {
+        val currentPosition = player?.currentPosition
         LogUtil.i(tag, "currentPosition:$currentPosition")
         return currentPosition
     }
 
     override fun seekTo(msec: Long?) {
-        if (canSeekTo(msec, getDuration())) {
+        if (canSeekTo(msec, getDuration()!!)) {
             player?.seekTo(msec!!)
             LogUtil.d(tag, "player seekTo$msec")
         } else {
