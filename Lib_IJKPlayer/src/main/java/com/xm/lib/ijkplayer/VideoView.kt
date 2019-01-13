@@ -137,7 +137,7 @@ class VideoView : AbsVideoView {
         super.prepareAsync()
         mediaHelp?.player?.setDataSource(path!!)
         mediaHelp?.player?.prepareAsync()
-        mediaHelp?.player?.setSpeed(2f)
+        mediaHelp?.player?.setSpeed(2.0f)
     }
 
     /**

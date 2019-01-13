@@ -18,6 +18,7 @@ class IJKPlayer : AbsMediaCore() {
         IjkMediaPlayer.native_profileBegin("libijkplayer.so")
 
         player = IjkMediaPlayer()
+        player?.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "soundtouch", 1)       //todo 加了这个才能设置倍速播放
         player?.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "libijkplayer.so", 1)
         player?.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "framedrop", 0)
         player?.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "start-on-prepared", 1)

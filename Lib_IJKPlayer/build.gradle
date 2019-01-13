@@ -28,10 +28,6 @@ android {
 dependencies {
     api fileTree(include: ['*.jar'], dir: 'libs')
     api project(':Lib_IJKPlayer_Sdk')
-    //该依赖包含ijkplayer解码和MediaPlayer解码
-    //api 'cn.jiajunhui:ijkplayer:3342_088_006'
-    //ijk官方的解码库依赖，较少格式版本且不支持HTTPS。
-    //api 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.8'
     api project(':Lib_Media')
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
