@@ -57,8 +57,8 @@ class ActivityIjkplayer : AppCompatActivity() {
     }
 
     private fun initData() {
-        urls?.add("http://hls.videocc.net/26de49f8c2/9/26de49f8c273bbc8f6812d1422a11b39_2.m3u8")
-        urls?.add("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4")
+        urls?.add("http://hls.videocc.net/26de49f8c2/4/26de49f8c2a6a16b2b8f41f88045f7b4_2.m3u8")
+//        urls?.add("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4")
         initPlayer()
         player?.setDataSource(urls!![urlIndex])
     }

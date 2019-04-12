@@ -25,7 +25,7 @@ class ActMedia : AppCompatActivity() {
 //        xmMediaComponent = findViewById(R.id.media)
 //        if (xmMediaComponent != null) {
 //            xmMediaComponent!!
-//                    .core(IJKPlayer())                                                                                                        //使用的播放器引擎&播放器初始化
+//                    .core(XmIJKPlayer())                                                                                                        //使用的播放器引擎&播放器初始化
 //                    .addViewToMedia(EnumViewType.PREVIEW, MediaPreView(this, R.layout.media_preview, preUrl))                        //绑定预览视图
 //                    .addViewToMedia(EnumViewType.LOADING, MediaLoadingView(this, R.layout.media_loading))                            //绑定加载视图
 //                    .addViewToMedia(EnumViewType.CONTROLLER, MediaControlView(this, R.layout.media_controller))                      //绑定控制视图
