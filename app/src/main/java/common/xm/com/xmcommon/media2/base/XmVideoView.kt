@@ -5,15 +5,55 @@ import android.content.Context
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.util.AttributeSet
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import common.xm.com.xmcommon.media2.engine.ijk.XmIJKPlayer
 import common.xm.com.xmcommon.media2.event.PlayerObservable
+import common.xm.com.xmcommon.media2.event.PlayerObserver
 import common.xm.com.xmcommon.media2.log.BKLog
+import tv.danmaku.ijk.media.player.IMediaPlayer
 import tv.danmaku.ijk.media.player.IjkMediaPlayer
 import java.io.IOException
+import java.util.*
 
-class XmVideoView {
+class XmVideoView : FrameLayout {
+
+    private var mediaPlayer: IXmMediaPlayer? = null //播放器
+    private var p: PlayerObservable? = null //观察者
+    private var attachmentViews: Queue<PlayerObserver>? = null //附着页面
+
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+
+    constructor(context: Context) : super(context)
+
+    init {
+        mediaPlayer = XmIJKPlayer()
+        p = PlayerObservable()
+        val sh = null
+        mediaPlayer?.setDisplay(sh)
+        mediaPlayer?.setOnPreparedListener(object : OnPreparedListener {
+            override fun onPrepared(mp: IXmMediaPlayer) {
+                notifyObserversPrepared(mp)
+            }
+        })
+    }
+
+    private fun notifyObserversPrepared(mp: IXmMediaPlayer) {
+        for (attachmentView in attachmentViews!!) {
+            attachmentView.onPrepared(mp)
+        }
+    }
+
+    fun attachment(playerObserver: PlayerObserver?) {
+        /*添加在播放器附着的页面*/
+        attachmentViews?.add(playerObserver)
+    }
 
     @TargetApi(Build.VERSION_CODES.O)
     fun testMediaPlayer(context: Context, parent: ViewGroup?) {
@@ -28,7 +68,7 @@ class XmVideoView {
         m.isLooping
         m.start()
         m.stop()
-        m
+        m.seekTo(1)
         //创建画布
         val surfaceView = SurfaceView(context)
         surfaceView.layoutParams = ViewGroup.LayoutParams(400, 400)
@@ -36,11 +76,11 @@ class XmVideoView {
         surfaceView.holder.setKeepScreenOn(true)
         surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
-                BKLog.d(XmMediaPlayer.TAG, "surfaceChanged width:$width height:$height")
+                BKLog.d(IXmMediaPlayer.TAG, "surfaceChanged width:$width height:$height")
             }
 
             override fun surfaceDestroyed(holder: SurfaceHolder?) {
-                BKLog.d(XmMediaPlayer.TAG, "surfaceDestroyed")
+                BKLog.d(IXmMediaPlayer.TAG, "surfaceDestroyed")
             }
 
             override fun surfaceCreated(holder: SurfaceHolder?) {
@@ -54,45 +94,45 @@ class XmVideoView {
                     e.printStackTrace()
                 }
                 m.prepareAsync()
-                BKLog.d(XmMediaPlayer.TAG, "surfaceCreated")
+                BKLog.d(IXmMediaPlayer.TAG, "surfaceCreated")
             }
         })
         m.setAudioStreamType(AudioManager.STREAM_MUSIC)
         m.setScreenOnWhilePlaying(true)
-        BKLog.d(XmMediaPlayer.TAG, "播放状态:${m.isPlaying}")
+        BKLog.d(IXmMediaPlayer.TAG, "播放状态:${m.isPlaying}")
         //设置监听
         m.setOnSeekCompleteListener {
-            BKLog.d(XmMediaPlayer.TAG, "SeekCompleteListener")
+            BKLog.d(IXmMediaPlayer.TAG, "SeekCompleteListener")
         }
         m.setOnSubtitleDataListener { mp, data ->
-            BKLog.d(XmMediaPlayer.TAG, "SubtitleDataListener")
+            BKLog.d(IXmMediaPlayer.TAG, "SubtitleDataListener")
         }
         m.setOnTimedTextListener { mp, text ->
-            BKLog.d(XmMediaPlayer.TAG, "TimedTextListener")
+            BKLog.d(IXmMediaPlayer.TAG, "TimedTextListener")
         }
         m.setOnVideoSizeChangedListener { mp, width, height ->
-            BKLog.d(XmMediaPlayer.TAG, "VideoSizeChangedListener width:$width height:$height")
+            BKLog.d(IXmMediaPlayer.TAG, "VideoSizeChangedListener width:$width height:$height")
         }
         m.setOnErrorListener { mp, what, extra ->
-            BKLog.d(XmMediaPlayer.TAG, "ErrorListener what:$what extra:$extra")
+            BKLog.d(IXmMediaPlayer.TAG, "ErrorListener what:$what extra:$extra")
             false
         }
         m.setOnInfoListener { mp, what, extra ->
-            BKLog.d(XmMediaPlayer.TAG, "InfoListener what:$what extra:$extra")
+            BKLog.d(IXmMediaPlayer.TAG, "InfoListener what:$what extra:$extra")
             false
         }
         m.setOnDrmInfoListener { mp, drmInfo ->
-            BKLog.d(XmMediaPlayer.TAG, "DrmInfoListener drmInfo:$drmInfo")
+            BKLog.d(IXmMediaPlayer.TAG, "DrmInfoListener drmInfo:$drmInfo")
         }
         m.setOnBufferingUpdateListener { mp, percent ->
-            BKLog.d(XmMediaPlayer.TAG, "BufferingUpdateListener percent:$percent")
+            BKLog.d(IXmMediaPlayer.TAG, "BufferingUpdateListener percent:$percent")
         }
         m.setOnCompletionListener {
-            BKLog.d(XmMediaPlayer.TAG, "CompletionListener")
+            BKLog.d(IXmMediaPlayer.TAG, "CompletionListener")
         }
         m.setOnPreparedListener {
             m.start()
-            BKLog.d(XmMediaPlayer.TAG, "PreparedListener")
+            BKLog.d(IXmMediaPlayer.TAG, "PreparedListener")
         }
     }
 
@@ -107,11 +147,11 @@ class XmVideoView {
         surfaceView.holder.setKeepScreenOn(true)
         surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
-                BKLog.d(XmMediaPlayer.TAG, "surfaceChanged width:$width height:$height")
+                BKLog.d(IXmMediaPlayer.TAG, "surfaceChanged width:$width height:$height")
             }
 
             override fun surfaceDestroyed(holder: SurfaceHolder?) {
-                BKLog.d(XmMediaPlayer.TAG, "surfaceDestroyed")
+                BKLog.d(IXmMediaPlayer.TAG, "surfaceDestroyed")
             }
 
             override fun surfaceCreated(holder: SurfaceHolder?) {
@@ -125,7 +165,7 @@ class XmVideoView {
                     e.printStackTrace()
                 }
                 m.prepareAsync()
-                BKLog.d(XmMediaPlayer.TAG, "surfaceCreated")
+                BKLog.d(IXmMediaPlayer.TAG, "surfaceCreated")
             }
         })
         m.setAudioStreamType(AudioManager.STREAM_MUSIC)  //与原生不同
@@ -140,18 +180,18 @@ class XmVideoView {
 
         //设置监听
         m.setOnSeekCompleteListener {
-            BKLog.d(XmMediaPlayer.TAG, "SeekCompleteListener")
+            BKLog.d(IXmMediaPlayer.TAG, "SeekCompleteListener")
 
         }
 //        m.setOnSubtitleDataListener { mp, data ->
 //            BKLog.d(TAG, "SubtitleDataListener")
 //        }
         m.setOnTimedTextListener { mp, text ->
-            BKLog.d(XmMediaPlayer.TAG, "TimedTextListener")
+            BKLog.d(IXmMediaPlayer.TAG, "TimedTextListener")
         }
 
         m.setOnVideoSizeChangedListener { mp, width, height, sar_num, sar_den ->
-            BKLog.d(XmMediaPlayer.TAG, "VideoSizeChangedListener width:$width height:$height sar_num:$sar_num sar_den:$sar_den")
+            BKLog.d(IXmMediaPlayer.TAG, "VideoSizeChangedListener width:$width height:$height sar_num:$sar_num sar_den:$sar_den")
         }
 
 //        m.setOnVideoSizeChangedListener { mp, width, height ->
@@ -159,25 +199,25 @@ class XmVideoView {
 //        }
 
         m.setOnErrorListener { mp, what, extra ->
-            BKLog.d(XmMediaPlayer.TAG, "ErrorListener what:$what extra:$extra")
+            BKLog.d(IXmMediaPlayer.TAG, "ErrorListener what:$what extra:$extra")
             false
         }
         m.setOnInfoListener { mp, what, extra ->
-            BKLog.d(XmMediaPlayer.TAG, "InfoListener what:$what extra:$extra")
+            BKLog.d(IXmMediaPlayer.TAG, "InfoListener what:$what extra:$extra")
             false
         }
 //        m.setOnDrmInfoListener { mp, drmInfo ->
 //            BKLog.d(TAG, "DrmInfoListener drmInfo:$drmInfo")
 //        }
         m.setOnBufferingUpdateListener { mp, percent ->
-            BKLog.d(XmMediaPlayer.TAG, "BufferingUpdateListener percent:$percent")
+            BKLog.d(IXmMediaPlayer.TAG, "BufferingUpdateListener percent:$percent")
         }
         m.setOnCompletionListener {
-            BKLog.d(XmMediaPlayer.TAG, "CompletionListener")
+            BKLog.d(IXmMediaPlayer.TAG, "CompletionListener")
         }
         m.setOnPreparedListener {
             m.start()
-            BKLog.d(XmMediaPlayer.TAG, "PreparedListener")
+            BKLog.d(IXmMediaPlayer.TAG, "PreparedListener")
         }
     }
 
@@ -195,7 +235,6 @@ class XmVideoView {
         // 播放过程中控制器 接受回调
     }
 
-    val p = PlayerObservable()
 
     fun add() {
         //p.addObserver(PlayerObserver())

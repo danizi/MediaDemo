@@ -1,7 +1,7 @@
 package common.xm.com.xmcommon.media2.event
 
-import common.xm.com.xmcommon.media2.base.XmMediaPlayer
+import common.xm.com.xmcommon.media2.base.IXmMediaPlayer
 
 interface PlayerObserver {
-    fun onPrepared(mp: XmMediaPlayer)
+    fun onPrepared(mp: IXmMediaPlayer)
 }
