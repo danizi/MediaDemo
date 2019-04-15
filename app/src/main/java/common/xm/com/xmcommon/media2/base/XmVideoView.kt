@@ -20,8 +20,8 @@ import kotlin.collections.ArrayList
 class XmVideoView : FrameLayout {
 
     var mediaPlayer: XmMediaPlayer? = null //播放器
-    private var urls: ArrayList<String>? = null //保存播放记录
     var attachmentViews: ArrayList<BaseAttachmentView>? = null //附着页面集合
+    private var urls: ArrayList<String>? = null //保存播放记录
     private var sh: SurfaceHolder? = null //画布Holder
     private var autoPlay = false
 

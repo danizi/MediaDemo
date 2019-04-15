@@ -3,9 +3,13 @@ package common.xm.com.xmcommon.media2.event
 import android.media.MediaPlayer
 import android.media.SubtitleData
 import common.xm.com.xmcommon.media2.base.IXmMediaPlayer
+import common.xm.com.xmcommon.media2.log.BKLog
 
 interface PlayerObserver {
-    fun onPrepared(mp: IXmMediaPlayer) {}
+    var TAG="PlayerObserver"
+    fun onPrepared(mp: IXmMediaPlayer) {
+        BKLog.d(TAG,"")
+    }
 
     fun onCompletion(mp: IXmMediaPlayer) {}
 
