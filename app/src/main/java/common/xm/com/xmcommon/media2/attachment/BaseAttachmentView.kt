@@ -6,25 +6,38 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import common.xm.com.xmcommon.R
+import common.xm.com.xmcommon.media2.base.IXmMediaPlayer
 import common.xm.com.xmcommon.media2.base.XmVideoView
 import common.xm.com.xmcommon.media2.event.PlayerObserver
 
 abstract class BaseAttachmentView : FrameLayout {
 
-    var observer: PlayerObserver? = null  //观察者
+    var observer: PlayerObserver? = object : PlayerObserver {}  //观察者
     var xmVideoView: XmVideoView? = null  //播放实例
+    var view: View? = null //当前页面
 
     constructor(context: Context?) : super(context!!)
 
     constructor(context: Context?, attrs: AttributeSet?) : super(context!!, attrs)
 
-    fun getView(layoutID: Int): View {
+    init {
+        try {
+            view = getView(layouId())
+            addView(view)
+            findViews(view)
+            initDisplay()
+            initEvent()
+            initData()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun getView(layoutID: Int): View {
         return LayoutInflater.from(context).inflate(layoutID, null, false)
     }
 
-    abstract fun unBind()
-
-    abstract fun bind(xmVideoView: XmVideoView)
+    abstract fun layouId(): Int
 
     abstract fun findViews(view: View?)
 
@@ -33,4 +46,8 @@ abstract class BaseAttachmentView : FrameLayout {
     abstract fun initEvent()
 
     abstract fun initData()
+
+    abstract fun bind(xmVideoView: XmVideoView)
+
+    abstract fun unBind()
 }

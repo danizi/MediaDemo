@@ -9,19 +9,23 @@ import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import common.xm.com.xmcommon.media2.attachment.AttachmentControl
+import common.xm.com.xmcommon.media2.attachment.AttachmentLoading
 import common.xm.com.xmcommon.media2.attachment.AttachmentPre
 import common.xm.com.xmcommon.media2.attachment.BaseAttachmentView
 import common.xm.com.xmcommon.media2.base.XmMediaPlayer.Companion.TAG
 import common.xm.com.xmcommon.media2.log.BKLog
 import java.io.IOException
 import java.util.*
+import java.util.concurrent.BlockingQueue
+import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.collections.ArrayList
 
 class XmVideoView : FrameLayout {
 
     var mediaPlayer: XmMediaPlayer? = null //播放器
-    var attachmentViews: ArrayList<BaseAttachmentView>? = null //附着页面集合
-    private var urls: ArrayList<String>? = null //保存播放记录
+    var attachmentViews: ConcurrentLinkedQueue<BaseAttachmentView>? = ConcurrentLinkedQueue() //附着页面集合
+    private var urls : ConcurrentLinkedQueue<String>? = ConcurrentLinkedQueue() //保存播放记录
     private var sh: SurfaceHolder? = null //画布Holder
     private var autoPlay = false
 
@@ -29,15 +33,13 @@ class XmVideoView : FrameLayout {
 
     constructor(context: Context) : super(context)
 
-    init {
-        urls = ArrayList()
-        attachmentViews = ArrayList()
+    private fun initMediaPlayer() {
+        //mediaPlayer?.release()
         mediaPlayer = XmMediaPlayer()
         initMediaPlayerListener()
     }
 
     private fun initMediaPlayerListener() {
-
         mediaPlayer?.setOnVideoSizeChangedListener(object : OnVideoSizeChangedListener {
             override fun onVideoSizeChanged(mp: IXmMediaPlayer, width: Int, height: Int, sar_num: Int, sar_den: Int) {
                 notifyObserversVideoSizeChanged(mp, width, height, sar_num, sar_den)
@@ -192,6 +194,7 @@ class XmVideoView : FrameLayout {
         if (attachment != null) {
             attachment.unBind()
             attachmentViews?.remove(attachment)
+            this.removeView(attachment)
         } else {
             BKLog.e(TAG, "attachment is null")
         }
@@ -207,23 +210,16 @@ class XmVideoView : FrameLayout {
             sh = surfaceView.holder
             sh?.addCallback(object : SurfaceHolder.Callback {
                 override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
-                    BKLog.d(IXmMediaPlayer.TAG, "surfaceChanged width:$width height:$height")
+                    BKLog.d(TAG, "surfaceChanged width:$width height:$height")
                 }
 
                 override fun surfaceDestroyed(holder: SurfaceHolder?) {
-                    BKLog.d(IXmMediaPlayer.TAG, "surfaceDestroyed")
+                    BKLog.d(TAG, "surfaceDestroyed")
                 }
 
                 override fun surfaceCreated(holder: SurfaceHolder?) {
                     if (!TextUtils.isEmpty(url)) {
-
-                        //重新创建
-                        mediaPlayer?.stop()
-                        mediaPlayer?.reset()
-                        mediaPlayer?.release()
-                        mediaPlayer = null
-                        mediaPlayer = XmMediaPlayer()
-
+                        initMediaPlayer()
                         mediaPlayer?.setDisplay(holder)
                         try {
                             mediaPlayer?.setDataSource(url)
@@ -246,9 +242,16 @@ class XmVideoView : FrameLayout {
     }
 
     fun test() {
-        val url = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"
-        val preUrl = "http://pic32.nipic.com/20130823/13339320_183302468194_2.jpg"
-        val pre = AttachmentPre(context, preUrl, url)
+        val pre = AttachmentPre(context)
+        pre.preUrl = "http://img3.imgtn.bdimg.com/it/u=1752243568,253651337&fm=26&gp=0.jpg"
+        pre.url = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"
+        pre.setCover()
         bindAttachmentView(pre)
+
+        val loading = AttachmentLoading(context)
+        bindAttachmentView(loading)
+
+        val control = AttachmentControl(context)
+        bindAttachmentView(control)
     }
 }

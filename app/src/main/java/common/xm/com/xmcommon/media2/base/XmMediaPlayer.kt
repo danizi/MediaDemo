@@ -2,7 +2,6 @@ package common.xm.com.xmcommon.media2.base
 
 import android.view.SurfaceHolder
 import common.xm.com.xmcommon.media2.base.ijk.XmIJKPlayer
-import common.xm.com.xmcommon.media2.base.origin.XmOriginPlayer
 import common.xm.com.xmcommon.media2.log.BKLog
 
 class XmMediaPlayer : IXmMediaPlayer() {
@@ -14,7 +13,7 @@ class XmMediaPlayer : IXmMediaPlayer() {
 
     init {
         mediaPlayer = XmIJKPlayer()
-        mediaPlayer = XmOriginPlayer()
+        //mediaPlayer = XmOriginPlayer()
     }
 
     override fun getDuration(): Long {

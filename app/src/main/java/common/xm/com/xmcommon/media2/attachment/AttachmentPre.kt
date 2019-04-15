@@ -10,12 +10,14 @@ import common.xm.com.xmcommon.media2.base.IXmMediaPlayer
 import common.xm.com.xmcommon.media2.base.XmVideoView
 import common.xm.com.xmcommon.media2.event.PlayerObserver
 
-class AttachmentPre(context: Context?, private val preUrl: String, private val url: String) : BaseAttachmentView(context!!) {
+class AttachmentPre(context: Context?) : BaseAttachmentView(context!!) {
 
 
     private var ivPre: ImageView? = null
     private var ivStart: ImageView? = null
     private var pbLoading: ProgressBar? = null
+    var preUrl: String = ""
+    var url: String = ""
 
     init {
         observer = object : PlayerObserver {
@@ -25,12 +27,6 @@ class AttachmentPre(context: Context?, private val preUrl: String, private val u
                 xmVideoView?.removeAttachmentView(this@AttachmentPre)
             }
         }
-        val view = getView(R.layout.attachment_pre)
-        addView(view)
-        findViews(view)
-        initDisplay()
-        initEvent()
-        initData()
     }
 
     override fun bind(xmVideoView: XmVideoView) {
@@ -41,6 +37,10 @@ class AttachmentPre(context: Context?, private val preUrl: String, private val u
     override fun unBind() {
         this.xmVideoView = null
         this.xmVideoView?.removeView(this)
+    }
+
+    override fun layouId(): Int {
+        return R.layout.attachment_pre
     }
 
     override fun findViews(view: View?) {
@@ -54,16 +54,20 @@ class AttachmentPre(context: Context?, private val preUrl: String, private val u
             if (ivStart?.visibility == View.VISIBLE) {
                 ivStart?.visibility = View.GONE
                 pbLoading?.visibility = View.VISIBLE
-                xmVideoView?.start(url) //播放视频
+                xmVideoView?.start(url, true) //播放视频
             }
         }
     }
 
     override fun initDisplay() {
-        Glide.with(context).load(preUrl).into(ivPre)//加载图片
+
         ivPre?.visibility = View.VISIBLE
         ivStart?.visibility = View.VISIBLE
         pbLoading?.visibility = View.GONE
+    }
+
+    fun setCover() {
+        Glide.with(context).load(preUrl).into(ivPre)//加载图片
     }
 
     override fun initData() {

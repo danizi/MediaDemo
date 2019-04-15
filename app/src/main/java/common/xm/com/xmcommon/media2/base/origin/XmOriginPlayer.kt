@@ -119,8 +119,10 @@ class XmOriginPlayer : IXmMediaPlayer() {
     }
 
     override fun setOnSubtitleDataListener(listener: OnSubtitleDataListener) {
-        mediaPlayer.setOnSubtitleDataListener { mp, data ->
-            listener.onSubtitleData(this, data)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            mediaPlayer.setOnSubtitleDataListener { mp, data ->
+                listener.onSubtitleData(this, data)
+            }
         }
     }
 
