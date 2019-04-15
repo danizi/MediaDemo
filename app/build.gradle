@@ -36,7 +36,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.testMediaPlayer.espresso:espresso-core:3.0.2'
+    //androidTestImplementation 'com.android.support.testMediaPlayer.espresso:espresso-core:3.0.2'
     implementation project(':Lib_Component')
     implementation project(':Lib_Common')
     api project(':Lib_IJKPlayer')

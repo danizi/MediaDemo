@@ -82,4 +82,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="测试播放器" />
+
+    <common.xm.com.xmcommon.media2.base.XmVideoView
+        android:id="@+id/video"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/colorAccent" />
 </LinearLayout>

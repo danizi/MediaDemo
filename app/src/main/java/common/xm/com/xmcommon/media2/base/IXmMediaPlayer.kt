@@ -1,64 +1,63 @@
 package common.xm.com.xmcommon.media2.base
 
-import android.drm.DrmInfo
+import android.media.MediaPlayer
 import android.media.SubtitleData
 import android.os.Bundle
 import android.view.SurfaceHolder
 
-interface IXmMediaPlayer {
+abstract class IXmMediaPlayer {
 
     companion object {
         const val TAG = "IXmMediaPlayer"
     }
 
-    fun getDuration(): Long
-    fun getCurrentPosition(): Long
-    fun getVideoHeight(): Long
-    fun getVideoWidth(): Long
-    fun isPlaying(): Boolean
-    fun isLooping(): Boolean
-    fun setLooping()
+    abstract fun getDuration(): Long
+    abstract fun getCurrentPosition(): Long
+    abstract fun getVideoHeight(): Long
+    abstract fun getVideoWidth(): Long
+    abstract fun isPlaying(): Boolean
+    abstract fun isLooping(): Boolean
+    abstract fun setLooping()
 
-    fun start()
-    fun stop()
-    fun pause()
-    fun prepare()
-    fun prepareAsync()
-    fun release()
-    fun reset()
-    fun seekTo(msec: Int)
-    fun setDataSource(path: String?)
-    fun setDisplay(sh: SurfaceHolder?)
+    abstract fun start()
+    abstract fun stop()
+    abstract fun pause()
+    abstract fun prepare()
+    abstract fun prepareAsync()
+    abstract fun release()
+    abstract fun reset()
+    abstract fun seekTo(msec: Int)
+    abstract fun setDataSource(path: String?)
+    abstract fun setDisplay(sh: SurfaceHolder?)
 
     /*-----------------------------
      * 监听
      */
-    fun setOnVideoSizeChangedListener(listener: OnVideoSizeChangedListener)
-    fun setOnErrorListener(listener: OnErrorListener)
-    fun setOnInfoListener(listener: OnInfoListener)
-    fun setOnPreparedListener(listener: OnPreparedListener)
-    fun setOnBufferingUpdateListener(listener: OnBufferingUpdateListener)
-    fun setOnSeekCompleteListener(listener: OnSeekCompleteListener)
-    fun setOnCompletionListener(listener: OnCompletionListener)
+    abstract fun setOnVideoSizeChangedListener(listener: OnVideoSizeChangedListener)
+    abstract fun setOnErrorListener(listener: OnErrorListener)
+    abstract fun setOnInfoListener(listener: OnInfoListener)
+    abstract fun setOnPreparedListener(listener: OnPreparedListener)
+    abstract fun setOnBufferingUpdateListener(listener: OnBufferingUpdateListener)
+    abstract fun setOnSeekCompleteListener(listener: OnSeekCompleteListener)
+    abstract fun setOnCompletionListener(listener: OnCompletionListener)
 
     /*-----------------------------
      * 原生播放器特有的监听
      */
-    fun setOnSubtitleDataListener(listener: OnSubtitleDataListener)
-
-    fun setOnDrmInfoListener(listener: OnDrmInfoListener)
+    abstract fun setOnSubtitleDataListener(listener: OnSubtitleDataListener)
+    abstract fun setOnDrmInfoListener(listener: OnDrmInfoListener)
 
     /*-----------------------------
      * IJKPlayer播放器特有监听
      */
-    fun setOnMediaCodecSelectListener(listener: OnMediaCodecSelectListener)
-
-    fun setOnNativeInvokeListener(listener: OnNativeInvokeListener)
-    fun setOnControlMessageListener(listener: OnControlMessageListener)
+    abstract fun setOnMediaCodecSelectListener(listener: OnMediaCodecSelectListener)
+    abstract fun setOnNativeInvokeListener(listener: OnNativeInvokeListener)
+    abstract fun setOnControlMessageListener(listener: OnControlMessageListener)
 
 }
+
 interface OnVideoSizeChangedListener {
-    fun onVideoSizeChanged(mp: IXmMediaPlayer, width: Int, height: Int)
+    fun onVideoSizeChanged(mp: IXmMediaPlayer, width: Int, height: Int, sar_num: Int = -1, sar_den: Int = -1)
 }
 
 interface OnErrorListener {
@@ -90,7 +89,7 @@ interface OnSubtitleDataListener {
 }
 
 interface OnDrmInfoListener {
-    fun onDrmInfo(mp: IXmMediaPlayer, drmInfo: DrmInfo)
+    fun onDrmInfo(mp: IXmMediaPlayer, drmInfo: MediaPlayer.DrmInfo)
 }
 
 interface OnMediaCodecSelectListener {

@@ -37,11 +37,11 @@ public class MainActivity extends AppCompatActivity {
 //                startActivity(new Intent(MainActivity.this, ActTabbar.class));
 //            }
 //        });
-
+        final XmVideoView xmVideoView = findViewById(R.id.video);
         findViewById(R.id.btn_media2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new XmVideoView().testMediaPlayer(MainActivity.this, view);
+                xmVideoView.test();
             }
         });
     }

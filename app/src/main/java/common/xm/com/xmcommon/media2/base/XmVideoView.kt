@@ -1,242 +1,254 @@
 package common.xm.com.xmcommon.media2.base
 
-import android.annotation.TargetApi
 import android.content.Context
-import android.media.AudioManager
 import android.media.MediaPlayer
-import android.os.Build
-import android.os.Handler
-import android.os.Looper
+import android.media.SubtitleData
+import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import common.xm.com.xmcommon.media2.engine.ijk.XmIJKPlayer
-import common.xm.com.xmcommon.media2.event.PlayerObservable
-import common.xm.com.xmcommon.media2.event.PlayerObserver
+import common.xm.com.xmcommon.media2.attachment.AttachmentPre
+import common.xm.com.xmcommon.media2.attachment.BaseAttachmentView
+import common.xm.com.xmcommon.media2.base.XmMediaPlayer.Companion.TAG
 import common.xm.com.xmcommon.media2.log.BKLog
-import tv.danmaku.ijk.media.player.IMediaPlayer
-import tv.danmaku.ijk.media.player.IjkMediaPlayer
 import java.io.IOException
 import java.util.*
+import kotlin.collections.ArrayList
 
 class XmVideoView : FrameLayout {
 
-    private var mediaPlayer: IXmMediaPlayer? = null //播放器
-    private var p: PlayerObservable? = null //观察者
-    private var attachmentViews: Queue<PlayerObserver>? = null //附着页面
+    var mediaPlayer: XmMediaPlayer? = null //播放器
+    private var urls: ArrayList<String>? = null //保存播放记录
+    var attachmentViews: ArrayList<BaseAttachmentView>? = null //附着页面集合
+    private var sh: SurfaceHolder? = null //画布Holder
+    private var autoPlay = false
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
     constructor(context: Context) : super(context)
 
     init {
-        mediaPlayer = XmIJKPlayer()
-        p = PlayerObservable()
-        val sh = null
-        mediaPlayer?.setDisplay(sh)
+        urls = ArrayList()
+        attachmentViews = ArrayList()
+        mediaPlayer = XmMediaPlayer()
+        initMediaPlayerListener()
+    }
+
+    private fun initMediaPlayerListener() {
+
+        mediaPlayer?.setOnVideoSizeChangedListener(object : OnVideoSizeChangedListener {
+            override fun onVideoSizeChanged(mp: IXmMediaPlayer, width: Int, height: Int, sar_num: Int, sar_den: Int) {
+                notifyObserversVideoSizeChanged(mp, width, height, sar_num, sar_den)
+            }
+        })
+
+        mediaPlayer?.setOnErrorListener(object : OnErrorListener {
+            override fun onError(mp: IXmMediaPlayer, what: Int, extra: Int): Boolean {
+                notifyObserversError(mp, what, extra)
+                return false
+            }
+        })
+
+        mediaPlayer?.setOnInfoListener(object : OnInfoListener {
+            override fun onInfo(mp: IXmMediaPlayer, what: Int, extra: Int): Boolean {
+                notifyObserversInfo(mp, what, extra)
+                return false
+            }
+        })
+
         mediaPlayer?.setOnPreparedListener(object : OnPreparedListener {
             override fun onPrepared(mp: IXmMediaPlayer) {
+                if (autoPlay) {
+                    mediaPlayer?.start()
+                }
                 notifyObserversPrepared(mp)
             }
         })
+
+        mediaPlayer?.setOnBufferingUpdateListener(object : OnBufferingUpdateListener {
+            override fun onBufferingUpdate(mp: IXmMediaPlayer, percent: Int) {
+                notifyObserversBufferingUpdate(mp, percent)
+            }
+        })
+
+        mediaPlayer?.setOnSeekCompleteListener(object : OnSeekCompleteListener {
+            override fun onSeekComplete(mp: IXmMediaPlayer) {
+                notifyObserversSeekComplete(mp)
+            }
+        })
+
+        mediaPlayer?.setOnCompletionListener(object : OnCompletionListener {
+            override fun onCompletion(mp: IXmMediaPlayer) {
+                notifyObserversCompletion(mp)
+            }
+        })
+
+        mediaPlayer?.setOnSubtitleDataListener(object : OnSubtitleDataListener {
+            override fun onSubtitleData(mp: IXmMediaPlayer, data: SubtitleData) {
+                notifyObserversSubtitleData(mp, data)
+            }
+        })
+
+        mediaPlayer?.setOnDrmInfoListener(object : OnDrmInfoListener {
+            override fun onDrmInfo(mp: IXmMediaPlayer, drmInfo: MediaPlayer.DrmInfo) {
+                notifyObserversDrmInfo(mp, drmInfo)
+            }
+        })
+
+        mediaPlayer?.setOnMediaCodecSelectListener(object : OnMediaCodecSelectListener {
+            override fun onMediaCodecSelect(mp: IXmMediaPlayer, mimeType: String, profile: Int, level: Int): String {
+                notifyObserversMediaCodecSelect(mp, mimeType, profile, level)
+                return ""
+            }
+        })
+
+        mediaPlayer?.setOnControlMessageListener(object : OnControlMessageListener {
+            override fun onControlResolveSegmentUrl(mp: IXmMediaPlayer, segment: Int): String {
+                notifyObserversControlResolveSegmentUrl(mp, segment)
+                return ""
+            }
+        })
+    }
+
+    private fun notifyObserversControlResolveSegmentUrl(mp: IXmMediaPlayer, segment: Int) {
+        for (attachmentView in attachmentViews!!) {
+            attachmentView.observer?.onControlResolveSegmentUrl(mp, segment)
+        }
+    }
+
+    private fun notifyObserversMediaCodecSelect(mp: IXmMediaPlayer, mimeType: String, profile: Int, level: Int) {
+        for (attachmentView in attachmentViews!!) {
+            attachmentView.observer?.onMediaCodecSelect(mp, mimeType, profile, level)
+        }
+    }
+
+    private fun notifyObserversDrmInfo(mp: IXmMediaPlayer, drmInfo: MediaPlayer.DrmInfo) {
+        for (attachmentView in attachmentViews!!) {
+            attachmentView.observer?.onDrmInfo(mp, drmInfo)
+        }
+    }
+
+    private fun notifyObserversSubtitleData(mp: IXmMediaPlayer, data: SubtitleData) {
+        for (attachmentView in attachmentViews!!) {
+            attachmentView.observer?.onSubtitleData(mp, data)
+        }
+    }
+
+    private fun notifyObserversCompletion(mp: IXmMediaPlayer) {
+        for (attachmentView in attachmentViews!!) {
+            attachmentView.observer?.onCompletion(mp)
+        }
+    }
+
+    private fun notifyObserversSeekComplete(mp: IXmMediaPlayer) {
+        for (attachmentView in attachmentViews!!) {
+            attachmentView.observer?.onSeekComplete(mp)
+        }
+    }
+
+    private fun notifyObserversBufferingUpdate(mp: IXmMediaPlayer, percent: Int) {
+        for (attachmentView in attachmentViews!!) {
+            attachmentView.observer?.onBufferingUpdate(mp, percent)
+        }
     }
 
     private fun notifyObserversPrepared(mp: IXmMediaPlayer) {
         for (attachmentView in attachmentViews!!) {
-            attachmentView.onPrepared(mp)
+            attachmentView.observer?.onPrepared(mp)
         }
     }
 
-    fun attachment(playerObserver: PlayerObserver?) {
+    private fun notifyObserversInfo(mp: IXmMediaPlayer, what: Int, extra: Int) {
+        for (attachmentView in attachmentViews!!) {
+            attachmentView.observer?.onInfo(mp, what, extra)
+        }
+    }
+
+    private fun notifyObserversError(mp: IXmMediaPlayer, what: Int, extra: Int) {
+        for (attachmentView in attachmentViews!!) {
+            attachmentView.observer?.onError(mp, what, extra)
+        }
+    }
+
+    private fun notifyObserversVideoSizeChanged(mp: IXmMediaPlayer, width: Int, height: Int, sar_num: Int, sar_den: Int) {
+        for (attachmentView in attachmentViews!!) {
+            attachmentView.observer?.onVideoSizeChanged(mp, width, height, sar_num, sar_den)
+        }
+    }
+
+    fun bindAttachmentView(attachment: BaseAttachmentView?) {
         /*添加在播放器附着的页面*/
-        attachmentViews?.add(playerObserver)
-    }
-
-    @TargetApi(Build.VERSION_CODES.O)
-    fun testMediaPlayer(context: Context, parent: ViewGroup?) {
-
-        val m = MediaPlayer()
-        //基本方法
-        m.duration
-        m.currentPosition
-        m.videoHeight
-        m.videoWidth
-        m.isPlaying
-        m.isLooping
-        m.start()
-        m.stop()
-        m.seekTo(1)
-        //创建画布
-        val surfaceView = SurfaceView(context)
-        surfaceView.layoutParams = ViewGroup.LayoutParams(400, 400)
-        parent?.addView(surfaceView)
-        surfaceView.holder.setKeepScreenOn(true)
-        surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
-                BKLog.d(IXmMediaPlayer.TAG, "surfaceChanged width:$width height:$height")
-            }
-
-            override fun surfaceDestroyed(holder: SurfaceHolder?) {
-                BKLog.d(IXmMediaPlayer.TAG, "surfaceDestroyed")
-            }
-
-            override fun surfaceCreated(holder: SurfaceHolder?) {
-                m.reset()
-                m.setDisplay(holder)
-                try {
-                    m.setDataSource("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4")
-                } catch (e: IllegalArgumentException) {
-                    e.printStackTrace()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
-                m.prepareAsync()
-                BKLog.d(IXmMediaPlayer.TAG, "surfaceCreated")
-            }
-        })
-        m.setAudioStreamType(AudioManager.STREAM_MUSIC)
-        m.setScreenOnWhilePlaying(true)
-        BKLog.d(IXmMediaPlayer.TAG, "播放状态:${m.isPlaying}")
-        //设置监听
-        m.setOnSeekCompleteListener {
-            BKLog.d(IXmMediaPlayer.TAG, "SeekCompleteListener")
-        }
-        m.setOnSubtitleDataListener { mp, data ->
-            BKLog.d(IXmMediaPlayer.TAG, "SubtitleDataListener")
-        }
-        m.setOnTimedTextListener { mp, text ->
-            BKLog.d(IXmMediaPlayer.TAG, "TimedTextListener")
-        }
-        m.setOnVideoSizeChangedListener { mp, width, height ->
-            BKLog.d(IXmMediaPlayer.TAG, "VideoSizeChangedListener width:$width height:$height")
-        }
-        m.setOnErrorListener { mp, what, extra ->
-            BKLog.d(IXmMediaPlayer.TAG, "ErrorListener what:$what extra:$extra")
-            false
-        }
-        m.setOnInfoListener { mp, what, extra ->
-            BKLog.d(IXmMediaPlayer.TAG, "InfoListener what:$what extra:$extra")
-            false
-        }
-        m.setOnDrmInfoListener { mp, drmInfo ->
-            BKLog.d(IXmMediaPlayer.TAG, "DrmInfoListener drmInfo:$drmInfo")
-        }
-        m.setOnBufferingUpdateListener { mp, percent ->
-            BKLog.d(IXmMediaPlayer.TAG, "BufferingUpdateListener percent:$percent")
-        }
-        m.setOnCompletionListener {
-            BKLog.d(IXmMediaPlayer.TAG, "CompletionListener")
-        }
-        m.setOnPreparedListener {
-            m.start()
-            BKLog.d(IXmMediaPlayer.TAG, "PreparedListener")
+        if (attachment != null) {
+            attachment.bind(this)
+            attachmentViews?.add(attachment)
+        } else {
+            BKLog.e(TAG, "attachment is null")
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.O)
-    fun testijk(context: Context, parent: ViewGroup?) {
+    fun removeAttachmentView(attachment: BaseAttachmentView?) {
+        if (attachment != null) {
+            attachment.unBind()
+            attachmentViews?.remove(attachment)
+        } else {
+            BKLog.e(TAG, "attachment is null")
+        }
+    }
 
-        val m = IjkMediaPlayer()
-        //创建画布
-        val surfaceView = SurfaceView(context)
-        surfaceView.layoutParams = ViewGroup.LayoutParams(400, 400)
-        parent?.addView(surfaceView)
-        surfaceView.holder.setKeepScreenOn(true)
-        surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
-                BKLog.d(IXmMediaPlayer.TAG, "surfaceChanged width:$width height:$height")
-            }
 
-            override fun surfaceDestroyed(holder: SurfaceHolder?) {
-                BKLog.d(IXmMediaPlayer.TAG, "surfaceDestroyed")
-            }
-
-            override fun surfaceCreated(holder: SurfaceHolder?) {
-                m.reset()
-                m.setDisplay(holder)
-                try {
-                    m.setDataSource("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4")
-                } catch (e: IllegalArgumentException) {
-                    e.printStackTrace()
-                } catch (e: IOException) {
-                    e.printStackTrace()
+    fun start(url: String, autoPlay: Boolean = false) {
+        /*异步准备播放*/
+        this.autoPlay = autoPlay
+        if (sh == null) {
+            val surfaceView = SurfaceView(context)
+            surfaceView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            sh = surfaceView.holder
+            sh?.addCallback(object : SurfaceHolder.Callback {
+                override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
+                    BKLog.d(IXmMediaPlayer.TAG, "surfaceChanged width:$width height:$height")
                 }
-                m.prepareAsync()
-                BKLog.d(IXmMediaPlayer.TAG, "surfaceCreated")
-            }
-        })
-        m.setAudioStreamType(AudioManager.STREAM_MUSIC)  //与原生不同
-        //m.setScreenOnWhilePlaying(true)
 
-        /**
-         * IjkMediaPlayer 特有监听
-         */
-        m.setOnMediaCodecSelectListener { mp, mimeType, profile, level -> "" }
-        m.setOnNativeInvokeListener { what, args -> false }
-        m.setOnControlMessageListener { "" }
+                override fun surfaceDestroyed(holder: SurfaceHolder?) {
+                    BKLog.d(IXmMediaPlayer.TAG, "surfaceDestroyed")
+                }
 
-        //设置监听
-        m.setOnSeekCompleteListener {
-            BKLog.d(IXmMediaPlayer.TAG, "SeekCompleteListener")
+                override fun surfaceCreated(holder: SurfaceHolder?) {
+                    if (!TextUtils.isEmpty(url)) {
 
-        }
-//        m.setOnSubtitleDataListener { mp, data ->
-//            BKLog.d(TAG, "SubtitleDataListener")
-//        }
-        m.setOnTimedTextListener { mp, text ->
-            BKLog.d(IXmMediaPlayer.TAG, "TimedTextListener")
-        }
+                        //重新创建
+                        mediaPlayer?.stop()
+                        mediaPlayer?.reset()
+                        mediaPlayer?.release()
+                        mediaPlayer = null
+                        mediaPlayer = XmMediaPlayer()
 
-        m.setOnVideoSizeChangedListener { mp, width, height, sar_num, sar_den ->
-            BKLog.d(IXmMediaPlayer.TAG, "VideoSizeChangedListener width:$width height:$height sar_num:$sar_num sar_den:$sar_den")
-        }
-
-//        m.setOnVideoSizeChangedListener { mp, width, height ->
-//            BKLog.d(TAG, "VideoSizeChangedListener width:$width height:$height")
-//        }
-
-        m.setOnErrorListener { mp, what, extra ->
-            BKLog.d(IXmMediaPlayer.TAG, "ErrorListener what:$what extra:$extra")
-            false
-        }
-        m.setOnInfoListener { mp, what, extra ->
-            BKLog.d(IXmMediaPlayer.TAG, "InfoListener what:$what extra:$extra")
-            false
-        }
-//        m.setOnDrmInfoListener { mp, drmInfo ->
-//            BKLog.d(TAG, "DrmInfoListener drmInfo:$drmInfo")
-//        }
-        m.setOnBufferingUpdateListener { mp, percent ->
-            BKLog.d(IXmMediaPlayer.TAG, "BufferingUpdateListener percent:$percent")
-        }
-        m.setOnCompletionListener {
-            BKLog.d(IXmMediaPlayer.TAG, "CompletionListener")
-        }
-        m.setOnPreparedListener {
-            m.start()
-            BKLog.d(IXmMediaPlayer.TAG, "PreparedListener")
+                        mediaPlayer?.setDisplay(holder)
+                        try {
+                            mediaPlayer?.setDataSource(url)
+                        } catch (e: IllegalArgumentException) {
+                            e.printStackTrace()
+                        } catch (e: IOException) {
+                            e.printStackTrace()
+                        }
+                        mediaPlayer?.prepareAsync()
+                    } else {
+                        BKLog.e(TAG, "url is null")
+                    }
+                    BKLog.d(IXmMediaPlayer.TAG, "surfaceCreated")
+                }
+            })
+            addView(surfaceView)
+        } else {
+            mediaPlayer?.prepareAsync()
         }
     }
 
     fun test() {
-        // 用户添加附着页面 - 预览界面
-        // 用户添加附着页面 - 完成界面
-        // 用户添加附着页面 - 错误界面
-        // 用户添加附着页面 - 加载界面
-        // 用户添加附着页面 - 控制器竖屏界面
-        // 用户添加附着页面 - 控制器横屏界面
-
-
-        // 用户进入播放窗口，此时展现预览界面，点击预览界面，显示加载页面  -> 播放回调 -> 删除预览界面和加载页面
-        // 播放过程中用户多次点击播放屏幕, (控制界面：显示&隐藏 有两种模式横屏和竖屏) -> 竖屏删除横屏页面，反之亦然
-        // 播放过程中控制器 接受回调
-    }
-
-
-    fun add() {
-        //p.addObserver(PlayerObserver())
+        val url = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"
+        val preUrl = "http://pic32.nipic.com/20130823/13339320_183302468194_2.jpg"
+        val pre = AttachmentPre(context, preUrl, url)
+        bindAttachmentView(pre)
     }
 }
