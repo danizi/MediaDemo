@@ -63,10 +63,11 @@ class AttachmentPre(context: Context?) : BaseAttachmentView(context!!) {
         ivPre?.visibility = View.VISIBLE
         ivStart?.visibility = View.VISIBLE
         pbLoading?.visibility = View.GONE
+        setCover()
     }
 
-    fun setCover() {
-        Glide.with(context).load(preUrl).into(ivPre)//加载图片
+    private fun setCover() {
+        Glide.with(context).load(preUrl).error(R.drawable.ic_launcher_background).into(ivPre)//加载图片
     }
 
     override fun initData() {

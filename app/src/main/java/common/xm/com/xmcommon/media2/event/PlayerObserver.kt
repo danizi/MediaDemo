@@ -27,7 +27,7 @@ interface PlayerObserver {
     }
 
     fun onBufferingUpdate(mp: IXmMediaPlayer, percent: Int) {
-        BKLog.d(TAG, "onBufferingUpdate percent:$percent")
+        BKLog.i(TAG, "onBufferingUpdate percent:$percent")
     }
 
     fun onInfo(mp: IXmMediaPlayer, what: Int, extra: Int) {

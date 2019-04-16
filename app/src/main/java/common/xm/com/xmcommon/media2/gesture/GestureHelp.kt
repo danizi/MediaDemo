@@ -49,7 +49,7 @@ class GestureHelp(context: Context?) {
             }
 
             override fun onSingleTapUp(e: MotionEvent?): Boolean {
-                BKLog.d(TAG, "手指释放")
+                BKLog.d(TAG, "单击")
                 scrollType = NONE
                 listener?.onClick()
                 return super.onSingleTapUp(e)
@@ -134,6 +134,9 @@ class GestureHelp(context: Context?) {
     }
 
     fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (event?.action == MotionEvent.ACTION_UP) {
+            listener?.onDownUp()                    //监听UP事件
+        }
         if (event?.pointerCount == 2) {
             scaleGestureDetector?.onTouchEvent(event)//两指操作
         } else {
@@ -150,6 +153,7 @@ class GestureHelp(context: Context?) {
      * 对外提供的监听
      */
     interface OnGestureListener {
+        fun onDownUp()
         fun onClick()
         fun onHorizontal(present: Int)
         fun onVertical(type: String, present: Int)

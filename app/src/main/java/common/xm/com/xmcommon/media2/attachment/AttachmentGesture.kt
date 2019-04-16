@@ -8,29 +8,28 @@ import common.xm.com.xmcommon.media2.base.XmVideoView
 import common.xm.com.xmcommon.media2.event.PlayerObserver
 import common.xm.com.xmcommon.media2.gesture.GestureHelp
 import android.support.constraint.ConstraintLayout
+import android.view.MotionEvent
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import common.xm.com.xmcommon.media2.utils.BrightnessUtil
-import common.xm.com.xmcommon.media2.utils.ScreenUtil
 
 
 class AttachmentGesture(context: Context) : BaseAttachmentView(context) {
 
-    //    private var clSeek: ConstraintLayout? = null
-//    private var tvTime: TextView? = null
-//    private var clVolume: ConstraintLayout? = null
-//    private var ivVolume: ImageView? = null
-//    private var volumePb: ProgressBar? = null
-//    private var clBrightness: ConstraintLayout? = null
-//    private var ivBrightness: ImageView? = null
-//    private var brightnessPb: ProgressBar? = null
     private var viewHolder: ViewHolder? = null
 
     companion object {
         const val SEEK = "Seek"
         const val BRIGHTNESS = "Brightness"
         const val VOLUME = "Volume"
+    }
+
+    override fun onDownUp() {
+        super.onDownUp()
+        hide(SEEK)
+        hide(BRIGHTNESS)
+        hide(VOLUME)
     }
 
     init {
@@ -56,15 +55,9 @@ class AttachmentGesture(context: Context) : BaseAttachmentView(context) {
                 super.onHorizontal(mediaPlayer, present)
                 show(SEEK)
             }
-
-            override fun onClick(mediaPlayer: XmMediaPlayer?) {
-                super.onClick(mediaPlayer)
-                hide(SEEK)
-                hide(BRIGHTNESS)
-                hide(SEEK)
-            }
         }
     }
+
 
     override fun layouId(): Int {
         return R.layout.attachment_gesture
@@ -72,14 +65,6 @@ class AttachmentGesture(context: Context) : BaseAttachmentView(context) {
 
     override fun findViews(view: View?) {
         viewHolder = ViewHolder.create(view)
-//        clSeek = view?.findViewById<View>(R.id.cl_seek) as ConstraintLayout
-//        tvTime = view.findViewById<View>(R.id.tv_time) as TextView
-//        clVolume = view.findViewById<View>(R.id.cl_volume) as ConstraintLayout
-//        ivVolume = view.findViewById<View>(R.id.iv_volume) as ImageView
-//        volumePb = view.findViewById<View>(R.id.volume_pb) as ProgressBar
-//        clBrightness = view.findViewById<View>(R.id.cl_brightness) as ConstraintLayout
-//        ivBrightness = view.findViewById<View>(R.id.iv_brightness) as ImageView
-//        brightnessPb = view.findViewById<View>(R.id.brightness_pb) as ProgressBar
     }
 
     override fun initDisplay() {
@@ -120,6 +105,7 @@ class AttachmentGesture(context: Context) : BaseAttachmentView(context) {
                 viewHolder?.clVolume?.visibility = View.VISIBLE
             }
         }
+        xmVideoView?.bringChildToFront(this)
     }
 
     private fun hide(type: String) {

@@ -15,10 +15,7 @@ import common.xm.com.xmcommon.media2.base.XmMediaPlayer.Companion.TAG
 import common.xm.com.xmcommon.media2.gesture.GestureHelp
 import common.xm.com.xmcommon.media2.log.BKLog
 import java.io.IOException
-import java.util.*
-import java.util.concurrent.BlockingQueue
 import java.util.concurrent.ConcurrentLinkedQueue
-import kotlin.collections.ArrayList
 
 class XmVideoView : FrameLayout {
 
@@ -26,6 +23,7 @@ class XmVideoView : FrameLayout {
     var attachmentViews: ConcurrentLinkedQueue<BaseAttachmentView>? = ConcurrentLinkedQueue() //附着页面集合
     private var urls: ConcurrentLinkedQueue<String>? = ConcurrentLinkedQueue() //保存播放记录
     private var sh: SurfaceHolder? = null //画布Holder
+    var surfaceView: SurfaceView? = null
     private var autoPlay = false
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -185,8 +183,7 @@ class XmVideoView : FrameLayout {
             attachment.bind(this)
             attachment.xmVideoView = this
             attachmentViews?.add(attachment)
-
-            this.addView(attachment)
+            this.addView(attachment, LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
         } else {
             BKLog.e(TAG, "attachment is null")
         }
@@ -207,9 +204,9 @@ class XmVideoView : FrameLayout {
         /*异步准备播放*/
         this.autoPlay = autoPlay
         if (sh == null) {
-            val surfaceView = SurfaceView(context)
-            surfaceView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-            sh = surfaceView.holder
+            surfaceView = SurfaceView(context)
+            surfaceView?.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            sh = surfaceView?.holder
             sh?.addCallback(object : SurfaceHolder.Callback {
                 override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
                     BKLog.d(TAG, "surfaceChanged width:$width height:$height")
@@ -246,9 +243,8 @@ class XmVideoView : FrameLayout {
     private var gestureHelp: GestureHelp? = null
     fun test() {
         val pre = AttachmentPre(context)
-        pre.preUrl = "http://img3.imgtn.bdimg.com/it/u=1752243568,253651337&fm=26&gp=0.jpg"
+        pre.preUrl = "http://pic1.nipic.com/2008-08-14/2008814183939909_2.jpg"
         pre.url = "http://hls.videocc.net/26de49f8c2/9/26de49f8c273bbc8f6812d1422a11b39_2.m3u8"
-        pre.setCover()
         bindAttachmentView(pre)
 
         val loading = AttachmentLoading(context)
@@ -262,6 +258,9 @@ class XmVideoView : FrameLayout {
         gestureHelp = GestureHelp(context)
         gestureHelp?.bind(this)
         gestureHelp?.setOnGestureListener(object : GestureHelp.OnGestureListener {
+            override fun onDownUp() {
+                notifyObserversDownUp()
+            }
 
             override fun onClick() {
                 notifyObserversClick()
@@ -283,6 +282,7 @@ class XmVideoView : FrameLayout {
             override fun onScaleEnd(scaleFactor: Float) {
                 notifyObserversScaleEnd(scaleFactor)
             }
+
 
             private fun notifyObserversScaleEnd(scaleFactor: Float) {
                 for (attachmentView in attachmentViews!!) {
@@ -314,6 +314,16 @@ class XmVideoView : FrameLayout {
                 }
             }
         })
+    }
+
+    private fun notifyObserversDownUp() {
+        try {
+            for (attachmentView in attachmentViews!!) {
+                attachmentView.onDownUp()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {

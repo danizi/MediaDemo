@@ -29,6 +29,21 @@ class TimerUtil {
         timer?.schedule(task, 0, 1000)
     }
 
+    fun start(periodListenner: PeriodListenner?, delay: Long) {
+        task = object : TimerTask() {
+            @SuppressLint("SetTextI18n")
+            override fun run() {
+                handler.post {
+                    periodListenner?.onPeriodListenner()
+                }
+            }
+        }
+        if (null == timer) {
+            timer = Timer()
+        }
+        timer?.schedule(task, delay)
+    }
+
     fun stop() {
         timer?.cancel()
         task?.cancel()

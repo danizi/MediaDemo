@@ -38,6 +38,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:text="title"
+            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@+id/iv_back"
             app:layout_constraintTop_toTopOf="parent" />
@@ -110,6 +111,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:text="00:00/00:00"
+            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="@+id/iv_action"
             app:layout_constraintStart_toEndOf="@+id/iv_action"
             app:layout_constraintTop_toTopOf="@+id/iv_action" />
@@ -121,6 +123,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:text="自动"
+            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="@+id/tv_time"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/tv_time" />

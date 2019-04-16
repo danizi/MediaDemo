@@ -5,14 +5,4 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--横屏-->
-    <include
-        layout="@layout/attachment_control_landscape"
-        android:visibility="gone" />
-
-    <!--竖屏-->
-    <include
-        layout="@layout/attachment_control_portrait"
-        android:visibility="gone" />
-
 </android.support.constraint.ConstraintLayout>

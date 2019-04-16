@@ -12,7 +12,7 @@ import common.xm.com.xmcommon.media2.event.PlayerObserver
 
 abstract class BaseAttachmentView : FrameLayout {
 
-    var observer: PlayerObserver? = object : PlayerObserver {}  //观察者
+    var observer: PlayerObserver? = null  //观察者
     var xmVideoView: XmVideoView? = null  //播放实例
     var view: View? = null //当前页面
 
@@ -39,15 +39,17 @@ abstract class BaseAttachmentView : FrameLayout {
 
     abstract fun layouId(): Int
 
-    abstract fun findViews(view: View?)
+    open fun findViews(view: View?){}
 
-    abstract fun initDisplay()
+    open fun initDisplay(){}
 
-    abstract fun initEvent()
+    open fun initEvent(){}
 
-    abstract fun initData()
+    open fun initData(){}
 
-    abstract fun bind(xmVideoView: XmVideoView)
+    open fun bind(xmVideoView: XmVideoView){}
 
-    abstract fun unBind()
+    open fun unBind(){}
+
+    open fun onDownUp(){}
 }
