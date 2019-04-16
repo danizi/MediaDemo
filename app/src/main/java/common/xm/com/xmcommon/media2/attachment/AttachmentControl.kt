@@ -2,6 +2,7 @@ package common.xm.com.xmcommon.media2.attachment
 
 import android.content.Context
 import android.view.View
+import android.view.ViewGroup
 import common.xm.com.xmcommon.R
 import common.xm.com.xmcommon.media2.base.XmMediaPlayer
 import common.xm.com.xmcommon.media2.base.XmVideoView
@@ -88,6 +89,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
         if (type == PORTRAIT) {
             portraitView?.visibility = View.VISIBLE
             landscapeView?.visibility = View.GONE
+            xmVideoView?.bringChildToFront(portraitView)
         } else {
             portraitView?.visibility = View.GONE
             landscapeView?.visibility = View.VISIBLE
