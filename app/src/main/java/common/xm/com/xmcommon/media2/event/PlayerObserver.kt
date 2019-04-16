@@ -3,6 +3,7 @@ package common.xm.com.xmcommon.media2.event
 import android.media.MediaPlayer
 import android.media.SubtitleData
 import common.xm.com.xmcommon.media2.base.IXmMediaPlayer
+import common.xm.com.xmcommon.media2.base.XmMediaPlayer
 import common.xm.com.xmcommon.media2.log.BKLog
 
 interface PlayerObserver {
@@ -10,6 +11,9 @@ interface PlayerObserver {
         get() = "PlayerObserver"
         set(value) = TODO()
 
+    /*================
+     * 播放器监听
+     */
     fun onPrepared(mp: IXmMediaPlayer) {
         BKLog.d(TAG, "onPrepared")
     }
@@ -52,5 +56,28 @@ interface PlayerObserver {
 
     fun onSubtitleData(mp: IXmMediaPlayer, data: SubtitleData) {
         BKLog.d(TAG, "onSubtitleData data:$data")
+    }
+
+    fun onScaleEnd(mediaPlayer: XmMediaPlayer?, scaleFactor: Float) {
+        BKLog.d(TAG, "onScaleEnd scaleFactor:$scaleFactor")
+    }
+
+    /*================
+     * 手势监听
+     */
+    fun onDoubleClick(mediaPlayer: XmMediaPlayer?) {
+        BKLog.d(TAG, "onDoubleClick")
+    }
+
+    fun onVertical(mediaPlayer: XmMediaPlayer?, type: String, present: Int) {
+        BKLog.d(TAG, "onVertical type:$type present:$present")
+    }
+
+    fun onHorizontal(mediaPlayer: XmMediaPlayer?, present: Int) {
+        BKLog.d(TAG, "onHorizontal present:$present")
+    }
+
+    fun onClick(mediaPlayer: XmMediaPlayer?) {
+        BKLog.d(TAG, "onClick")
     }
 }

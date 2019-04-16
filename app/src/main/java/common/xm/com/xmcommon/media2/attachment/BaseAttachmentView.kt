@@ -33,7 +33,7 @@ abstract class BaseAttachmentView : FrameLayout {
         }
     }
 
-    private fun getView(layoutID: Int): View {
+    fun getView(layoutID: Int): View {
         return LayoutInflater.from(context).inflate(layoutID, null, false)
     }
 

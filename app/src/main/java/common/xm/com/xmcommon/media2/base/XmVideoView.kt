@@ -5,15 +5,14 @@ import android.media.MediaPlayer
 import android.media.SubtitleData
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import common.xm.com.xmcommon.media2.attachment.AttachmentControl
-import common.xm.com.xmcommon.media2.attachment.AttachmentLoading
-import common.xm.com.xmcommon.media2.attachment.AttachmentPre
-import common.xm.com.xmcommon.media2.attachment.BaseAttachmentView
+import common.xm.com.xmcommon.media2.attachment.*
 import common.xm.com.xmcommon.media2.base.XmMediaPlayer.Companion.TAG
+import common.xm.com.xmcommon.media2.gesture.GestureHelp
 import common.xm.com.xmcommon.media2.log.BKLog
 import java.io.IOException
 import java.util.*
@@ -25,7 +24,7 @@ class XmVideoView : FrameLayout {
 
     var mediaPlayer: XmMediaPlayer? = null //播放器
     var attachmentViews: ConcurrentLinkedQueue<BaseAttachmentView>? = ConcurrentLinkedQueue() //附着页面集合
-    private var urls : ConcurrentLinkedQueue<String>? = ConcurrentLinkedQueue() //保存播放记录
+    private var urls: ConcurrentLinkedQueue<String>? = ConcurrentLinkedQueue() //保存播放记录
     private var sh: SurfaceHolder? = null //画布Holder
     private var autoPlay = false
 
@@ -184,17 +183,20 @@ class XmVideoView : FrameLayout {
         /*添加在播放器附着的页面*/
         if (attachment != null) {
             attachment.bind(this)
+            attachment.xmVideoView = this
             attachmentViews?.add(attachment)
+
+            this.addView(attachment)
         } else {
             BKLog.e(TAG, "attachment is null")
         }
     }
 
-    fun removeAttachmentView(attachment: BaseAttachmentView?) {
+    fun unBindAttachmentView(attachment: BaseAttachmentView?) {
         if (attachment != null) {
             attachment.unBind()
+            attachment.xmVideoView = null
             attachmentViews?.remove(attachment)
-            this.removeView(attachment)
         } else {
             BKLog.e(TAG, "attachment is null")
         }
@@ -241,10 +243,11 @@ class XmVideoView : FrameLayout {
         }
     }
 
+    private var gestureHelp: GestureHelp? = null
     fun test() {
         val pre = AttachmentPre(context)
         pre.preUrl = "http://img3.imgtn.bdimg.com/it/u=1752243568,253651337&fm=26&gp=0.jpg"
-        pre.url = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"
+        pre.url = "http://hls.videocc.net/26de49f8c2/9/26de49f8c273bbc8f6812d1422a11b39_2.m3u8"
         pre.setCover()
         bindAttachmentView(pre)
 
@@ -253,5 +256,70 @@ class XmVideoView : FrameLayout {
 
         val control = AttachmentControl(context)
         bindAttachmentView(control)
+
+        bindAttachmentView(AttachmentGesture(context))
+
+        gestureHelp = GestureHelp(context)
+        gestureHelp?.bind(this)
+        gestureHelp?.setOnGestureListener(object : GestureHelp.OnGestureListener {
+
+            override fun onClick() {
+                notifyObserversClick()
+            }
+
+            override fun onHorizontal(present: Int) {
+                notifyObserversHorizontal(present)
+            }
+
+
+            override fun onVertical(type: String, present: Int) {
+                notifyObserversVertical(type, present)
+            }
+
+            override fun onDoubleClick() {
+                notifyObserversDoubleClick()
+            }
+
+            override fun onScaleEnd(scaleFactor: Float) {
+                notifyObserversScaleEnd(scaleFactor)
+            }
+
+            private fun notifyObserversScaleEnd(scaleFactor: Float) {
+                for (attachmentView in attachmentViews!!) {
+                    attachmentView.observer?.onScaleEnd(mediaPlayer, scaleFactor)
+                }
+            }
+
+            private fun notifyObserversDoubleClick() {
+                for (attachmentView in attachmentViews!!) {
+                    attachmentView.observer?.onDoubleClick(mediaPlayer)
+                }
+            }
+
+            private fun notifyObserversVertical(type: String, present: Int) {
+                for (attachmentView in attachmentViews!!) {
+                    attachmentView.observer?.onVertical(mediaPlayer, type, present)
+                }
+            }
+
+            private fun notifyObserversHorizontal(present: Int) {
+                for (attachmentView in attachmentViews!!) {
+                    attachmentView.observer?.onHorizontal(mediaPlayer, present)
+                }
+            }
+
+            private fun notifyObserversClick() {
+                for (attachmentView in attachmentViews!!) {
+                    attachmentView.observer?.onClick(mediaPlayer)
+                }
+            }
+        })
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (sh != null) { //只要播放过则就手势处理
+            return gestureHelp?.onTouchEvent(event)!!
+        }
+        return super.onTouchEvent(event)
     }
 }

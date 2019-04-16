@@ -24,19 +24,19 @@ class AttachmentPre(context: Context?) : BaseAttachmentView(context!!) {
             override fun onPrepared(mp: IXmMediaPlayer) {
                 super.onPrepared(mp)
                 xmVideoView?.mediaPlayer?.start()
-                xmVideoView?.removeAttachmentView(this@AttachmentPre)
+                xmVideoView?.unBindAttachmentView(this@AttachmentPre)
             }
         }
     }
 
     override fun bind(xmVideoView: XmVideoView) {
-        this.xmVideoView = xmVideoView
-        this.xmVideoView?.addView(this)
+//        this.xmVideoView = xmVideoView
+//        this.xmVideoView?.addView(this)
     }
 
     override fun unBind() {
-        this.xmVideoView = null
-        this.xmVideoView?.removeView(this)
+//        this.xmVideoView = null
+//        this.xmVideoView?.removeView(this)
     }
 
     override fun layouId(): Int {
@@ -60,7 +60,6 @@ class AttachmentPre(context: Context?) : BaseAttachmentView(context!!) {
     }
 
     override fun initDisplay() {
-
         ivPre?.visibility = View.VISIBLE
         ivStart?.visibility = View.VISIBLE
         pbLoading?.visibility = View.GONE
