@@ -18,6 +18,7 @@ class AttachmentLoading(context: Context?) : BaseAttachmentView(context) {
         observer = object : PlayerObserver {
             override fun onInfo(mp: IXmMediaPlayer, what: Int, extra: Int) {
                 super.onInfo(mp, what, extra)
+                xmVideoView?.bringChildToFront(this@AttachmentLoading)
                 when (what) {
                     IXmMediaPlayer.MEDIA_INFO_BUFFERING_START -> {
                         pb?.visibility = View.VISIBLE

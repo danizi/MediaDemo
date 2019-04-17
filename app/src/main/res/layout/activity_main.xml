@@ -103,7 +103,6 @@
         android:id="@+id/btn_full"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:text="改变宽高填充整个屏幕"
         app:layout_constraintStart_toEndOf="@+id/btn_media2"
         app:layout_constraintTop_toTopOf="@+id/btn_media2" />

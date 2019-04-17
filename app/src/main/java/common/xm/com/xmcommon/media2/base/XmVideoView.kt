@@ -32,6 +32,9 @@ class XmVideoView : FrameLayout {
 
     init {
         initMediaPlayer()
+        //添加画布
+        surfaceView = SurfaceView(context)
+        addView(surfaceView)
     }
 
     private fun initMediaPlayer() {
@@ -210,7 +213,6 @@ class XmVideoView : FrameLayout {
         /*异步准备播放*/
         this.autoPlay = autoPlay
         if (sh == null) {
-            surfaceView = SurfaceView(context)
             surfaceView?.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             sh = surfaceView?.holder
             sh?.addCallback(object : SurfaceHolder.Callback {
@@ -244,7 +246,6 @@ class XmVideoView : FrameLayout {
                     BKLog.d(IXmMediaPlayer.TAG, "surfaceCreated")
                 }
             })
-            addView(surfaceView)
         } else {
             mediaPlayer?.prepareAsync()
         }
@@ -266,6 +267,9 @@ class XmVideoView : FrameLayout {
 
         bindAttachmentView(AttachmentGesture(context))
 
+        bindAttachmentView(AttachmentComplete(context))
+
+        //监听
         gestureHelp = GestureHelp(context)
         gestureHelp?.bind(this)
         gestureHelp?.setOnGestureListener(object : GestureHelp.OnGestureListener {

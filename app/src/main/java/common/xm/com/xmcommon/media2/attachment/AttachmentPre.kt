@@ -24,15 +24,17 @@ class AttachmentPre(context: Context?) : BaseAttachmentView(context!!) {
             override fun onPrepared(mp: IXmMediaPlayer) {
                 super.onPrepared(mp)
                 pbLoading?.visibility = View.VISIBLE
+                xmVideoView?.mediaPlayer?.start()
+                xmVideoView?.unBindAttachmentView(this@AttachmentPre)
             }
 
-            override fun onInfo(mp: IXmMediaPlayer, what: Int, extra: Int) {
-                super.onInfo(mp, what, extra)
-                if (what == IXmMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
-                    xmVideoView?.mediaPlayer?.start()
-                    xmVideoView?.unBindAttachmentView(this@AttachmentPre)
-                }
-            }
+//            override fun onInfo(mp: IXmMediaPlayer, what: Int, extra: Int) {
+//                super.onInfo(mp, what, extra)
+//                if (what == IXmMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
+//                    xmVideoView?.mediaPlayer?.start()
+//                    xmVideoView?.unBindAttachmentView(this@AttachmentPre)
+//                }
+//            }
         }
     }
 

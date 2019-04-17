@@ -5,13 +5,11 @@ import android.app.Activity
 import android.content.Context
 import android.support.constraint.ConstraintLayout
 import android.view.View
-import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import common.xm.com.xmcommon.R
-import common.xm.com.xmcommon.R.id.cl_portrait
 import common.xm.com.xmcommon.media2.base.IXmMediaPlayer
 import common.xm.com.xmcommon.media2.base.XmMediaPlayer
 import common.xm.com.xmcommon.media2.base.XmVideoView
@@ -26,9 +24,10 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
     private var landscapeViewHolder: LandscapeViewHolder? = null
     private var landscapeView: View? = null
     private var portraitView: View? = null
-    private var progressTimer: TimerHelper? = null
-    private var controlViewHideTimer: TimerHelper? = null
-    private var isTouch = false
+    private val controlHelper: ControlHelper? = null
+    private var slidePresent = 0
+    private val period: Int = 1000
+    private val delay: Int = 5000
 
     companion object {
         const val TAG = "AttachmentControl"
@@ -36,30 +35,29 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
         const val LANDSCAPE = "landscape"
     }
 
-    private var slidePresent = 0
     override fun onDownUp() {
         super.onDownUp()
-
         //手指滑动设置进度释放处理进度
-        if (isTouch) {
-            portraitViewHolder?.seekBar?.progress = (((xmVideoView?.mediaPlayer?.getCurrentPosition()!! + slidePresent) * 100) / xmVideoView?.mediaPlayer?.getDuration()!!).toInt()
-            isTouch = false
-            portraitViewHolder?.clSeek?.visibility = View.GONE
+        if (portraitViewHolder?.isHorizontalSlide!!) {
+            portraitViewHolder?.hide()
+            portraitViewHolder?.hideProgress()
+            portraitViewHolder?.isHorizontalSlide = false
+        }
+        if (landscapeViewHolder?.isHorizontalSlide!!) {
+            landscapeViewHolder?.hide()
+            landscapeViewHolder?.hideProgress()
+            landscapeViewHolder?.isHorizontalSlide = false
         }
 
+
         //定时隐藏控制器页面
-        controlViewHideTimer?.start(object : TimerHelper.OnDelayTimerListener {
-            override fun onDelayTimerFinish() {
-                //hideAll()
-                portraitViewHolder?.hide()
-                landscapeViewHolder?.hide()
-            }
-        }, 10000)
+        if (portraitViewHolder?.isClick!!) {
+            controlHelper?.startDelayTimerHideControlView(portraitViewHolder, landscapeViewHolder, delay)
+            portraitViewHolder?.isClick = false
+        }
     }
 
     init {
-        controlViewHideTimer = TimerHelper()
-        progressTimer = TimerHelper()
         observer = object : PlayerObserver {
             override fun onScaleEnd(mediaPlayer: XmMediaPlayer?, scaleFactor: Float) {
                 super.onScaleEnd(mediaPlayer, scaleFactor)
@@ -75,6 +73,9 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
 
             override fun onClick(mediaPlayer: XmMediaPlayer?) {
                 super.onClick(mediaPlayer)
+                portraitViewHolder?.isClick = true
+                landscapeViewHolder?.isClick = true
+                xmVideoView?.bringChildToFront(this@AttachmentControl)  //ps:可能会被其他控件置顶
                 portraitViewHolder?.showAndHide()
                 landscapeViewHolder?.showAndHide()
             }
@@ -83,40 +84,37 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
                 super.onInfo(mp, what, extra)
                 if (what == IXmMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
                     portraitViewHolder?.ivAction?.setImageResource(R.mipmap.media_control_pause)
-                    progressTimerStart()
+                    controlHelper?.progressTimerStart(xmVideoView, portraitViewHolder, landscapeViewHolder, period)
                 }
             }
 
             override fun onBufferingUpdate(mp: IXmMediaPlayer, percent: Int) {
                 super.onBufferingUpdate(mp, percent)
                 portraitViewHolder?.seekBar?.secondaryProgress = percent
+                landscapeViewHolder?.seekBar?.secondaryProgress = percent
             }
 
             @SuppressLint("SetTextI18n")
             override fun onHorizontal(mediaPlayer: XmMediaPlayer?, present: Int) {
                 super.onHorizontal(mediaPlayer, present)
-                isTouch = true
+
+                //手指处于水平滑动中
+                portraitViewHolder?.isHorizontalSlide = true
+                landscapeViewHolder?.isHorizontalSlide = true
+
+                //停止所有的计时器
+                controlHelper?.stopDelayTimerHideControlView()
+                controlHelper?.progressTimerStop()
+
+                //显示控制器界面
                 slidePresent = present * 1000//转化毫秒
-                portraitViewHolder?.clSeek?.visibility = View.VISIBLE
-                portraitViewHolder?.tvTime2?.text = hhmmss(xmVideoView?.mediaPlayer?.getCurrentPosition()!! + slidePresent) + "/" + hhmmss(xmVideoView?.mediaPlayer?.getDuration()!!)
+                portraitViewHolder?.showProgress(slidePresent) //显示“竖屏”进度UI界面
+                portraitViewHolder?.show() //显示“竖屏”控制界面
+
+                landscapeViewHolder?.showProgress(slidePresent) //显示“横向”进度UI界面
+                landscapeViewHolder?.show()//显示“横向”控制界面
             }
         }
-    }
-
-    private fun progressTimerStart() {
-        progressTimer?.start(object : TimerHelper.OnPeriodListener {
-            @SuppressLint("SetTextI18n")
-            override fun onPeriod() {
-                val pos = xmVideoView?.mediaPlayer?.getCurrentPosition()!!
-                val duration = xmVideoView?.mediaPlayer?.getDuration()!!
-                portraitViewHolder?.seekBar?.progress = (pos * 100f / duration.toFloat()).toInt()
-                portraitViewHolder?.tvTime?.text = hhmmss(pos) + ":" + hhmmss(duration)
-            }
-        }, 1000)
-    }
-
-    private fun progressTimerStop() {
-        progressTimer?.stop()
     }
 
     override fun layouId(): Int {
@@ -133,6 +131,9 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
         addView(portraitView, LayoutParams(MATCH_PARENT, MATCH_PARENT))
         addView(landscapeView, LayoutParams(MATCH_PARENT, MATCH_PARENT))
 
+        portraitView?.visibility = View.GONE
+        landscapeView?.visibility = View.GONE
+
         portraitViewHolder = PortraitViewHolder.create(this, portraitView)
         landscapeViewHolder = LandscapeViewHolder.create(this, landscapeView)
 
@@ -146,6 +147,49 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
     }
 
     private class ControlHelper {
+        var isHorizontalSlide = false
+        var isClick = false
+
+        private var progressTimer: TimerHelper? = TimerHelper()
+        private var controlViewHideTimer: TimerHelper? = TimerHelper()
+
+        fun progressTimerStart(xmVideoView: XmVideoView?, portraitViewHolder: PortraitViewHolder?, landscapeViewHolder: LandscapeViewHolder?, period: Int) {
+            /*定时更新进度*/
+            progressTimer?.start(object : TimerHelper.OnPeriodListener {
+                @SuppressLint("SetTextI18n")
+                override fun onPeriod() {
+                    val pos = xmVideoView?.mediaPlayer?.getCurrentPosition()!!
+                    val duration = xmVideoView?.mediaPlayer?.getDuration()!!
+                    if (pos > duration) {
+                        progressTimer?.stop()
+                        return
+                    }
+                    updateProgress(portraitViewHolder?.seekBar, portraitViewHolder?.tvTime, pos, duration)
+                    updateProgress(landscapeViewHolder?.seekBar, landscapeViewHolder?.tvTime, pos, duration)
+                }
+            }, period.toLong())
+        }
+
+        fun progressTimerStop() {
+            /*关闭定时更新进度*/
+            progressTimer?.stop()
+        }
+
+        fun startDelayTimerHideControlView(portraitViewHolder: PortraitViewHolder?, landscapeViewHolder: LandscapeViewHolder?, delay: Int) {
+            /*延时隐藏控制界面*/
+            controlViewHideTimer?.start(object : TimerHelper.OnDelayTimerListener {
+                override fun onDelayTimerFinish() {
+                    portraitViewHolder?.hide()
+                    landscapeViewHolder?.hide()
+                }
+            }, delay.toLong())
+
+        }
+
+        fun stopDelayTimerHideControlView() {
+            /*停止延时隐藏控制界面*/
+            controlViewHideTimer?.stop()
+        }
 
         fun clickAction(playId: Int, pauseId: Int, action: ImageView?, xmMediaPlayer: XmMediaPlayer?) {
             /*暂停&播放*/
@@ -202,7 +246,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
         }
     }
 
-    private class PortraitViewHolder private constructor(var attachmentControl: AttachmentControl?, val clPortraitTop: ConstraintLayout, val ivBack: ImageView, val tvTitle: TextView, val ivListener: ImageView, val ivMiracast: ImageView, val ivShare: ImageView, val ivMore: ImageView, val clPortraitBottom: ConstraintLayout, val ivAction: ImageView, val seekBar: SeekBar, val tvTime: TextView, val ivScreenFull: ImageView, val clSeek: ConstraintLayout, val tvTime2: TextView) {
+    private class PortraitViewHolder private constructor(var attachmentControl: AttachmentControl?, val rootView: View?, val clPortraitTop: ConstraintLayout, val ivBack: ImageView, val tvTitle: TextView, val ivListener: ImageView, val ivMiracast: ImageView, val ivShare: ImageView, val ivMore: ImageView, val clPortraitBottom: ConstraintLayout, val ivAction: ImageView, val seekBar: SeekBar, val tvTime: TextView, val ivScreenFull: ImageView, val clSeek: ConstraintLayout, val tvTime2: TextView) {
 
         companion object {
             fun create(attachmentControl: AttachmentControl?, rootView: View?): PortraitViewHolder {
@@ -220,19 +264,21 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
                 val ivScreenFull = rootView.findViewById<View>(R.id.iv_screen_full) as ImageView
                 val clSeek = rootView.findViewById<View>(R.id.cl_seek) as ConstraintLayout
                 val tvTime2 = rootView.findViewById<View>(R.id.tv_time2) as TextView
-                return PortraitViewHolder(attachmentControl, clPortraitTop, ivBack, tvTitle, ivListener, ivMiracast, ivShare, ivMore, clPortraitBottom, ivAction, seekBar, tvTime, ivScreenFull, clSeek, tvTime2)
+                return PortraitViewHolder(attachmentControl, rootView, clPortraitTop, ivBack, tvTitle, ivListener, ivMiracast, ivShare, ivMore, clPortraitBottom, ivAction, seekBar, tvTime, ivScreenFull, clSeek, tvTime2)
             }
         }
 
-        private var controlHelper: ControlHelper? = null
         private var activity: Activity? = null
         private var mediaPlayer: XmMediaPlayer? = null
         private var xmVideoView: XmVideoView? = null
         private var screenW = 0
         private var screenH = 0
+        private var controlHelper: ControlHelper? = null
+        var isHorizontalSlide = false
+        var isClick = false
 
         init {
-            controlHelper = ControlHelper()
+            controlHelper = attachmentControl?.controlHelper
             screenW = ScreenUtil.getNormalWH(activity)[0]
             screenH = ScreenUtil.getNormalWH(activity)[1]
         }
@@ -250,12 +296,11 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
             seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                     //用户手指触控了屏幕
-//                    if (isTouch) {
-//                        BKLog.i(TAG, "触发滑动 progress:$progress")
-//                        progressTimerStop() //先暂停进度定时器
-//                        val seekPos = xmVideoView?.mediaPlayer?.getDuration()!! * (progress.toFloat() / 100f)
-//                        xmVideoView?.mediaPlayer?.seekTo(seekPos.toInt())
-//                    }
+                    if (isHorizontalSlide) {
+                        BKLog.i(TAG, "触发滑动 progress:$progress")
+                        val seekPos = xmVideoView?.mediaPlayer?.getDuration()!! * (progress.toFloat() / 100f)
+                        xmVideoView?.mediaPlayer?.seekTo(seekPos.toInt())
+                    }
                 }
 
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -271,9 +316,9 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
         fun showAndHide() {
             if (ScreenUtil.isPortrait(activity!!)) {
                 if (clPortraitBottom.visibility == View.VISIBLE) {
-                    show()
-                } else {
                     hide()
+                } else {
+                    show()
                 }
             }
         }
@@ -282,17 +327,20 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
             /*显示控制器*/
             clPortraitTop.visibility = View.VISIBLE
             clPortraitBottom.visibility = View.VISIBLE
+            rootView?.visibility = View.VISIBLE
         }
 
         fun hide() {
             /*隐藏控制器*/
             clPortraitTop.visibility = View.GONE
             clPortraitBottom.visibility = View.GONE
+            rootView?.visibility = View.GONE
         }
 
-        fun showProgress() {
+        fun showProgress(slidePresent: Int = 0) {
             /*显示手势播放进度*/
             clSeek.visibility = View.VISIBLE
+            controlHelper?.updateProgress(seekBar, tvTime2, mediaPlayer?.getCurrentPosition()!! + slidePresent, mediaPlayer?.getDuration()!!)
         }
 
         fun hideProgress() {
@@ -325,15 +373,18 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
 
         }
 
-        private var controlHelper: ControlHelper? = null
+
         private var activity: Activity? = null
         private var mediaPlayer: XmMediaPlayer? = null
         private var xmVideoView: XmVideoView? = null
         private var screenW = 0
         private var screenH = 0
+        private var controlHelper: ControlHelper? = null
+        var isHorizontalSlide = false
+        var isClick = false
 
         init {
-            controlHelper = ControlHelper()
+            controlHelper = attachmentControl?.controlHelper
             screenW = ScreenUtil.getNormalWH(activity)[0]
             screenH = ScreenUtil.getNormalWH(activity)[1]
         }
@@ -370,6 +421,13 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
             activity = attachmentControl?.context as Activity
             mediaPlayer = attachmentControl.xmVideoView?.mediaPlayer
             this.xmVideoView = xmVideoView
+        }
+
+        fun showProgress(slidePresent: Int) {
+        }
+
+        fun hideProgress() {
+
         }
     }
 }
