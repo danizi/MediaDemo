@@ -18,13 +18,13 @@ class XmMediaPlayer : IXmMediaPlayer() {
 
     override fun getDuration(): Long {
         val duration = mediaPlayer?.getDuration()!!
-        BKLog.d(TAG, "duration:$duration")
+        BKLog.i(TAG, "duration:$duration")
         return duration
     }
 
     override fun getCurrentPosition(): Long {
         val pos = mediaPlayer?.getCurrentPosition()!!
-        BKLog.d(TAG, "currentPosition:$pos")
+        BKLog.i(TAG, "currentPosition:$pos")
         return pos
     }
 

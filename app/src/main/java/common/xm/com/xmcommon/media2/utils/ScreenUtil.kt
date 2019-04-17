@@ -16,28 +16,28 @@ import android.view.WindowManager
  */
 object ScreenUtil {
     @SuppressLint("ObsoleteSdkInt")
-    fun getNormalWH(activity: Activity): IntArray {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+    fun getNormalWH(activity: Activity?): IntArray {
+        return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             val dm = DisplayMetrics()
-            activity.windowManager.defaultDisplay.getMetrics(dm)
-            return intArrayOf(dm.widthPixels, dm.heightPixels)
+            activity?.windowManager?.defaultDisplay?.getMetrics(dm)
+            intArrayOf(dm.widthPixels, dm.heightPixels)
         } else {
             val point = Point()
-            val wm = activity.windowManager
-            wm.defaultDisplay.getSize(point)
+            val wm = activity?.windowManager
+            wm?.defaultDisplay?.getSize(point)
             //{宽,高}
-            return intArrayOf(point.x, point.y)
+            intArrayOf(point.x, point.y)
         }
     }
 
-    fun hideStatusBar(activity: Activity) {
+    fun hideStatusBar(activity: Activity?) {
         /*隐藏状态栏*/
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            activity.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            activity?.window?.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN)
         } else {
-            val decorView = activity.window.decorView
-            activity.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            val decorView = activity?.window?.decorView
+            activity?.window?.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN)
             val uiOptions = (
                     View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -47,7 +47,7 @@ object ScreenUtil {
                             View.SYSTEM_UI_FLAG_IMMERSIVE
                             or
                             View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
-            decorView.systemUiVisibility = uiOptions
+            decorView?.systemUiVisibility = uiOptions
         }
     }
 
@@ -73,13 +73,13 @@ object ScreenUtil {
         return context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     }
 
-    fun setPortrait(activity: Activity) {
+    fun setPortrait(activity: Activity?) {
         /*设置竖屏*/
-        activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
     }
 
-    fun setLandscape(activity: Activity) {
+    fun setLandscape(activity: Activity?) {
         /*设置横屏*/
-        activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
     }
 }

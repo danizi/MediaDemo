@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!--顶部-->
     <android.support.constraint.ConstraintLayout
         android:id="@+id/cl_landscape_top"
         android:layout_width="match_parent"
@@ -69,6 +70,7 @@
 
     </android.support.constraint.ConstraintLayout>
 
+    <!--底部-->
     <android.support.constraint.ConstraintLayout
         android:id="@+id/cl_landscape_bottom"
         android:layout_width="match_parent"
@@ -129,4 +131,5 @@
             app:layout_constraintTop_toTopOf="@+id/tv_time" />
 
     </android.support.constraint.ConstraintLayout>
+
 </android.support.constraint.ConstraintLayout>

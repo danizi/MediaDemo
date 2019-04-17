@@ -8,6 +8,22 @@ import android.view.SurfaceHolder
 abstract class IXmMediaPlayer {
 
     companion object {
+        /*-----------------------------
+         * 共用回调状态码
+         */
+        val MEDIA_INFO_UNKNOWN = 1
+        val MEDIA_INFO_STARTED_AS_NEXT = 2
+        val MEDIA_INFO_VIDEO_RENDERING_START = 3
+        val MEDIA_INFO_VIDEO_TRACK_LAGGING = 700
+        val MEDIA_INFO_BUFFERING_START = 701
+        val MEDIA_INFO_BUFFERING_END = 702
+        val MEDIA_INFO_NETWORK_BANDWIDTH = 703
+        val MEDIA_INFO_BAD_INTERLEAVING = 800
+        val MEDIA_INFO_NOT_SEEKABLE = 801
+        val MEDIA_INFO_METADATA_UPDATE = 802
+        val MEDIA_INFO_TIMED_TEXT_ERROR = 900
+        val MEDIA_INFO_UNSUPPORTED_SUBTITLE = 901
+        val MEDIA_INFO_SUBTITLE_TIMED_OUT = 902
         const val TAG = "IXmMediaPlayer"
     }
 
@@ -34,6 +50,7 @@ abstract class IXmMediaPlayer {
      * 监听
      */
     abstract fun setOnVideoSizeChangedListener(listener: OnVideoSizeChangedListener)
+
     abstract fun setOnErrorListener(listener: OnErrorListener)
     abstract fun setOnInfoListener(listener: OnInfoListener)
     abstract fun setOnPreparedListener(listener: OnPreparedListener)
@@ -45,12 +62,14 @@ abstract class IXmMediaPlayer {
      * 原生播放器特有的监听
      */
     abstract fun setOnSubtitleDataListener(listener: OnSubtitleDataListener)
+
     abstract fun setOnDrmInfoListener(listener: OnDrmInfoListener)
 
     /*-----------------------------
      * IJKPlayer播放器特有监听
      */
     abstract fun setOnMediaCodecSelectListener(listener: OnMediaCodecSelectListener)
+
     abstract fun setOnNativeInvokeListener(listener: OnNativeInvokeListener)
     abstract fun setOnControlMessageListener(listener: OnControlMessageListener)
 

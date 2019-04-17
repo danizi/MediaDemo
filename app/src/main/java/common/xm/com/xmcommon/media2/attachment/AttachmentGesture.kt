@@ -1,18 +1,18 @@
 package common.xm.com.xmcommon.media2.attachment
 
 import android.content.Context
-import android.view.View
-import common.xm.com.xmcommon.R
-import common.xm.com.xmcommon.media2.base.XmMediaPlayer
-import common.xm.com.xmcommon.media2.base.XmVideoView
-import common.xm.com.xmcommon.media2.event.PlayerObserver
-import common.xm.com.xmcommon.media2.gesture.GestureHelp
 import android.support.constraint.ConstraintLayout
-import android.view.MotionEvent
+import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import common.xm.com.xmcommon.R
+import common.xm.com.xmcommon.media2.base.XmMediaPlayer
+import common.xm.com.xmcommon.media2.event.PlayerObserver
+import common.xm.com.xmcommon.media2.gesture.GestureHelp
+import common.xm.com.xmcommon.media2.log.BKLog
 import common.xm.com.xmcommon.media2.utils.BrightnessUtil
+import common.xm.com.xmcommon.media2.utils.VolumeUtil
 
 
 class AttachmentGesture(context: Context) : BaseAttachmentView(context) {
@@ -42,22 +42,32 @@ class AttachmentGesture(context: Context) : BaseAttachmentView(context) {
                         show(BRIGHTNESS)
                         viewHolder?.brightnessPb?.max = 100
                         viewHolder?.brightnessPb?.progress = (BrightnessUtil.getScreenBrightness(context) * 100).toInt()
-                        val p = BrightnessUtil.getScreenBrightness(context) + (1f - BrightnessUtil.getScreenBrightness(context) * present / 100f)
-                        BrightnessUtil.setSystemBrightness(context, p)
+                        val brightnessPresent = BrightnessUtil.getScreenBrightness(context) + (1f - BrightnessUtil.getScreenBrightness(context) * present / 100f)
+                        BrightnessUtil.setSystemBrightness(context, brightnessPresent)
                     }
                     GestureHelp.VERTICAL_RIGHT_VALUE -> {
                         show(VOLUME)
+                        val curVolumePresent = VolumeUtil.getVolume(context)
+                        viewHolder?.volumePb?.max = 100
+                        viewHolder?.volumePb?.progress = (curVolumePresent * 100).toInt()
+                        var volumePresent = curVolumePresent
+                        volumePresent = if (present > 0) {
+                            curVolumePresent + (1f - curVolumePresent * present) / 100f
+                        } else {
+                            curVolumePresent - (1f - curVolumePresent) * present / 100f
+                        }
+                        VolumeUtil.setVolume(context, volumePresent)
                     }
                 }
             }
 
             override fun onHorizontal(mediaPlayer: XmMediaPlayer?, present: Int) {
                 super.onHorizontal(mediaPlayer, present)
-                show(SEEK)
+                //viewHolder?.tvTime?.text = xmVideoView?.mediaPlayer?.getCurrentPosition() + present * 1000 + "/" + xmVideoView?.mediaPlayer?.getDuration()
+                //show(SEEK)
             }
         }
     }
-
 
     override fun layouId(): Int {
         return R.layout.attachment_gesture
@@ -67,24 +77,8 @@ class AttachmentGesture(context: Context) : BaseAttachmentView(context) {
         viewHolder = ViewHolder.create(view)
     }
 
-    override fun initDisplay() {
-
-    }
-
     override fun initEvent() {
-
-    }
-
-    override fun initData() {
-
-    }
-
-    override fun bind(xmVideoView: XmVideoView) {
-
-    }
-
-    override fun unBind() {
-
+        super.initEvent()
     }
 
     private fun show(type: String) {

@@ -19,12 +19,12 @@ class AttachmentLoading(context: Context?) : BaseAttachmentView(context) {
             override fun onInfo(mp: IXmMediaPlayer, what: Int, extra: Int) {
                 super.onInfo(mp, what, extra)
                 when (what) {
-                    701 -> {
+                    IXmMediaPlayer.MEDIA_INFO_BUFFERING_START -> {
                         pb?.visibility = View.VISIBLE
                         tvDes?.visibility = View.VISIBLE
                         xmVideoView?.bindAttachmentView(this@AttachmentLoading)
                     }
-                    702 -> {
+                    IXmMediaPlayer.MEDIA_INFO_BUFFERING_END -> {
                         xmVideoView?.unBindAttachmentView(this@AttachmentLoading)
                     }
                 }

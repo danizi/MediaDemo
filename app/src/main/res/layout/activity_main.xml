@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,19 +11,24 @@
         android:id="@+id/btn_media"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="media Test" />
+        android:text="media Test"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/btn_tabbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="tabbar Test" />
+        android:text="tabbar Test"
+        android:visibility="gone" />
 
     <!--签到组件-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="513dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -77,15 +82,30 @@
     </LinearLayout>
 
     <!--新版播放器-->
-    <Button
-        android:id="@+id/btn_media2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="测试播放器" />
-
     <common.xm.com.xmcommon.media2.base.XmVideoView
         android:id="@+id/video"
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:background="@color/colorAccent" />
-</LinearLayout>
+
+    <Button
+        android:id="@+id/btn_media2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="测试播放器"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/video" />
+
+    <Button
+        android:id="@+id/btn_full"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="改变宽高填充整个屏幕"
+        app:layout_constraintStart_toEndOf="@+id/btn_media2"
+        app:layout_constraintTop_toTopOf="@+id/btn_media2" />
+
+</android.support.constraint.ConstraintLayout>

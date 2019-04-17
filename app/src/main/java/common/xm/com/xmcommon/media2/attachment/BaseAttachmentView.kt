@@ -39,17 +39,19 @@ abstract class BaseAttachmentView : FrameLayout {
 
     abstract fun layouId(): Int
 
-    open fun findViews(view: View?){}
+    open fun findViews(view: View?) {}
 
-    open fun initDisplay(){}
+    open fun initDisplay() {}
 
-    open fun initEvent(){}
+    open fun initEvent() {}
 
-    open fun initData(){}
+    open fun initData() {}
 
-    open fun bind(xmVideoView: XmVideoView){}
+    open fun bind(xmVideoView: XmVideoView) {}
 
-    open fun unBind(){}
+    open fun unBind() {}
 
-    open fun onDownUp(){}
+    open fun onDownUp() {}
+
+    open fun onDown() {}
 }

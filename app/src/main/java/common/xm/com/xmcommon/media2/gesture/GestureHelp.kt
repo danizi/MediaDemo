@@ -45,6 +45,7 @@ class GestureHelp(context: Context?) {
 
             override fun onDown(e: MotionEvent?): Boolean {
                 scrollType = NONE
+                listener?.onDown()
                 return super.onDown(e)
             }
 
@@ -153,6 +154,7 @@ class GestureHelp(context: Context?) {
      * 对外提供的监听
      */
     interface OnGestureListener {
+        fun onDown()
         fun onDownUp()
         fun onClick()
         fun onHorizontal(present: Int)

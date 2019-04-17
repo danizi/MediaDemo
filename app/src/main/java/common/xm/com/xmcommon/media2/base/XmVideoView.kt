@@ -30,10 +30,16 @@ class XmVideoView : FrameLayout {
 
     constructor(context: Context) : super(context)
 
+    init {
+        initMediaPlayer()
+    }
+
     private fun initMediaPlayer() {
         //mediaPlayer?.release()
-        mediaPlayer = XmMediaPlayer()
-        initMediaPlayerListener()
+        if (mediaPlayer == null) {
+            mediaPlayer = XmMediaPlayer()
+            initMediaPlayerListener()
+        }
     }
 
     private fun initMediaPlayerListener() {
@@ -218,7 +224,11 @@ class XmVideoView : FrameLayout {
 
                 override fun surfaceCreated(holder: SurfaceHolder?) {
                     if (!TextUtils.isEmpty(url)) {
-                        initMediaPlayer()
+                        if (mediaPlayer == null) {
+                            initMediaPlayer()
+                        } else {
+                            mediaPlayer?.reset()
+                        }
                         mediaPlayer?.setDisplay(holder)
                         try {
                             mediaPlayer?.setDataSource(url)
@@ -245,6 +255,7 @@ class XmVideoView : FrameLayout {
         val pre = AttachmentPre(context)
         pre.preUrl = "http://pic1.nipic.com/2008-08-14/2008814183939909_2.jpg"
         pre.url = "http://hls.videocc.net/26de49f8c2/9/26de49f8c273bbc8f6812d1422a11b39_2.m3u8"
+        pre.url = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"
         bindAttachmentView(pre)
 
         val loading = AttachmentLoading(context)
@@ -258,6 +269,10 @@ class XmVideoView : FrameLayout {
         gestureHelp = GestureHelp(context)
         gestureHelp?.bind(this)
         gestureHelp?.setOnGestureListener(object : GestureHelp.OnGestureListener {
+            override fun onDown() {
+                notifyObserversDown()
+            }
+
             override fun onDownUp() {
                 notifyObserversDownUp()
             }
@@ -316,13 +331,15 @@ class XmVideoView : FrameLayout {
         })
     }
 
+    private fun notifyObserversDown() {
+        for (attachmentView in attachmentViews!!) {
+            attachmentView.onDown()
+        }
+    }
+
     private fun notifyObserversDownUp() {
-        try {
-            for (attachmentView in attachmentViews!!) {
-                attachmentView.onDownUp()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        for (attachmentView in attachmentViews!!) {
+            attachmentView.onDownUp()
         }
     }
 

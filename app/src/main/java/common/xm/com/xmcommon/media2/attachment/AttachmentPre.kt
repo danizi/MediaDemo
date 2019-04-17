@@ -7,11 +7,11 @@ import android.widget.ProgressBar
 import com.bumptech.glide.Glide
 import common.xm.com.xmcommon.R
 import common.xm.com.xmcommon.media2.base.IXmMediaPlayer
+import common.xm.com.xmcommon.media2.base.XmMediaPlayer
 import common.xm.com.xmcommon.media2.base.XmVideoView
 import common.xm.com.xmcommon.media2.event.PlayerObserver
 
 class AttachmentPre(context: Context?) : BaseAttachmentView(context!!) {
-
 
     private var ivPre: ImageView? = null
     private var ivStart: ImageView? = null
@@ -23,8 +23,15 @@ class AttachmentPre(context: Context?) : BaseAttachmentView(context!!) {
         observer = object : PlayerObserver {
             override fun onPrepared(mp: IXmMediaPlayer) {
                 super.onPrepared(mp)
-                xmVideoView?.mediaPlayer?.start()
-                xmVideoView?.unBindAttachmentView(this@AttachmentPre)
+                pbLoading?.visibility = View.VISIBLE
+            }
+
+            override fun onInfo(mp: IXmMediaPlayer, what: Int, extra: Int) {
+                super.onInfo(mp, what, extra)
+                if (what == IXmMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
+                    xmVideoView?.mediaPlayer?.start()
+                    xmVideoView?.unBindAttachmentView(this@AttachmentPre)
+                }
             }
         }
     }
