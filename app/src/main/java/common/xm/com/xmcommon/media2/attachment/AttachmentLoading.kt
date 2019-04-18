@@ -9,6 +9,7 @@ import common.xm.com.xmcommon.media2.base.IXmMediaPlayer
 import common.xm.com.xmcommon.media2.base.XmVideoView
 import common.xm.com.xmcommon.media2.event.PlayerObserver
 
+@Deprecated("")
 class AttachmentLoading(context: Context?) : BaseAttachmentView(context) {
 
     var pb: ProgressBar? = null
@@ -21,8 +22,10 @@ class AttachmentLoading(context: Context?) : BaseAttachmentView(context) {
                 xmVideoView?.bringChildToFront(this@AttachmentLoading)
                 when (what) {
                     IXmMediaPlayer.MEDIA_INFO_BUFFERING_START -> {
+                        xmVideoView?.bringChildToFront(this@AttachmentLoading)
                         pb?.visibility = View.VISIBLE
                         tvDes?.visibility = View.VISIBLE
+                        this@AttachmentLoading.visibility = View.VISIBLE
                         xmVideoView?.bindAttachmentView(this@AttachmentLoading)
                     }
                     IXmMediaPlayer.MEDIA_INFO_BUFFERING_END -> {
@@ -34,13 +37,11 @@ class AttachmentLoading(context: Context?) : BaseAttachmentView(context) {
     }
 
     override fun bind(xmVideoView: XmVideoView) {
-        this.xmVideoView = xmVideoView
-//        this.xmVideoView?.addView(this)
+        super.bind(xmVideoView)
     }
 
     override fun unBind() {
-//        this.xmVideoView = null
-//        this.xmVideoView?.removeView(this)
+        super.unBind()
     }
 
     override fun layouId(): Int {

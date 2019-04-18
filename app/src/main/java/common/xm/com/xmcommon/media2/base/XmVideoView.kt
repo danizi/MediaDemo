@@ -5,12 +5,11 @@ import android.media.MediaPlayer
 import android.media.SubtitleData
 import android.text.TextUtils
 import android.util.AttributeSet
-import android.view.MotionEvent
-import android.view.SurfaceHolder
-import android.view.SurfaceView
-import android.view.ViewGroup
+import android.view.*
 import android.widget.FrameLayout
 import common.xm.com.xmcommon.media2.attachment.*
+import common.xm.com.xmcommon.media2.attachment.control.AttachmentControl
+import common.xm.com.xmcommon.media2.attachment.control.AttachmentControl2
 import common.xm.com.xmcommon.media2.base.XmMediaPlayer.Companion.TAG
 import common.xm.com.xmcommon.media2.gesture.GestureHelp
 import common.xm.com.xmcommon.media2.log.BKLog
@@ -32,9 +31,6 @@ class XmVideoView : FrameLayout {
 
     init {
         initMediaPlayer()
-        //添加画布
-        surfaceView = SurfaceView(context)
-        addView(surfaceView)
     }
 
     private fun initMediaPlayer() {
@@ -189,10 +185,12 @@ class XmVideoView : FrameLayout {
     fun bindAttachmentView(attachment: BaseAttachmentView?) {
         /*添加在播放器附着的页面*/
         if (attachment != null) {
-            attachment.bind(this)
-            attachment.xmVideoView = this
-            attachmentViews?.add(attachment)
+            if (attachment.parent != null) {//android.view.ViewGroup$LayoutParams cannot be cast to android.view.ViewGroup$MarginLayoutParams
+                (attachment.parent as ViewGroup).removeView(attachment)
+            }
             this.addView(attachment, LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+            attachmentViews?.add(attachment)
+            attachment.bind(this)
         } else {
             BKLog.e(TAG, "attachment is null")
         }
@@ -200,9 +198,9 @@ class XmVideoView : FrameLayout {
 
     fun unBindAttachmentView(attachment: BaseAttachmentView?) {
         if (attachment != null) {
-            attachment.unBind()
-            attachment.xmVideoView = null
+            this.removeView(attachment)
             attachmentViews?.remove(attachment)
+            attachment.unBind()
         } else {
             BKLog.e(TAG, "attachment is null")
         }
@@ -212,7 +210,9 @@ class XmVideoView : FrameLayout {
     fun start(url: String, autoPlay: Boolean = false) {
         /*异步准备播放*/
         this.autoPlay = autoPlay
-        if (sh == null) {
+        if (surfaceView == null || sh == null) {
+            //添加画布
+            surfaceView = SurfaceView(context)
             surfaceView?.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             sh = surfaceView?.holder
             sh?.addCallback(object : SurfaceHolder.Callback {
@@ -249,24 +249,29 @@ class XmVideoView : FrameLayout {
         } else {
             mediaPlayer?.prepareAsync()
         }
+        // surfaceView?.visibility= View.GONE  设置画布隐藏就无法播放了
+        addView(surfaceView, attachmentViews?.size!! - 1)
     }
 
     private var gestureHelp: GestureHelp? = null
     fun test() {
-        val pre = AttachmentPre(context)
-        pre.preUrl = "http://pic1.nipic.com/2008-08-14/2008814183939909_2.jpg"
+        //预览
+        val pre = AttachmentPre(context, "https://img-blog.csdn.net/20160413112832792?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center")
         pre.url = "http://hls.videocc.net/26de49f8c2/9/26de49f8c273bbc8f6812d1422a11b39_2.m3u8"
-        pre.url = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"
         bindAttachmentView(pre)
 
-        val loading = AttachmentLoading(context)
-        bindAttachmentView(loading)
+        //加载
+        //val loading = AttachmentLoading(context)
+        //bindAttachmentView(loading)
 
-        val control = AttachmentControl(context)
+        //控制器
+        val control = AttachmentControl2(context)
         bindAttachmentView(control)
 
+        //手势
         bindAttachmentView(AttachmentGesture(context))
 
+        //完成
         bindAttachmentView(AttachmentComplete(context))
 
         //监听

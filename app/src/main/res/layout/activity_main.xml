@@ -107,4 +107,10 @@
         app:layout_constraintStart_toEndOf="@+id/btn_media2"
         app:layout_constraintTop_toTopOf="@+id/btn_media2" />
 
+    <ImageView
+        android:id="@+id/iv"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/black" />
+
 </android.support.constraint.ConstraintLayout>

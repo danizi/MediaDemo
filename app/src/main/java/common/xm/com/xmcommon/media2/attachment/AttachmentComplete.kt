@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import common.xm.com.xmcommon.R
 import common.xm.com.xmcommon.media2.base.IXmMediaPlayer
+import common.xm.com.xmcommon.media2.base.XmVideoView
 import common.xm.com.xmcommon.media2.event.PlayerObserver
 
 class AttachmentComplete(context: Context?) : BaseAttachmentView(context) {
@@ -21,6 +22,11 @@ class AttachmentComplete(context: Context?) : BaseAttachmentView(context) {
                 this@AttachmentComplete.visibility = View.GONE
             }
         }
+    }
+
+    override fun bind(xmVideoView: XmVideoView) {
+        super.bind(xmVideoView)
+        this.visibility = View.GONE
     }
 
     override fun layouId(): Int {

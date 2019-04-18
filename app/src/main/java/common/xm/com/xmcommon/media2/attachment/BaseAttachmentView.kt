@@ -51,7 +51,9 @@ abstract class BaseAttachmentView : FrameLayout {
         this.xmVideoView = xmVideoView
     }
 
-    open fun unBind() {}
+    open fun unBind() {
+        xmVideoView = null
+    }
 
     open fun onDownUp() {}
 

@@ -51,15 +51,15 @@ object ScreenUtil {
         }
     }
 
-    fun setDecorVisible(activity: Activity) {
+    fun setDecorVisible(activity: Activity?) {
         /*显示状态栏*/
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            activity.window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         } else {
-            val decorView = activity.window.decorView
-            activity.window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            val decorView = activity?.window?.decorView
+            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
             val uiOptions = View.SYSTEM_UI_FLAG_VISIBLE
-            decorView.systemUiVisibility = uiOptions
+            decorView?.systemUiVisibility = uiOptions
         }
     }
 

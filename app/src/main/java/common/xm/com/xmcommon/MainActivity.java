@@ -8,8 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+
+import com.bumptech.glide.Glide;
 
 import common.xm.com.xmcommon.media2.base.XmVideoView;
 import common.xm.com.xmcommon.media2.utils.ScreenUtil;
@@ -56,6 +60,11 @@ public class MainActivity extends AppCompatActivity {
                 xmVideoView.layout(0, 200, xmVideoView.getRight(), xmVideoView.getBottom() + 200);  //ps:如果再调用requestLayout 则不会生效
             }
         });
+
+        ImageView ivPre = findViewById(R.id.iv);
+        ivPre.setVisibility(View.GONE);
+        String preUrl = "https://img-blog.csdn.net/20160413112832792?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center";
+        Glide.with(this).load(preUrl).error(R.drawable.ic_launcher_background).into(ivPre);//加载图片
     }
 
     @Override

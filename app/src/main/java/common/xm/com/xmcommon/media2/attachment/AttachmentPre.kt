@@ -11,41 +11,21 @@ import common.xm.com.xmcommon.media2.base.XmMediaPlayer
 import common.xm.com.xmcommon.media2.base.XmVideoView
 import common.xm.com.xmcommon.media2.event.PlayerObserver
 
-class AttachmentPre(context: Context?) : BaseAttachmentView(context!!) {
-
-    private var ivPre: ImageView? = null
+class AttachmentPre(context: Context?, private var preUrl: String = "") : BaseAttachmentView(context!!) {
     private var ivStart: ImageView? = null
     private var pbLoading: ProgressBar? = null
-    var preUrl: String = ""
     var url: String = ""
+    private var ivPre: ImageView? = null
 
     init {
         observer = object : PlayerObserver {
             override fun onPrepared(mp: IXmMediaPlayer) {
                 super.onPrepared(mp)
-                pbLoading?.visibility = View.VISIBLE
                 xmVideoView?.mediaPlayer?.start()
                 xmVideoView?.unBindAttachmentView(this@AttachmentPre)
             }
-
-//            override fun onInfo(mp: IXmMediaPlayer, what: Int, extra: Int) {
-//                super.onInfo(mp, what, extra)
-//                if (what == IXmMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
-//                    xmVideoView?.mediaPlayer?.start()
-//                    xmVideoView?.unBindAttachmentView(this@AttachmentPre)
-//                }
-//            }
         }
-    }
-
-    override fun bind(xmVideoView: XmVideoView) {
-//        this.xmVideoView = xmVideoView
-//        this.xmVideoView?.addView(this)
-    }
-
-    override fun unBind() {
-//        this.xmVideoView = null
-//        this.xmVideoView?.removeView(this)
+        Glide.with(context).load(preUrl).error(R.drawable.ic_launcher_background).into(ivPre)//加载图片
     }
 
     override fun layouId(): Int {
@@ -64,6 +44,7 @@ class AttachmentPre(context: Context?) : BaseAttachmentView(context!!) {
                 ivStart?.visibility = View.GONE
                 pbLoading?.visibility = View.VISIBLE
                 xmVideoView?.start(url, true) //播放视频
+                xmVideoView?.bringChildToFront(this@AttachmentPre)
             }
         }
     }
@@ -72,14 +53,5 @@ class AttachmentPre(context: Context?) : BaseAttachmentView(context!!) {
         ivPre?.visibility = View.VISIBLE
         ivStart?.visibility = View.VISIBLE
         pbLoading?.visibility = View.GONE
-        setCover()
-    }
-
-    private fun setCover() {
-        Glide.with(context).load(preUrl).error(R.drawable.ic_launcher_background).into(ivPre)//加载图片
-    }
-
-    override fun initData() {
-
     }
 }
