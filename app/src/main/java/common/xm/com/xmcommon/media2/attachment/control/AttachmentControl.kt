@@ -179,7 +179,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
         val landscapeView = getView(R.layout.attachment_control_landscape)
         landscapeView.visibility = visibility
         addView(landscapeView, LayoutParams(MATCH_PARENT, MATCH_PARENT))
-        controlViewHolder = PortraitViewHolder.create(landscapeView)
+        controlViewHolder = LandscapeViewHolder.create(landscapeView)
         controlViewHolder?.playResID = R.mipmap.media_control_play
         controlViewHolder?.pauseResID = R.mipmap.media_control_pause
         controlViewHolder?.bind(this)
