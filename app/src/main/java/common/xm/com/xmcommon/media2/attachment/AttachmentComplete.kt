@@ -5,6 +5,8 @@ import android.view.View
 import common.xm.com.xmcommon.R
 import common.xm.com.xmcommon.media2.base.IXmMediaPlayer
 import common.xm.com.xmcommon.media2.base.XmVideoView
+import common.xm.com.xmcommon.media2.event.GestureObserver
+import common.xm.com.xmcommon.media2.event.PhoneStateObserver
 import common.xm.com.xmcommon.media2.event.PlayerObserver
 
 class AttachmentComplete(context: Context?) : BaseAttachmentView(context) {
@@ -22,6 +24,10 @@ class AttachmentComplete(context: Context?) : BaseAttachmentView(context) {
                 this@AttachmentComplete.visibility = View.GONE
             }
         }
+        gestureObserver = object : GestureObserver {
+
+        }
+        phoneObserver = object : PhoneStateObserver {}
     }
 
     override fun bind(xmVideoView: XmVideoView) {
@@ -29,7 +35,7 @@ class AttachmentComplete(context: Context?) : BaseAttachmentView(context) {
         this.visibility = View.GONE
     }
 
-    override fun layouId(): Int {
+    override fun layoutId(): Int {
         return R.layout.attachment_complete
     }
 

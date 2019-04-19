@@ -9,6 +9,8 @@ import common.xm.com.xmcommon.R
 import common.xm.com.xmcommon.media2.base.IXmMediaPlayer
 import common.xm.com.xmcommon.media2.base.XmMediaPlayer
 import common.xm.com.xmcommon.media2.base.XmVideoView
+import common.xm.com.xmcommon.media2.event.GestureObserver
+import common.xm.com.xmcommon.media2.event.PhoneStateObserver
 import common.xm.com.xmcommon.media2.event.PlayerObserver
 
 class AttachmentPre(context: Context?, private var preUrl: String = "") : BaseAttachmentView(context!!) {
@@ -25,10 +27,14 @@ class AttachmentPre(context: Context?, private var preUrl: String = "") : BaseAt
                 xmVideoView?.unBindAttachmentView(this@AttachmentPre)
             }
         }
+        gestureObserver = object : GestureObserver {
+
+        }
+        phoneObserver = object : PhoneStateObserver {}
         Glide.with(context).load(preUrl).error(R.drawable.ic_launcher_background).into(ivPre)//加载图片
     }
 
-    override fun layouId(): Int {
+    override fun layoutId(): Int {
         return R.layout.attachment_pre
     }
 

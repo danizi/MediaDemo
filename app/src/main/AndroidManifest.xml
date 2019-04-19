@@ -5,6 +5,9 @@
 
     <!--重力感应-->
     <uses-permission android:name="android.hardware.sensor.accelerometer" />
+    <!--蓝牙耳机-->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <!--设置系统配置-->
     <uses-permission
         android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
@@ -18,8 +21,8 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard"
             android:name=".MainActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,5 +1,6 @@
 package common.xm.com.xmcommon.media2.attachment.control
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.support.constraint.ConstraintLayout
 import android.view.View
@@ -8,16 +9,17 @@ import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
 import common.xm.com.xmcommon.R
-import common.xm.com.xmcommon.media2.base.XmMediaPlayer
-import common.xm.com.xmcommon.media2.base.XmVideoView
 import common.xm.com.xmcommon.media2.log.BKLog
 import common.xm.com.xmcommon.media2.utils.ScreenUtil
+import common.xm.com.xmcommon.media2.utils.TimeUtil
 
-@Deprecated("")
-class PortraitViewHolder private constructor(var attachmentControl: AttachmentControl?, val rootView: View?, val clPortraitTop: ConstraintLayout, val ivBack: ImageView, val tvTitle: TextView, val ivListener: ImageView, val ivMiracast: ImageView, val ivShare: ImageView, val ivMore: ImageView, val clPortraitBottom: ConstraintLayout, val ivAction: ImageView, val seekBar: SeekBar, val tvTime: TextView, val ivScreenFull: ImageView, val clSeek: ConstraintLayout, val tvTime2: TextView, val pbLoading: ProgressBar) {
+/**
+ * 竖屏界面
+ */
+class PortraitViewHolder : ControlViewHolder {
 
     companion object {
-        fun create(attachmentControl: AttachmentControl?, rootView: View?): PortraitViewHolder {
+        fun create(rootView: View?): PortraitViewHolder {
             val clPortraitTop = rootView?.findViewById<View>(R.id.cl_portrait_top) as ConstraintLayout
             val ivBack = rootView.findViewById<View>(R.id.iv_back) as ImageView
             val tvTitle = rootView.findViewById<View>(R.id.tv_title) as TextView
@@ -33,99 +35,206 @@ class PortraitViewHolder private constructor(var attachmentControl: AttachmentCo
             val clSeek = rootView.findViewById<View>(R.id.cl_seek) as ConstraintLayout
             val tvTime2 = rootView.findViewById<View>(R.id.tv_time2) as TextView
             val pbLoading = rootView.findViewById<View>(R.id.pb) as ProgressBar
-            return PortraitViewHolder(attachmentControl, rootView, clPortraitTop, ivBack, tvTitle, ivListener, ivMiracast, ivShare, ivMore, clPortraitBottom, ivAction, seekBar, tvTime, ivScreenFull, clSeek, tvTime2, pbLoading)
+            return PortraitViewHolder(rootView, clPortraitTop, ivBack, tvTitle, ivListener, ivMiracast, ivShare, ivMore, clPortraitBottom, ivAction, seekBar, tvTime, ivScreenFull, clSeek, tvTime2, pbLoading)
         }
     }
 
-
-    private var activity: Activity? = null
-    private var mediaPlayer: XmMediaPlayer? = null
-    private var xmVideoView: XmVideoView? = null
-    private var screenW = 0
-    private var screenH = 0
-    private var controlHelper: ControlHelper? = null
-    var isHorizontalSlide = false
-    var isClick = false
-    var progress = 0
-
-    init {
-        controlHelper = attachmentControl?.controlHelper
-        screenW = ScreenUtil.getNormalWH(activity)[0]
-        screenH = ScreenUtil.getNormalWH(activity)[1]
+    private constructor(rootView: View, clPortraitTop: ConstraintLayout, ivBack: ImageView, tvTitle: TextView, ivListener: ImageView, ivMiracast: ImageView, ivShare: ImageView, ivMore: ImageView, clPortraitBottom: ConstraintLayout, ivAction: ImageView, seekBar: SeekBar, tvTime: TextView, ivScreenFull: ImageView, clSeek: ConstraintLayout, tvTime2: TextView, pbLoading: ProgressBar) {
+        this.attachmentControl = attachmentControl
+        this.rootView = rootView
+        this.clPortraitTop = clPortraitTop
+        this.ivBack = ivBack
+        this.tvTitle = tvTitle
+        this.ivListener = ivListener
+        this.ivMiracast = ivMiracast
+        this.ivShare = ivShare
+        this.ivMore = ivMore
+        this.clPortraitBottom = clPortraitBottom
+        this.ivAction = ivAction
+        this.seekBar = seekBar
+        this.tvTime = tvTime
+        this.ivScreenFull = ivScreenFull
+        this.clSeek = clSeek
+        this.tvTime2 = tvTime2
+        this.pbLoading = pbLoading
     }
 
-    fun initEvent() {
-        ivAction.setOnClickListener {
-            controlHelper?.clickAction(R.mipmap.media_control_play, R.mipmap.media_control_pause, ivAction, mediaPlayer)
-        }
-        ivScreenFull.setOnClickListener {
-            controlHelper?.clickScreenSwitch(activity, xmVideoView, 0, 0, screenW, screenH)
-            hide()
-            attachmentControl?.landscapeViewHolder?.hide()
+    private var clPortraitTop: ConstraintLayout? = null
+    private var ivBack: ImageView? = null
+    private var tvTitle: TextView? = null
+    private var ivListener: ImageView? = null
+    private var ivMiracast: ImageView? = null
+    private var ivShare: ImageView? = null
+    private var ivMore: ImageView? = null
+    private var clPortraitBottom: ConstraintLayout? = null
+    private var ivAction: ImageView? = null
+    private var seekBar: SeekBar? = null
+    private var tvTime: TextView? = null
+    private var ivScreenFull: ImageView? = null
+    private var clSeek: ConstraintLayout? = null
+    private var tvTime2: TextView? = null
+    private var pbLoading: ProgressBar? = null
+
+
+    private fun initEvent() {
+        ivAction?.setOnClickListener {
+            try {
+                if (mediaPlayer?.isPlaying() == true) {
+                    ivAction?.setImageResource(playResID)
+                    mediaPlayer?.pause()
+                } else {
+                    ivAction?.setImageResource(pauseResID)
+                    mediaPlayer?.start()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
-        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        ivScreenFull?.setOnClickListener {
+            //横屏 高度 < 宽度
+            ScreenUtil.setLandscape(activity)  //设置横屏
+            ScreenUtil.hideStatusBar(activity) //隐藏系统状态栏
+            xmVideoView?.layout(0, 0, screenW, screenH)    //设置宽高
+            hideControlView()                  //隐藏控制界面  PS : 或者删除
+            listener?.onState(AttachmentControl.LANDSCAPE)
+        }
+
+        seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            /**
+             * 设置progress 属性也会触发，所有设置进度完成的时候应该在DOWN_UP事件回调中设置播放器播放进度
+             */
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                //用户手指触控了屏幕
+                this@PortraitViewHolder.progress = progress
                 if (isHorizontalSlide) {
-                    this@PortraitViewHolder.progress = progress
-                    BKLog.i(AttachmentControl.TAG, "触发滑动中... progress:$progress")
+                    //用户在屏幕水平滑动，但未触碰到seekbar时
+                    BKLog.i(AttachmentControl.TAG, "“未”触碰到Seekbar，滑动中... progress:$progress")
+                } else {
+                    //用户触碰了seekbar或者定时器一直设置progress属性值时
+                    val pos = ((progress.toFloat() / 100f) * mediaPlayer?.getDuration()!!).toLong()
+                    updateProgress(pos, false)
+                    BKLog.i(AttachmentControl.TAG, "触碰到Seekbar，滑动中... progress:$progress")
                 }
             }
 
+            /**
+             * 只有手指触控了滑块触发
+             */
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                clSeek.visibility = View.VISIBLE
+                showControlView()
+                showProgress()
+                progressTimerStop()
                 progress = 0
                 BKLog.d(AttachmentControl.TAG, "开始触发滑动 progress:$progress")
             }
 
+            /**
+             * 只有手指触控了滑块释放后触发
+             */
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                clSeek.visibility = View.GONE
-                val seekPos = xmVideoView?.mediaPlayer?.getDuration()!! * (progress.toFloat() / 100f)
-                xmVideoView?.mediaPlayer?.seekTo(seekPos.toInt())
+                hideControlView()
+                horizontalSlideStopSeekTo()
+                progressTimerStart(period = 1000)
                 BKLog.d(AttachmentControl.TAG, "结束触发滑动 progress:$progress")
             }
         })
     }
 
-    fun showAndHide() {
-        if (ScreenUtil.isPortrait(activity!!)) {
-            if (clPortraitBottom.visibility == View.VISIBLE) {
-                hide()
-            } else {
-                show()
-            }
+    override fun horizontalSlideStopSeekTo() {
+        val seekPos = mediaPlayer?.getDuration()!! * (progress.toFloat() / 100f)
+        mediaPlayer?.seekTo(seekPos.toInt())
+    }
+
+    override fun bind(attachmentControl: AttachmentControl?) {
+        super.bind(attachmentControl)
+
+
+        mediaPlayer = attachmentControl?.xmVideoView?.mediaPlayer
+        xmVideoView = attachmentControl?.xmVideoView
+
+        activity = attachmentControl?.context as Activity
+        screenW = ScreenUtil.getNormalWH(activity)[0]
+        screenH = ScreenUtil.getNormalWH(activity)[1]
+        initEvent()
+
+    }
+
+    override fun showOrHideControlView() {
+        if (clPortraitBottom?.visibility == View.VISIBLE) {
+            hideControlView()
+        } else {
+            showControlView()
         }
     }
 
-    fun show() {
-        /*显示控制器*/
-        clPortraitTop.visibility = View.VISIBLE
-        clPortraitBottom.visibility = View.VISIBLE
-        rootView?.visibility = View.VISIBLE
+    override fun showLoading() {
+        pbLoading?.visibility = View.VISIBLE
     }
 
-    fun hide() {
-        /*隐藏控制器*/
-        clPortraitTop.visibility = View.GONE
-        clPortraitBottom.visibility = View.GONE
-        rootView?.visibility = View.GONE
+    override fun showTop() {
+        clPortraitTop?.visibility = View.VISIBLE
     }
 
-    fun showProgress(slidePresent: Int = 0) {
-        /*显示手势播放进度*/
-        clSeek.visibility = View.VISIBLE
-        controlHelper?.updateProgress(seekBar, tvTime2, tvTime, slidePresent.toLong(), mediaPlayer?.getDuration()!!)
+    override fun showBottom() {
+        clPortraitBottom?.visibility = View.VISIBLE
     }
 
-    fun hideProgress() {
-        /*隐藏手势播放进度*/
-        clSeek.visibility = View.GONE
+    override fun showProgress() {
+        clSeek?.visibility = View.VISIBLE
     }
 
-    fun bind(xmVideoView: XmVideoView?) {
-        mediaPlayer = xmVideoView?.mediaPlayer
-        activity = attachmentControl?.context as Activity
-        this.xmVideoView = xmVideoView
+    override fun hideLoading() {
+        pbLoading?.visibility = View.GONE
     }
+
+    override fun hideTop() {
+        clPortraitTop?.visibility = View.GONE
+    }
+
+    override fun hideBottom() {
+        clPortraitBottom?.visibility = View.GONE
+    }
+
+    override fun hideProgress() {
+        clSeek?.visibility = View.GONE
+    }
+
+    override fun setActionResID(id: Int) {
+        try {
+            ivAction?.setImageResource(id)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun hideControlView() {
+        hideBottom()
+        hideLoading()
+        hideProgress()
+    }
+
+    override fun secondaryProgress(present: Int) {
+        seekBar?.secondaryProgress = present
+    }
+
+    override fun progress(present: Int) {
+        seekBar?.progress = present
+    }
+
+    @SuppressLint("SetTextI18n")
+    override fun updateProgress(pos: Long, isSetProgress: Boolean) {
+        if (mediaPlayer == null) {
+            BKLog.e(TAG, "updateProgress() mediaPlayer is null")
+            return
+        }
+        val duration = mediaPlayer?.getDuration()!!
+        if (isSetProgress) {
+            seekBar?.progress = (pos * 100f / duration.toFloat()).toInt()
+        }
+        if (pos in 0..duration) {
+            tvTime?.text = TimeUtil.hhmmss(pos) + "/" + TimeUtil.hhmmss(duration)
+            tvTime2?.text = TimeUtil.hhmmss(pos) + "/" + TimeUtil.hhmmss(duration)
+        }
+    }
+
 }

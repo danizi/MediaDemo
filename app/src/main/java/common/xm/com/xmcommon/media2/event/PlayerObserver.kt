@@ -6,10 +6,12 @@ import common.xm.com.xmcommon.media2.base.IXmMediaPlayer
 import common.xm.com.xmcommon.media2.base.XmMediaPlayer
 import common.xm.com.xmcommon.media2.log.BKLog
 
+/**
+ * 播放回调
+ */
 interface PlayerObserver {
-    var TAG: String
+    val TAG: String
         get() = "PlayerObserver"
-        set(value) = TODO()
 
     /*================
      * 播放器监听
@@ -58,6 +60,7 @@ interface PlayerObserver {
         BKLog.d(TAG, "onSubtitleData data:$data")
     }
 
+    @Deprecated("1")
     fun onScaleEnd(mediaPlayer: XmMediaPlayer?, scaleFactor: Float) {
         BKLog.d(TAG, "onScaleEnd scaleFactor:$scaleFactor")
     }
@@ -65,19 +68,29 @@ interface PlayerObserver {
     /*================
      * 手势监听
      */
+    @Deprecated("1")
     fun onDoubleClick(mediaPlayer: XmMediaPlayer?) {
         BKLog.d(TAG, "onDoubleClick")
     }
-
+    @Deprecated("1")
     fun onVertical(mediaPlayer: XmMediaPlayer?, type: String, present: Int) {
         BKLog.d(TAG, "onVertical type:$type present:$present")
     }
-
+    @Deprecated("1")
     fun onHorizontal(mediaPlayer: XmMediaPlayer?, present: Int) {
         BKLog.d(TAG, "onHorizontal present:$present")
     }
-
+    @Deprecated("1")
     fun onClick(mediaPlayer: XmMediaPlayer?) {
         BKLog.d(TAG, "onClick")
     }
+
+    /*================
+     * 手势监听
+     */
+
+    /*================
+     * 监听手机状态
+     */
+
 }

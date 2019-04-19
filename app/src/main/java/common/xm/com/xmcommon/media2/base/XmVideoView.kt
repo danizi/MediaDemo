@@ -3,14 +3,20 @@ package common.xm.com.xmcommon.media2.base
 import android.content.Context
 import android.media.MediaPlayer
 import android.media.SubtitleData
+import android.provider.ContactsContract
+import android.support.v4.app.FragmentManager
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.*
 import android.widget.FrameLayout
 import common.xm.com.xmcommon.media2.attachment.*
 import common.xm.com.xmcommon.media2.attachment.control.AttachmentControl
-import common.xm.com.xmcommon.media2.attachment.control.AttachmentControl2
 import common.xm.com.xmcommon.media2.base.XmMediaPlayer.Companion.TAG
+import common.xm.com.xmcommon.media2.broadcast.BroadcastManager
+import common.xm.com.xmcommon.media2.broadcast.receiver.*
+import common.xm.com.xmcommon.media2.event.GestureObservable
+import common.xm.com.xmcommon.media2.event.PhoneStateObservable
+import common.xm.com.xmcommon.media2.event.PlayerObservable
 import common.xm.com.xmcommon.media2.gesture.GestureHelp
 import common.xm.com.xmcommon.media2.log.BKLog
 import java.io.IOException
@@ -19,11 +25,14 @@ import java.util.concurrent.ConcurrentLinkedQueue
 class XmVideoView : FrameLayout {
 
     var mediaPlayer: XmMediaPlayer? = null //播放器
-    var attachmentViews: ConcurrentLinkedQueue<BaseAttachmentView>? = ConcurrentLinkedQueue() //附着页面集合
+    //var attachmentViews: ConcurrentLinkedQueue<BaseAttachmentView>? = ConcurrentLinkedQueue() //附着页面集合
     private var urls: ConcurrentLinkedQueue<String>? = ConcurrentLinkedQueue() //保存播放记录
     private var sh: SurfaceHolder? = null //画布Holder
     var surfaceView: SurfaceView? = null
     private var autoPlay = false
+    private var playerObservable: PlayerObservable? = null
+    private var phoneStateObservable: PhoneStateObservable? = null
+    private var gestureObservable: GestureObservable? = null
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
@@ -34,6 +43,15 @@ class XmVideoView : FrameLayout {
     }
 
     private fun initMediaPlayer() {
+        if (playerObservable == null) {
+            playerObservable = PlayerObservable()
+        }
+        if (phoneStateObservable == null) {
+            phoneStateObservable = PhoneStateObservable()
+        }
+        if (gestureObservable == null) {
+            gestureObservable = GestureObservable()
+        }
         //mediaPlayer?.release()
         if (mediaPlayer == null) {
             mediaPlayer = XmMediaPlayer()
@@ -44,20 +62,20 @@ class XmVideoView : FrameLayout {
     private fun initMediaPlayerListener() {
         mediaPlayer?.setOnVideoSizeChangedListener(object : OnVideoSizeChangedListener {
             override fun onVideoSizeChanged(mp: IXmMediaPlayer, width: Int, height: Int, sar_num: Int, sar_den: Int) {
-                notifyObserversVideoSizeChanged(mp, width, height, sar_num, sar_den)
+                playerObservable?.notifyObserversVideoSizeChanged(mp, width, height, sar_num, sar_den)
             }
         })
 
         mediaPlayer?.setOnErrorListener(object : OnErrorListener {
             override fun onError(mp: IXmMediaPlayer, what: Int, extra: Int): Boolean {
-                notifyObserversError(mp, what, extra)
+                playerObservable?.notifyObserversError(mp, what, extra)
                 return false
             }
         })
 
         mediaPlayer?.setOnInfoListener(object : OnInfoListener {
             override fun onInfo(mp: IXmMediaPlayer, what: Int, extra: Int): Boolean {
-                notifyObserversInfo(mp, what, extra)
+                playerObservable?.notifyObserversInfo(mp, what, extra)
                 return false
             }
         })
@@ -67,119 +85,53 @@ class XmVideoView : FrameLayout {
                 if (autoPlay) {
                     mediaPlayer?.start()
                 }
-                notifyObserversPrepared(mp)
+                playerObservable?.notifyObserversPrepared(mp)
             }
         })
 
         mediaPlayer?.setOnBufferingUpdateListener(object : OnBufferingUpdateListener {
             override fun onBufferingUpdate(mp: IXmMediaPlayer, percent: Int) {
-                notifyObserversBufferingUpdate(mp, percent)
+                playerObservable?.notifyObserversBufferingUpdate(mp, percent)
             }
         })
 
         mediaPlayer?.setOnSeekCompleteListener(object : OnSeekCompleteListener {
             override fun onSeekComplete(mp: IXmMediaPlayer) {
-                notifyObserversSeekComplete(mp)
+                playerObservable?.notifyObserversSeekComplete(mp)
             }
         })
 
         mediaPlayer?.setOnCompletionListener(object : OnCompletionListener {
             override fun onCompletion(mp: IXmMediaPlayer) {
-                notifyObserversCompletion(mp)
+                playerObservable?.notifyObserversCompletion(mp)
             }
         })
 
         mediaPlayer?.setOnSubtitleDataListener(object : OnSubtitleDataListener {
             override fun onSubtitleData(mp: IXmMediaPlayer, data: SubtitleData) {
-                notifyObserversSubtitleData(mp, data)
+                playerObservable?.notifyObserversSubtitleData(mp, data)
             }
         })
 
         mediaPlayer?.setOnDrmInfoListener(object : OnDrmInfoListener {
             override fun onDrmInfo(mp: IXmMediaPlayer, drmInfo: MediaPlayer.DrmInfo) {
-                notifyObserversDrmInfo(mp, drmInfo)
+                playerObservable?.notifyObserversDrmInfo(mp, drmInfo)
             }
         })
 
         mediaPlayer?.setOnMediaCodecSelectListener(object : OnMediaCodecSelectListener {
             override fun onMediaCodecSelect(mp: IXmMediaPlayer, mimeType: String, profile: Int, level: Int): String {
-                notifyObserversMediaCodecSelect(mp, mimeType, profile, level)
+                playerObservable?.notifyObserversMediaCodecSelect(mp, mimeType, profile, level)
                 return ""
             }
         })
 
         mediaPlayer?.setOnControlMessageListener(object : OnControlMessageListener {
             override fun onControlResolveSegmentUrl(mp: IXmMediaPlayer, segment: Int): String {
-                notifyObserversControlResolveSegmentUrl(mp, segment)
+                playerObservable?.notifyObserversControlResolveSegmentUrl(mp, segment)
                 return ""
             }
         })
-    }
-
-    private fun notifyObserversControlResolveSegmentUrl(mp: IXmMediaPlayer, segment: Int) {
-        for (attachmentView in attachmentViews!!) {
-            attachmentView.observer?.onControlResolveSegmentUrl(mp, segment)
-        }
-    }
-
-    private fun notifyObserversMediaCodecSelect(mp: IXmMediaPlayer, mimeType: String, profile: Int, level: Int) {
-        for (attachmentView in attachmentViews!!) {
-            attachmentView.observer?.onMediaCodecSelect(mp, mimeType, profile, level)
-        }
-    }
-
-    private fun notifyObserversDrmInfo(mp: IXmMediaPlayer, drmInfo: MediaPlayer.DrmInfo) {
-        for (attachmentView in attachmentViews!!) {
-            attachmentView.observer?.onDrmInfo(mp, drmInfo)
-        }
-    }
-
-    private fun notifyObserversSubtitleData(mp: IXmMediaPlayer, data: SubtitleData) {
-        for (attachmentView in attachmentViews!!) {
-            attachmentView.observer?.onSubtitleData(mp, data)
-        }
-    }
-
-    private fun notifyObserversCompletion(mp: IXmMediaPlayer) {
-        for (attachmentView in attachmentViews!!) {
-            attachmentView.observer?.onCompletion(mp)
-        }
-    }
-
-    private fun notifyObserversSeekComplete(mp: IXmMediaPlayer) {
-        for (attachmentView in attachmentViews!!) {
-            attachmentView.observer?.onSeekComplete(mp)
-        }
-    }
-
-    private fun notifyObserversBufferingUpdate(mp: IXmMediaPlayer, percent: Int) {
-        for (attachmentView in attachmentViews!!) {
-            attachmentView.observer?.onBufferingUpdate(mp, percent)
-        }
-    }
-
-    private fun notifyObserversPrepared(mp: IXmMediaPlayer) {
-        for (attachmentView in attachmentViews!!) {
-            attachmentView.observer?.onPrepared(mp)
-        }
-    }
-
-    private fun notifyObserversInfo(mp: IXmMediaPlayer, what: Int, extra: Int) {
-        for (attachmentView in attachmentViews!!) {
-            attachmentView.observer?.onInfo(mp, what, extra)
-        }
-    }
-
-    private fun notifyObserversError(mp: IXmMediaPlayer, what: Int, extra: Int) {
-        for (attachmentView in attachmentViews!!) {
-            attachmentView.observer?.onError(mp, what, extra)
-        }
-    }
-
-    private fun notifyObserversVideoSizeChanged(mp: IXmMediaPlayer, width: Int, height: Int, sar_num: Int, sar_den: Int) {
-        for (attachmentView in attachmentViews!!) {
-            attachmentView.observer?.onVideoSizeChanged(mp, width, height, sar_num, sar_den)
-        }
     }
 
     fun bindAttachmentView(attachment: BaseAttachmentView?) {
@@ -188,8 +140,12 @@ class XmVideoView : FrameLayout {
             if (attachment.parent != null) {//android.view.ViewGroup$LayoutParams cannot be cast to android.view.ViewGroup$MarginLayoutParams
                 (attachment.parent as ViewGroup).removeView(attachment)
             }
-            this.addView(attachment, LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
-            attachmentViews?.add(attachment)
+            //this.addView(attachment, LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+            //attachmentViews?.add(attachment)
+            playerObservable?.addObserver(attachment.observer)
+            gestureObservable?.addObserver(attachment.gestureObserver)
+            phoneStateObservable?.addObserver(attachment.phoneObserver)
+
             attachment.bind(this)
         } else {
             BKLog.e(TAG, "attachment is null")
@@ -198,8 +154,11 @@ class XmVideoView : FrameLayout {
 
     fun unBindAttachmentView(attachment: BaseAttachmentView?) {
         if (attachment != null) {
-            this.removeView(attachment)
-            attachmentViews?.remove(attachment)
+            //this.removeView(attachment)
+            //attachmentViews?.remove(attachment)
+            playerObservable?.deleteObserver(attachment.observer)
+            gestureObservable?.deleteObserver(attachment.gestureObserver)
+            phoneStateObservable?.deleteObserver(attachment.phoneObserver)
             attachment.unBind()
         } else {
             BKLog.e(TAG, "attachment is null")
@@ -250,7 +209,7 @@ class XmVideoView : FrameLayout {
             mediaPlayer?.prepareAsync()
         }
         // surfaceView?.visibility= View.GONE  设置画布隐藏就无法播放了
-        addView(surfaceView, attachmentViews?.size!! - 1)
+        addView(surfaceView)
     }
 
     private var gestureHelp: GestureHelp? = null
@@ -265,7 +224,7 @@ class XmVideoView : FrameLayout {
         //bindAttachmentView(loading)
 
         //控制器
-        val control = AttachmentControl2(context)
+        val control = AttachmentControl(context)
         bindAttachmentView(control)
 
         //手势
@@ -274,83 +233,91 @@ class XmVideoView : FrameLayout {
         //完成
         bindAttachmentView(AttachmentComplete(context))
 
-        //监听
+        //手势监听
         gestureHelp = GestureHelp(context)
         gestureHelp?.bind(this)
         gestureHelp?.setOnGestureListener(object : GestureHelp.OnGestureListener {
             override fun onDown() {
-                notifyObserversDown()
+                gestureObservable?.notifyObserversDown()
             }
 
             override fun onDownUp() {
-                notifyObserversDownUp()
+                gestureObservable?.notifyObserversDownUp()
             }
 
             override fun onClick() {
-                notifyObserversClick()
+                gestureObservable?.notifyObserversClick()
             }
 
             override fun onHorizontal(present: Int) {
-                notifyObserversHorizontal(present)
+                gestureObservable?.notifyObserversHorizontal(present)
             }
 
-
             override fun onVertical(type: String, present: Int) {
-                notifyObserversVertical(type, present)
+                gestureObservable?.notifyObserversVertical(type, present)
             }
 
             override fun onDoubleClick() {
-                notifyObserversDoubleClick()
+                gestureObservable?.notifyObserversDoubleClick()
             }
 
             override fun onScaleEnd(scaleFactor: Float) {
-                notifyObserversScaleEnd(scaleFactor)
-            }
-
-
-            private fun notifyObserversScaleEnd(scaleFactor: Float) {
-                for (attachmentView in attachmentViews!!) {
-                    attachmentView.observer?.onScaleEnd(mediaPlayer, scaleFactor)
-                }
-            }
-
-            private fun notifyObserversDoubleClick() {
-                for (attachmentView in attachmentViews!!) {
-                    attachmentView.observer?.onDoubleClick(mediaPlayer)
-                }
-            }
-
-            private fun notifyObserversVertical(type: String, present: Int) {
-                for (attachmentView in attachmentViews!!) {
-                    attachmentView.observer?.onVertical(mediaPlayer, type, present)
-                }
-            }
-
-            private fun notifyObserversHorizontal(present: Int) {
-                for (attachmentView in attachmentViews!!) {
-                    attachmentView.observer?.onHorizontal(mediaPlayer, present)
-                }
-            }
-
-            private fun notifyObserversClick() {
-                for (attachmentView in attachmentViews!!) {
-                    attachmentView.observer?.onClick(mediaPlayer)
-                }
+                gestureObservable?.notifyObserversScaleEnd(scaleFactor)
             }
         })
+
+        //各种系统广播监听
+        if (broadcastManager == null) {
+            broadcastManager = BroadcastManager.create(context)
+        }
+
+        //电量状态
+        val batteryLevelReceiver = BatteryLevelReceiver(object : BatteryLevelReceiver.OnBatteryLevelListener {
+            override fun onBatteryLevel(type: String, batteryPct: Float) {
+                phoneStateObservable?.notifyObserversBatteryLevel(type,batteryPct)
+            }
+        })
+        //耳机状态
+        val headsetReceiver = HeadsetReceiver(object : HeadsetReceiver.OnHeadsetListener {
+            override fun onHeadset(type: String, state: Int?) {
+                phoneStateObservable?.notifyObserversHeadset(type,state)
+            }
+        })
+
+        //网络状态
+        val networkConnectChangedReceiver = NetworkConnectChangedReceiver(object : NetworkConnectChangedReceiver.OnNetworkConnectChangedListener {
+            override fun onChange(isConnect: Boolean, type: Int) {
+                BKLog.d(TAG, "isConnect:$isConnect type:$type")
+                phoneStateObservable?.notifyObserversNetworkConnectChange(isConnect,type)
+            }
+        })
+
+        //手机来电去电状态
+        val phoneStateReceiver = PhoneStateReceiver(object : PhoneStateReceiver.OnPhoneStateListener {
+            override fun onPhoneState() {
+                phoneStateObservable?.notifyObserversPhoneState()
+            }
+
+            override fun onStateRinging() {
+                phoneStateObservable?.notifyObserversStateRinging()
+            }
+        })
+        //是否充电状态
+        val powerConnectionReceiver = PowerConnectionReceiver(object :PowerConnectionReceiver.OnPowerConnectionListener{
+            override fun onPowerConnection(charger: Boolean, type: String) {
+                phoneStateObservable?.notifyObserversPowerConnection(charger,type)
+            }
+        })
+
+        broadcastManager?.registerReceiver(batteryLevelReceiver.createIntentFilter(), batteryLevelReceiver)
+        broadcastManager?.registerReceiver(headsetReceiver.createIntentFilter(), headsetReceiver)
+        broadcastManager?.registerReceiver(networkConnectChangedReceiver.createIntentFilter(), networkConnectChangedReceiver)
+        broadcastManager?.registerReceiver(phoneStateReceiver.createIntentFilter(), phoneStateReceiver)
+        broadcastManager?.registerReceiver(powerConnectionReceiver.createIntentFilter(), powerConnectionReceiver)
     }
 
-    private fun notifyObserversDown() {
-        for (attachmentView in attachmentViews!!) {
-            attachmentView.onDown()
-        }
-    }
+    private var broadcastManager: BroadcastManager? = null
 
-    private fun notifyObserversDownUp() {
-        for (attachmentView in attachmentViews!!) {
-            attachmentView.onDownUp()
-        }
-    }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (sh != null) { //只要播放过则就手势处理

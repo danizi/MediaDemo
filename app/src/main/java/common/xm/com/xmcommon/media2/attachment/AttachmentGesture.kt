@@ -8,6 +8,8 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import common.xm.com.xmcommon.R
 import common.xm.com.xmcommon.media2.base.XmMediaPlayer
+import common.xm.com.xmcommon.media2.event.GestureObserver
+import common.xm.com.xmcommon.media2.event.PhoneStateObserver
 import common.xm.com.xmcommon.media2.event.PlayerObserver
 import common.xm.com.xmcommon.media2.gesture.GestureHelp
 import common.xm.com.xmcommon.media2.log.BKLog
@@ -25,18 +27,28 @@ class AttachmentGesture(context: Context) : BaseAttachmentView(context) {
         const val VOLUME = "Volume"
     }
 
-    override fun onDownUp() {
-        super.onDownUp()
-        hide(SEEK)
-        hide(BRIGHTNESS)
-        hide(VOLUME)
-    }
+//    override fun onDownUp() {
+//        super.onDownUp()
+//        hide(SEEK)
+//        hide(BRIGHTNESS)
+//        hide(VOLUME)
+//    }
 
     init {
         observer = object : PlayerObserver {
 
-            override fun onVertical(mediaPlayer: XmMediaPlayer?, type: String, present: Int) {
-                super.onVertical(mediaPlayer, type, present)
+
+        }
+
+        gestureObserver = object : GestureObserver {
+            override fun onDownUp() {
+                super.onDownUp()
+                hide(SEEK)
+                hide(BRIGHTNESS)
+                hide(VOLUME)
+            }
+            override fun onVertical( type: String, present: Int) {
+                super.onVertical( type, present)
                 when (type) {
                     GestureHelp.VERTICAL_LEFT_VALUE -> {
                         show(BRIGHTNESS)
@@ -60,16 +72,11 @@ class AttachmentGesture(context: Context) : BaseAttachmentView(context) {
                     }
                 }
             }
-
-            override fun onHorizontal(mediaPlayer: XmMediaPlayer?, present: Int) {
-                super.onHorizontal(mediaPlayer, present)
-                //viewHolder?.tvTime?.text = xmVideoView?.mediaPlayer?.getCurrentPosition() + present * 1000 + "/" + xmVideoView?.mediaPlayer?.getDuration()
-                //show(SEEK)
-            }
         }
+        phoneObserver = object : PhoneStateObserver {}
     }
 
-    override fun layouId(): Int {
+    override fun layoutId(): Int {
         return R.layout.attachment_gesture
     }
 

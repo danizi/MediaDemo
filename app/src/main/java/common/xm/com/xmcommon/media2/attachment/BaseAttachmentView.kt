@@ -4,17 +4,20 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
-import common.xm.com.xmcommon.R
-import common.xm.com.xmcommon.media2.base.IXmMediaPlayer
 import common.xm.com.xmcommon.media2.base.XmVideoView
+import common.xm.com.xmcommon.media2.event.GestureObserver
+import common.xm.com.xmcommon.media2.event.PhoneStateObserver
 import common.xm.com.xmcommon.media2.event.PlayerObserver
 
 abstract class BaseAttachmentView : FrameLayout {
 
     var observer: PlayerObserver? = null  //观察者
+    var gestureObserver: GestureObserver? = null  //观察者
+    var phoneObserver: PhoneStateObserver? = null  //观察者
     var xmVideoView: XmVideoView? = null  //播放实例
-    var view: View? = null //当前页面
+    var view: View? = null //当前页面View
 
     constructor(context: Context?) : super(context!!)
 
@@ -22,7 +25,7 @@ abstract class BaseAttachmentView : FrameLayout {
 
     init {
         try {
-            view = getView(layouId())
+            view = getView(layoutId())
             addView(view)
             findViews(view)
             initDisplay()
@@ -37,7 +40,7 @@ abstract class BaseAttachmentView : FrameLayout {
         return LayoutInflater.from(context).inflate(layoutID, null, false)
     }
 
-    abstract fun layouId(): Int
+    abstract fun layoutId(): Int
 
     open fun findViews(view: View?) {}
 
@@ -47,15 +50,19 @@ abstract class BaseAttachmentView : FrameLayout {
 
     open fun initData() {}
 
+    /**
+     * 在调用XmMediaView.bindAttachment()会调用此方法
+     */
     open fun bind(xmVideoView: XmVideoView) {
+        xmVideoView.addView(this, LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
         this.xmVideoView = xmVideoView
     }
 
+    /**
+     * 在调用XmMediaView.unBindAttachment()会调用此方法
+     */
     open fun unBind() {
+        xmVideoView?.removeView(this)
         xmVideoView = null
     }
-
-    open fun onDownUp() {}
-
-    open fun onDown() {}
 }

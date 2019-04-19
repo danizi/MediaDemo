@@ -15,7 +15,7 @@ abstract class ControlViewHolder {
     protected val TAG = "ControlViewHolder"
     private var progressTimer: TimerHelper? = TimerHelper()
     private var controlViewHideTimer: TimerHelper? = TimerHelper()
-    var attachmentControl: AttachmentControl2? = null //播放器控制页面
+    var attachmentControl: AttachmentControl? = null //播放器控制页面
     var isHorizontalSlide = false //是否处于水平滑动
     var isClick = false //是否处理点击状态
     var progress = 0    //保存用户拖动进度 单位:%
@@ -31,6 +31,7 @@ abstract class ControlViewHolder {
     protected var xmVideoView: XmVideoView? = null
     protected var screenW = 0
     protected var screenH = 0
+    var listener: OnScreenStateListener? = null
 
     /**
      * 点击屏幕控制界面 显示和隐藏状态来回切换
@@ -70,7 +71,7 @@ abstract class ControlViewHolder {
     /**
      * 绑定播放器
      */
-    open fun bind(attachmentControl: AttachmentControl2?) {
+    open fun bind(attachmentControl: AttachmentControl?) {
         this.attachmentControl = attachmentControl
     }
 
@@ -147,5 +148,9 @@ abstract class ControlViewHolder {
     fun stopDelayTimerHideControlView() {
         /*停止延时隐藏控制界面*/
         controlViewHideTimer?.stop()
+    }
+
+    interface OnScreenStateListener {
+        fun onState(type: String)
     }
 }
