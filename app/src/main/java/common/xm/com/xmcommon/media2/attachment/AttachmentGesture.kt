@@ -7,12 +7,10 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import common.xm.com.xmcommon.R
-import common.xm.com.xmcommon.media2.base.XmMediaPlayer
 import common.xm.com.xmcommon.media2.event.GestureObserver
 import common.xm.com.xmcommon.media2.event.PhoneStateObserver
 import common.xm.com.xmcommon.media2.event.PlayerObserver
-import common.xm.com.xmcommon.media2.gesture.GestureHelp
-import common.xm.com.xmcommon.media2.log.BKLog
+import common.xm.com.xmcommon.media2.utils.GestureHelper
 import common.xm.com.xmcommon.media2.utils.BrightnessUtil
 import common.xm.com.xmcommon.media2.utils.VolumeUtil
 
@@ -50,14 +48,14 @@ class AttachmentGesture(context: Context) : BaseAttachmentView(context) {
             override fun onVertical( type: String, present: Int) {
                 super.onVertical( type, present)
                 when (type) {
-                    GestureHelp.VERTICAL_LEFT_VALUE -> {
+                    GestureHelper.VERTICAL_LEFT_VALUE -> {
                         show(BRIGHTNESS)
                         viewHolder?.brightnessPb?.max = 100
                         viewHolder?.brightnessPb?.progress = (BrightnessUtil.getScreenBrightness(context) * 100).toInt()
                         val brightnessPresent = BrightnessUtil.getScreenBrightness(context) + (1f - BrightnessUtil.getScreenBrightness(context) * present / 100f)
                         BrightnessUtil.setSystemBrightness(context, brightnessPresent)
                     }
-                    GestureHelp.VERTICAL_RIGHT_VALUE -> {
+                    GestureHelper.VERTICAL_RIGHT_VALUE -> {
                         show(VOLUME)
                         val curVolumePresent = VolumeUtil.getVolume(context)
                         viewHolder?.volumePb?.max = 100

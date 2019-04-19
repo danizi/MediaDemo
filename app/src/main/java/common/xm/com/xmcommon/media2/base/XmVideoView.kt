@@ -3,8 +3,6 @@ package common.xm.com.xmcommon.media2.base
 import android.content.Context
 import android.media.MediaPlayer
 import android.media.SubtitleData
-import android.provider.ContactsContract
-import android.support.v4.app.FragmentManager
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.*
@@ -17,7 +15,7 @@ import common.xm.com.xmcommon.media2.broadcast.receiver.*
 import common.xm.com.xmcommon.media2.event.GestureObservable
 import common.xm.com.xmcommon.media2.event.PhoneStateObservable
 import common.xm.com.xmcommon.media2.event.PlayerObservable
-import common.xm.com.xmcommon.media2.gesture.GestureHelp
+import common.xm.com.xmcommon.media2.utils.GestureHelper
 import common.xm.com.xmcommon.media2.log.BKLog
 import java.io.IOException
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -212,7 +210,7 @@ class XmVideoView : FrameLayout {
         addView(surfaceView)
     }
 
-    private var gestureHelp: GestureHelp? = null
+    private var gestureHelper: GestureHelper? = null
     fun test() {
         //预览
         val pre = AttachmentPre(context, "https://img-blog.csdn.net/20160413112832792?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center")
@@ -234,9 +232,9 @@ class XmVideoView : FrameLayout {
         bindAttachmentView(AttachmentComplete(context))
 
         //手势监听
-        gestureHelp = GestureHelp(context)
-        gestureHelp?.bind(this)
-        gestureHelp?.setOnGestureListener(object : GestureHelp.OnGestureListener {
+        gestureHelper = GestureHelper(context)
+        gestureHelper?.bind(this)
+        gestureHelper?.setOnGestureListener(object : GestureHelper.OnGestureListener {
             override fun onDown() {
                 gestureObservable?.notifyObserversDown()
             }
@@ -321,7 +319,7 @@ class XmVideoView : FrameLayout {
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (sh != null) { //只要播放过则就手势处理
-            return gestureHelp?.onTouchEvent(event)!!
+            return gestureHelper?.onTouchEvent(event)!!
         }
         return super.onTouchEvent(event)
     }

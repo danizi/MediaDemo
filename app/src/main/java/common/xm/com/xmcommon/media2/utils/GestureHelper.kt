@@ -1,4 +1,4 @@
-package common.xm.com.xmcommon.media2.gesture
+package common.xm.com.xmcommon.media2.utils
 
 import android.content.Context
 import android.view.GestureDetector
@@ -16,9 +16,9 @@ import kotlin.math.abs
  * ScaleGestureDetector.OnScaleGestureListener
  *
  */
-class GestureHelp(context: Context?) {
+class GestureHelper(context: Context?) {
     companion object {
-        const val TAG = "GestureHelp"
+        const val TAG = "GestureHelper"
         const val VERTICAL_LEFT_VALUE = "vertical_left"
         const val VERTICAL_RIGHT_VALUE = "vertical_right"
     }
