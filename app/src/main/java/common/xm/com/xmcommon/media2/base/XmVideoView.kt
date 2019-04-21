@@ -1,13 +1,20 @@
 package common.xm.com.xmcommon.media2.base
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.media.MediaPlayer
 import android.media.SubtitleData
 import android.text.TextUtils
 import android.util.AttributeSet
-import android.view.*
+import android.view.MotionEvent
+import android.view.SurfaceHolder
+import android.view.SurfaceView
+import android.view.ViewGroup
 import android.widget.FrameLayout
-import common.xm.com.xmcommon.media2.attachment.*
+import common.xm.com.xmcommon.media2.attachment.AttachmentComplete
+import common.xm.com.xmcommon.media2.attachment.AttachmentGesture
+import common.xm.com.xmcommon.media2.attachment.AttachmentPre
+import common.xm.com.xmcommon.media2.attachment.BaseAttachmentView
 import common.xm.com.xmcommon.media2.attachment.control.AttachmentControl
 import common.xm.com.xmcommon.media2.base.XmMediaPlayer.Companion.TAG
 import common.xm.com.xmcommon.media2.broadcast.BroadcastManager
@@ -15,22 +22,23 @@ import common.xm.com.xmcommon.media2.broadcast.receiver.*
 import common.xm.com.xmcommon.media2.event.GestureObservable
 import common.xm.com.xmcommon.media2.event.PhoneStateObservable
 import common.xm.com.xmcommon.media2.event.PlayerObservable
-import common.xm.com.xmcommon.media2.utils.GestureHelper
 import common.xm.com.xmcommon.media2.log.BKLog
+import common.xm.com.xmcommon.media2.utils.GestureHelper
 import java.io.IOException
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class XmVideoView : FrameLayout {
-
+    private var broadcastManager: BroadcastManager? = null
     var mediaPlayer: XmMediaPlayer? = null //播放器
-    //var attachmentViews: ConcurrentLinkedQueue<BaseAttachmentView>? = ConcurrentLinkedQueue() //附着页面集合
+    private var attachmentViews: ConcurrentLinkedQueue<BaseAttachmentView>? = ConcurrentLinkedQueue() //附着页面集合
     private var urls: ConcurrentLinkedQueue<String>? = ConcurrentLinkedQueue() //保存播放记录
     private var sh: SurfaceHolder? = null //画布Holder
-    var surfaceView: SurfaceView? = null
+    private var surfaceView: SurfaceView? = null
     private var autoPlay = false
     private var playerObservable: PlayerObservable? = null
     private var phoneStateObservable: PhoneStateObservable? = null
     private var gestureObservable: GestureObservable? = null
+    private var pos = 0L
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
@@ -50,7 +58,6 @@ class XmVideoView : FrameLayout {
         if (gestureObservable == null) {
             gestureObservable = GestureObservable()
         }
-        //mediaPlayer?.release()
         if (mediaPlayer == null) {
             mediaPlayer = XmMediaPlayer()
             initMediaPlayerListener()
@@ -81,6 +88,7 @@ class XmVideoView : FrameLayout {
         mediaPlayer?.setOnPreparedListener(object : OnPreparedListener {
             override fun onPrepared(mp: IXmMediaPlayer) {
                 if (autoPlay) {
+                    mediaPlayer?.seekTo(pos.toInt())
                     mediaPlayer?.start()
                 }
                 playerObservable?.notifyObserversPrepared(mp)
@@ -139,11 +147,10 @@ class XmVideoView : FrameLayout {
                 (attachment.parent as ViewGroup).removeView(attachment)
             }
             //this.addView(attachment, LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
-            //attachmentViews?.add(attachment)
+            attachmentViews?.add(attachment)
             playerObservable?.addObserver(attachment.observer)
             gestureObservable?.addObserver(attachment.gestureObserver)
             phoneStateObservable?.addObserver(attachment.phoneObserver)
-
             attachment.bind(this)
         } else {
             BKLog.e(TAG, "attachment is null")
@@ -162,7 +169,6 @@ class XmVideoView : FrameLayout {
             BKLog.e(TAG, "attachment is null")
         }
     }
-
 
     fun start(url: String, autoPlay: Boolean = false) {
         /*异步准备播放*/
@@ -203,31 +209,69 @@ class XmVideoView : FrameLayout {
                     BKLog.d(IXmMediaPlayer.TAG, "surfaceCreated")
                 }
             })
+            // surfaceView?.visibility= View.GONE  设置画布隐藏就无法播放了
+            addView(surfaceView)
         } else {
+            mediaPlayer?.stop()
+            mediaPlayer?.reset()
+            mediaPlayer?.setDisplay(sh)
+            mediaPlayer?.setDataSource(url)
             mediaPlayer?.prepareAsync()
         }
-        // surfaceView?.visibility= View.GONE  设置画布隐藏就无法播放了
-        addView(surfaceView)
+//        if (TextUtils.isEmpty(url)) {
+//            throw NullPointerException("url is null")
+//        }
+//
+//        if (mediaPlayer == null) {
+//            initMediaPlayer()
+//            initMediaPlayerListener()
+//        }
+//
+//        if (surfaceView == null) {
+//            surfaceView = SurfaceView(context)
+//            surfaceView?.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+//            sh = surfaceView?.holder
+//            sh?.addCallback(object : SurfaceHolder.Callback {
+//                override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
+//                    BKLog.d(TAG, "surfaceChanged width:$width height:$height")
+//                }
+//
+//                override fun surfaceDestroyed(holder: SurfaceHolder?) {
+//                    BKLog.d(TAG, "surfaceDestroyed")
+//                }
+//
+//                override fun surfaceCreated(holder: SurfaceHolder?) {
+//                    try {
+//                        mediaPlayer?.setDisplay(sh)
+//                        mediaPlayer?.setDataSource(url)
+//                    } catch (e: Exception) {
+//                        e.printStackTrace()
+//                    }
+//                    mediaPlayer?.prepareAsync()
+//                    BKLog.d(IXmMediaPlayer.TAG, "surfaceCreated")
+//                }
+//            })
+//            // surfaceView?.visibility= View.GONE  设置画布隐藏就无法播放了
+//            addView(surfaceView)
+//        }
+//
+//        mediaPlayer?.stop()
+//        mediaPlayer?.reset()
+//        mediaPlayer?.setDataSource(url)
+//        mediaPlayer?.prepareAsync()
     }
 
     private var gestureHelper: GestureHelper? = null
     fun test() {
         //预览
-        val pre = AttachmentPre(context, "https://img-blog.csdn.net/20160413112832792?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center")
+        val pre = AttachmentPre(context, "https://note.youdao.com/yws/public/resource/cad6c6346e3b853a1705f7f4e765ed70/xmlnote/WEBRESOURCE22c3dbdc8cce3596ee91db89882861d1/1891")
         pre.url = "http://hls.videocc.net/26de49f8c2/9/26de49f8c273bbc8f6812d1422a11b39_2.m3u8"
         bindAttachmentView(pre)
-
-        //加载
-        //val loading = AttachmentLoading(context)
-        //bindAttachmentView(loading)
-
         //控制器
         val control = AttachmentControl(context)
         bindAttachmentView(control)
-
         //手势
         bindAttachmentView(AttachmentGesture(context))
-
         //完成
         bindAttachmentView(AttachmentComplete(context))
 
@@ -268,45 +312,45 @@ class XmVideoView : FrameLayout {
         if (broadcastManager == null) {
             broadcastManager = BroadcastManager.create(context)
         }
-
         //电量状态
         val batteryLevelReceiver = BatteryLevelReceiver(object : BatteryLevelReceiver.OnBatteryLevelListener {
             override fun onBatteryLevel(type: String, batteryPct: Float) {
-                phoneStateObservable?.notifyObserversBatteryLevel(type,batteryPct)
+                BKLog.d(TAG, "onBatteryLevel type:$type batteryPct:$batteryPct")
+                phoneStateObservable?.notifyObserversBatteryLevel(type, batteryPct)
             }
         })
         //耳机状态
         val headsetReceiver = HeadsetReceiver(object : HeadsetReceiver.OnHeadsetListener {
             override fun onHeadset(type: String, state: Int?) {
-                phoneStateObservable?.notifyObserversHeadset(type,state)
+                BKLog.d(TAG, "onHeadset type:$type state:$state")
+                phoneStateObservable?.notifyObserversHeadset(type, state)
             }
         })
-
         //网络状态
         val networkConnectChangedReceiver = NetworkConnectChangedReceiver(object : NetworkConnectChangedReceiver.OnNetworkConnectChangedListener {
             override fun onChange(isConnect: Boolean, type: Int) {
-                BKLog.d(TAG, "isConnect:$isConnect type:$type")
-                phoneStateObservable?.notifyObserversNetworkConnectChange(isConnect,type)
+                BKLog.d(TAG, "onChange isConnect:$isConnect type:$type")
+                phoneStateObservable?.notifyObserversNetworkConnectChange(isConnect, type)
             }
         })
-
         //手机来电去电状态
         val phoneStateReceiver = PhoneStateReceiver(object : PhoneStateReceiver.OnPhoneStateListener {
             override fun onPhoneState() {
+                BKLog.d(TAG, "onPhoneState")
                 phoneStateObservable?.notifyObserversPhoneState()
             }
 
             override fun onStateRinging() {
+                BKLog.d(TAG, "onStateRinging")
                 phoneStateObservable?.notifyObserversStateRinging()
             }
         })
         //是否充电状态
-        val powerConnectionReceiver = PowerConnectionReceiver(object :PowerConnectionReceiver.OnPowerConnectionListener{
+        val powerConnectionReceiver = PowerConnectionReceiver(object : PowerConnectionReceiver.OnPowerConnectionListener {
             override fun onPowerConnection(charger: Boolean, type: String) {
-                phoneStateObservable?.notifyObserversPowerConnection(charger,type)
+                phoneStateObservable?.notifyObserversPowerConnection(charger, type)
             }
         })
-
         broadcastManager?.registerReceiver(batteryLevelReceiver.createIntentFilter(), batteryLevelReceiver)
         broadcastManager?.registerReceiver(headsetReceiver.createIntentFilter(), headsetReceiver)
         broadcastManager?.registerReceiver(networkConnectChangedReceiver.createIntentFilter(), networkConnectChangedReceiver)
@@ -314,13 +358,19 @@ class XmVideoView : FrameLayout {
         broadcastManager?.registerReceiver(powerConnectionReceiver.createIntentFilter(), powerConnectionReceiver)
     }
 
-    private var broadcastManager: BroadcastManager? = null
+    fun next() {
+        start("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4")
+    }
 
-
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (sh != null) { //只要播放过则就手势处理
             return gestureHelper?.onTouchEvent(event)!!
         }
         return super.onTouchEvent(event)
+    }
+
+    fun onPause() {
+        pos = mediaPlayer?.getCurrentPosition()!!
     }
 }

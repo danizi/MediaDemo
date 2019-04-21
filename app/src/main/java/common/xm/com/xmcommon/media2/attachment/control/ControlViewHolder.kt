@@ -2,6 +2,7 @@ package common.xm.com.xmcommon.media2.attachment.control
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.graphics.Rect
 import android.view.View
 import common.xm.com.xmcommon.media2.base.XmMediaPlayer
 import common.xm.com.xmcommon.media2.base.XmVideoView
@@ -24,7 +25,7 @@ abstract class ControlViewHolder {
     var playResID = 0  //播放图片资源
     var pauseResID = 0 //暂停图片资源
 
-    var portraitXmVideoView: XmVideoView? = null //保存竖屏的控件
+    var portraitXmVideoViewRect: Rect? = null //保存竖屏的控件
 
     protected var activity: Activity? = null
     protected var mediaPlayer: XmMediaPlayer? = null

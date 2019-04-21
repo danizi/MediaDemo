@@ -9,7 +9,7 @@ object BKLog {
     const val D = 2
     const val W = 1
     const val E = 0
-    private var LEVEL = I
+    private var LEVEL = D
 
     fun d(msg: String?) {
         Log.d(TAG, msg)

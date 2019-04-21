@@ -76,6 +76,26 @@ class PortraitViewHolder : ControlViewHolder {
     private var pbLoading: ProgressBar? = null
 
 
+    override fun horizontalSlideStopSeekTo() {
+        val seekPos = mediaPlayer?.getDuration()!! * (progress.toFloat() / 100f)
+        mediaPlayer?.seekTo(seekPos.toInt())
+    }
+
+    override fun bind(attachmentControl: AttachmentControl?) {
+        super.bind(attachmentControl)
+        mediaPlayer = attachmentControl?.xmVideoView?.mediaPlayer
+        xmVideoView = attachmentControl?.xmVideoView
+        activity = attachmentControl?.context as Activity
+        screenW = ScreenUtil.getNormalWH(activity)[0]
+        screenH = ScreenUtil.getNormalWH(activity)[1]
+        if (screenH > screenW) {
+            val temp = screenW
+            screenW = screenH
+            screenH = temp
+        }
+        initEvent()
+    }
+
     private fun initEvent() {
         ivAction?.setOnClickListener {
             try {
@@ -95,7 +115,10 @@ class PortraitViewHolder : ControlViewHolder {
             //横屏 高度 < 宽度
             ScreenUtil.setLandscape(activity)  //设置横屏
             ScreenUtil.hideStatusBar(activity) //隐藏系统状态栏
-            xmVideoView?.layout(0, 0, screenW, screenH)    //设置宽高
+
+            //xmVideoView?.layout(0, 0, screenW, screenH)    //设置宽高
+            xmVideoView?.layoutParams?.height = screenH
+            xmVideoView?.layoutParams?.width = screenW
             hideControlView()                  //隐藏控制界面  PS : 或者删除
             listener?.onState(AttachmentControl.LANDSCAPE)
         }
@@ -138,25 +161,6 @@ class PortraitViewHolder : ControlViewHolder {
                 BKLog.d(AttachmentControl.TAG, "结束触发滑动 progress:$progress")
             }
         })
-    }
-
-    override fun horizontalSlideStopSeekTo() {
-        val seekPos = mediaPlayer?.getDuration()!! * (progress.toFloat() / 100f)
-        mediaPlayer?.seekTo(seekPos.toInt())
-    }
-
-    override fun bind(attachmentControl: AttachmentControl?) {
-        super.bind(attachmentControl)
-
-
-        mediaPlayer = attachmentControl?.xmVideoView?.mediaPlayer
-        xmVideoView = attachmentControl?.xmVideoView
-
-        activity = attachmentControl?.context as Activity
-        screenW = ScreenUtil.getNormalWH(activity)[0]
-        screenH = ScreenUtil.getNormalWH(activity)[1]
-        initEvent()
-
     }
 
     override fun showOrHideControlView() {

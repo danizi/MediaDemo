@@ -2,6 +2,7 @@ package common.xm.com.xmcommon.media2.attachment
 
 import android.content.Context
 import android.view.View
+import android.view.ViewGroup
 import common.xm.com.xmcommon.R
 import common.xm.com.xmcommon.media2.base.IXmMediaPlayer
 import common.xm.com.xmcommon.media2.base.XmVideoView
@@ -10,6 +11,7 @@ import common.xm.com.xmcommon.media2.event.PhoneStateObserver
 import common.xm.com.xmcommon.media2.event.PlayerObserver
 
 class AttachmentComplete(context: Context?) : BaseAttachmentView(context) {
+
 
     init {
         observer = object : PlayerObserver {

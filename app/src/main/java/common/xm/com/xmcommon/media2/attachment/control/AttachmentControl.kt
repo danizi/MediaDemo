@@ -2,12 +2,12 @@ package common.xm.com.xmcommon.media2.attachment.control
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import common.xm.com.xmcommon.R
 import common.xm.com.xmcommon.media2.attachment.BaseAttachmentView
 import common.xm.com.xmcommon.media2.base.IXmMediaPlayer
-import common.xm.com.xmcommon.media2.base.XmMediaPlayer
 import common.xm.com.xmcommon.media2.base.XmVideoView
 import common.xm.com.xmcommon.media2.event.GestureObserver
 import common.xm.com.xmcommon.media2.event.PhoneStateObserver
@@ -27,7 +27,6 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
         const val LANDSCAPE = "landscape"
     }
 
-
     init {
         observer = object : PlayerObserver {
             override fun onPrepared(mp: IXmMediaPlayer) {
@@ -45,7 +44,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
                 super.onInfo(mp, what, extra)
                 if (what == IXmMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) {
                     controlViewHolder?.setActionResID(R.mipmap.media_control_pause)
-                    controlViewHolder?.progressTimerStart(period.toLong())
+                    //controlViewHolder?.progressTimerStart(period.toLong())
                 }
                 when (what) {
                     IXmMediaPlayer.MEDIA_INFO_BUFFERING_START -> {
@@ -132,26 +131,19 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
         return R.layout.attachment_control
     }
 
-    override fun unBind() {}
-
     override fun bind(xmVideoView: XmVideoView) {
         super.bind(xmVideoView)
-
-//        val portraitView = getView(R.layout.attachment_control_portrait)
-//        val landscapeView = getView(R.layout.attachment_control_landscape)
-//        portraitView.visibility = View.GONE
-//        landscapeView.visibility = View.GONE
-//        addView(portraitView, LayoutParams(MATCH_PARENT, MATCH_PARENT))
-//        addView(landscapeView, LayoutParams(MATCH_PARENT, MATCH_PARENT))
-//
-//        controlViewHolder = PortraitViewHolder.create(portraitView)
-//        controlViewHolder?.playResID = R.mipmap.media_control_play
-//        controlViewHolder?.pauseResID = R.mipmap.media_control_pause
-//        controlViewHolder?.bind(this)
+        portraitXmVideoViewRect?.left = xmVideoView.left
+        portraitXmVideoViewRect?.top = xmVideoView.top
+        portraitXmVideoViewRect?.right = xmVideoView.right
+        portraitXmVideoViewRect?.bottom = xmVideoView.bottom
         addPortraitView()
     }
 
+    private var portraitXmVideoViewRect: Rect? = Rect()
+    //private var portraitXmVideoView: XmVideoView? = null
     private fun addPortraitView(visibility: Int = View.GONE) {
+
         val portraitView = getView(R.layout.attachment_control_portrait)
         portraitView.visibility = visibility
         addView(portraitView, LayoutParams(MATCH_PARENT, MATCH_PARENT))
@@ -170,9 +162,9 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
                         addLandscapeView(View.VISIBLE)
                     }
                 }
-
             }
         }
+        controlViewHolder?.progressTimerStart(period.toLong())
     }
 
     private fun addLandscapeView(visibility: Int = View.GONE) {
@@ -183,6 +175,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
         controlViewHolder?.playResID = R.mipmap.media_control_play
         controlViewHolder?.pauseResID = R.mipmap.media_control_pause
         controlViewHolder?.bind(this)
+        controlViewHolder?.portraitXmVideoViewRect = portraitXmVideoViewRect
         controlViewHolder?.listener = object : ControlViewHolder.OnScreenStateListener {
             override fun onState(type: String) {
                 this@AttachmentControl.removeAllViews()//删除所有子View ps:子View包含横屏or竖屏View
@@ -197,5 +190,6 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
 
             }
         }
+        controlViewHolder?.progressTimerStart(period.toLong())
     }
 }
