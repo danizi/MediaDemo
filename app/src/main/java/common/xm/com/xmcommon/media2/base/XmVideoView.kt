@@ -6,10 +6,7 @@ import android.media.MediaPlayer
 import android.media.SubtitleData
 import android.text.TextUtils
 import android.util.AttributeSet
-import android.view.MotionEvent
-import android.view.SurfaceHolder
-import android.view.SurfaceView
-import android.view.ViewGroup
+import android.view.*
 import android.widget.FrameLayout
 import common.xm.com.xmcommon.media2.attachment.AttachmentComplete
 import common.xm.com.xmcommon.media2.attachment.AttachmentGesture
