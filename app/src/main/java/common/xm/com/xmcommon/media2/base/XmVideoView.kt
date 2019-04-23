@@ -264,8 +264,9 @@ class XmVideoView : FrameLayout {
     private var gestureHelper: GestureHelper? = null
     fun test() {
         //预览
-        val pre = AttachmentPre(context, "https://note.youdao.com/yws/public/resource/cad6c6346e3b853a1705f7f4e765ed70/xmlnote/WEBRESOURCE22c3dbdc8cce3596ee91db89882861d1/1891")
+        val pre = AttachmentPre(context, "https://img-blog.csdn.net/20160413112832792?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center")
         pre.url = "http://hls.videocc.net/26de49f8c2/9/26de49f8c273bbc8f6812d1422a11b39_2.m3u8"
+        pre.url = "http://hls.videocc.net/26de49f8c2/2/26de49f8c22abafd8adc1b49246262c6_1.m3u8"
         bindAttachmentView(pre)
         //控制器
         val control = AttachmentControl(context)
@@ -358,8 +359,24 @@ class XmVideoView : FrameLayout {
         broadcastManager?.registerReceiver(powerConnectionReceiver.createIntentFilter(), powerConnectionReceiver)
     }
 
+    fun addPlaylists(url: String) {
+        urls?.add(url)
+    }
+
     fun next() {
         start("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4")
+    }
+
+    fun pre() {
+        start("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4")
+    }
+
+    fun pause() {
+        mediaPlayer?.pause()
+    }
+
+    fun onPause() {
+        pos = mediaPlayer?.getCurrentPosition()!!
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -368,9 +385,5 @@ class XmVideoView : FrameLayout {
             return gestureHelper?.onTouchEvent(event)!!
         }
         return super.onTouchEvent(event)
-    }
-
-    fun onPause() {
-        pos = mediaPlayer?.getCurrentPosition()!!
     }
 }

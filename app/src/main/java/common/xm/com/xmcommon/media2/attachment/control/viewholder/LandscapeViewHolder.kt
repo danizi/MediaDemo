@@ -1,20 +1,24 @@
-package common.xm.com.xmcommon.media2.attachment.control
+package common.xm.com.xmcommon.media2.attachment.control.viewholder
 
+import android.R.attr.x
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.SeekBar
-import android.widget.TextView
+import android.widget.*
 import common.xm.com.xmcommon.R
+import common.xm.com.xmcommon.media2.attachment.control.AttachmentControl
+import common.xm.com.xmcommon.media2.attachment.control.ControlViewHolder
 import common.xm.com.xmcommon.media2.log.BKLog
 import common.xm.com.xmcommon.media2.utils.ScreenUtil
 import common.xm.com.xmcommon.media2.utils.TimeUtil
+import common.xm.com.xmcommon.media2.view.XmPopWindow
+
 
 /**
  * 横屏界面
@@ -26,6 +30,7 @@ class LandscapeViewHolder : ControlViewHolder {
             val clLandscapeTop = rootView?.findViewById<View>(R.id.cl_landscape_top) as ConstraintLayout
             val ivBack = rootView.findViewById<View>(R.id.iv_back) as ImageView
             val tvTitle = rootView.findViewById<View>(R.id.tv_title) as TextView
+            val ivShare = rootView.findViewById<View>(R.id.iv_share) as ImageView
             val ivMore = rootView.findViewById<View>(R.id.iv_more) as ImageView
             val clLandscapeBottom = rootView.findViewById<View>(R.id.cl_landscape_bottom) as ConstraintLayout
             val seekBar = rootView.findViewById<View>(R.id.seekBar) as SeekBar
@@ -35,13 +40,16 @@ class LandscapeViewHolder : ControlViewHolder {
             val clSeek = rootView.findViewById<View>(R.id.cl_seek) as ConstraintLayout
             val tvTime2 = rootView.findViewById<View>(R.id.tv_time2) as TextView
             val pbLoading = rootView.findViewById<View>(R.id.pb) as ProgressBar
-            return LandscapeViewHolder(clLandscapeTop, ivBack, tvTitle, ivMore, clLandscapeBottom, seekBar, ivAction, tvTime, tvRatio, clSeek, tvTime2, pbLoading)
+            val rv = rootView.findViewById<View>(R.id.rv) as RecyclerView
+
+            return LandscapeViewHolder(clLandscapeTop, ivBack, tvTitle, ivShare, ivMore, clLandscapeBottom, seekBar, ivAction, tvTime, tvRatio, clSeek, tvTime2, pbLoading, rv)
         }
     }
 
     private var clLandscapeTop: ConstraintLayout? = null
     private var ivBack: ImageView? = null
     private var tvTitle: TextView? = null
+    private var ivShare: ImageView? = null
     private var ivMore: ImageView? = null
     private var clLandscapeBottom: ConstraintLayout? = null
     private var seekBar: SeekBar? = null
@@ -51,11 +59,13 @@ class LandscapeViewHolder : ControlViewHolder {
     private var clSeek: ConstraintLayout? = null
     private var tvTime2: TextView? = null
     private var pbLoading: ProgressBar? = null
+    private var rv: RecyclerView? = null
 
-    private constructor(clLandscapeTop: ConstraintLayout, ivBack: ImageView, tvTitle: TextView, ivMore: ImageView, clLandscapeBottom: ConstraintLayout, seekBar: SeekBar, ivAction: ImageView, tvTime: TextView, tvRatio: TextView, clSeek: ConstraintLayout, tvTime2: TextView, pbLoading: ProgressBar) {
+    private constructor(clLandscapeTop: ConstraintLayout, ivBack: ImageView, tvTitle: TextView, ivShare: ImageView, ivMore: ImageView, clLandscapeBottom: ConstraintLayout, seekBar: SeekBar, ivAction: ImageView, tvTime: TextView, tvRatio: TextView, clSeek: ConstraintLayout, tvTime2: TextView, pbLoading: ProgressBar, rv: RecyclerView) {
         this.clLandscapeTop = clLandscapeTop
         this.ivBack = ivBack
         this.tvTitle = tvTitle
+        this.ivShare = ivShare
         this.ivMore = ivMore
         this.clLandscapeBottom = clLandscapeBottom
         this.seekBar = seekBar
@@ -65,6 +75,7 @@ class LandscapeViewHolder : ControlViewHolder {
         this.clSeek = clSeek
         this.tvTime2 = tvTime2
         this.pbLoading = pbLoading
+        this.rv = rv
     }
 
     override fun bind(attachmentControl: AttachmentControl?) {
@@ -82,7 +93,13 @@ class LandscapeViewHolder : ControlViewHolder {
         initEvent()
     }
 
+    private var mLastY: Int = 0
+    private var mLastX: Int = 0
+    private var deltaX = 0
+    private var deltaY = 0
+    @SuppressLint("ClickableViewAccessibility", "ObjectAnimatorBinding")
     private fun initEvent() {
+        //顶部
         ivBack?.setOnClickListener {
             BKLog.d(TAG, "Landscape -> Portrait")
             // 横屏高度 > 宽度
@@ -101,6 +118,40 @@ class LandscapeViewHolder : ControlViewHolder {
             }
             hideControlView()
             listener?.onState(AttachmentControl.PORTRAIT)
+        }
+        ivShare?.setOnClickListener {
+            val xmPopWindow = XmPopWindow(activity)
+            val shareView = LayoutInflater.from(activity).inflate(R.layout.media_share, null, false)
+            val share: ImageView = shareView.findViewById(R.id.iv_share_wx)
+            val friend: ImageView = shareView.findViewById(R.id.iv_share_friend)
+            share.setOnClickListener {
+                Toast.makeText(activity, "分享到微信", Toast.LENGTH_SHORT).show()
+            }
+            friend.setOnClickListener {
+                Toast.makeText(activity, "分享到朋友圈", Toast.LENGTH_SHORT).show()
+            }
+            xmPopWindow.ini(shareView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            xmPopWindow.showAtLocation(XmPopWindow.Location.BOTTOM, R.style.AnimationBottomFade, activity?.window?.decorView!!, 0, 0)
+        }
+        ivMore?.setOnClickListener {
+            val xmPopWindow = XmPopWindow(activity)
+            xmPopWindow.ini(LayoutInflater.from(activity).inflate(R.layout.attachment_control_landscape_setting_pop, null, false), ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            xmPopWindow.showAtLocation(XmPopWindow.Location.RIGHT, R.style.AnimationRightFade, activity?.window?.decorView!!, 0, 0)
+        }
+
+        //底部
+        ivAction?.setOnClickListener {
+            try {
+                if (mediaPlayer?.isPlaying() == true) {
+                    ivAction?.setImageResource(playResID)
+                    mediaPlayer?.pause()
+                } else {
+                    ivAction?.setImageResource(pauseResID)
+                    mediaPlayer?.start()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
         seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             /**
@@ -140,6 +191,55 @@ class LandscapeViewHolder : ControlViewHolder {
                 BKLog.d(AttachmentControl.TAG, "结束触发滑动 progress:$progress")
             }
         })
+        tvRatio?.setOnClickListener { it ->
+            val xmPopWindow = XmPopWindow(activity)
+            val ratioView = LayoutInflater.from(activity).inflate(R.layout.attachment_control_landscape_ratio, null, false)
+            val tvRatio360p: TextView = ratioView.findViewById(R.id.tv_ratio_360p)
+            val tvRatio480p: TextView = ratioView.findViewById(R.id.tv_ratio_480p)
+            val tvRatio720p: TextView = ratioView.findViewById(R.id.tv_ratio_720p)
+            val tvRatio1080p: TextView = ratioView.findViewById(R.id.tv_ratio_1080p)
+            tvRatio360p.setOnClickListener {
+                Toast.makeText(activity, "360p", Toast.LENGTH_SHORT).show()
+            }
+            tvRatio480p.setOnClickListener {
+                Toast.makeText(activity, "480p", Toast.LENGTH_SHORT).show()
+            }
+            tvRatio720p.setOnClickListener {
+                Toast.makeText(activity, "720p", Toast.LENGTH_SHORT).show()
+            }
+            tvRatio1080p.setOnClickListener {
+                Toast.makeText(activity, "1080p", Toast.LENGTH_SHORT).show()
+            }
+            xmPopWindow.ini(ratioView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
+            xmPopWindow.showAtLocation(XmPopWindow.Location.RIGHT, R.style.AnimationRightFade, activity?.window?.decorView!!, 0, 0)
+        }
+        rv?.setOnTouchListener { v, event ->
+            //val x = event.rawX.toInt()
+            val y = event.rawY.toInt()
+
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                }
+                MotionEvent.ACTION_UP -> {
+                    if (deltaY > 0) {
+                        ObjectAnimator.ofFloat(rv, "translationY", rv?.translationY!!, 0f).setDuration(500).start()
+                    } else {
+                        ObjectAnimator.ofFloat(rv, "translationY", rv?.translationY!!.toFloat(), (-rv?.height!!).toFloat()).setDuration(500).start()
+                    }
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    deltaX = x - mLastX//计算x坐标上的差值
+                    deltaY = y - mLastY//计算y坐标上的差值
+                    val tranX = rv?.translationX!! + deltaX//要平移的x值
+                    val tranY = rv?.translationY!! + deltaY//要平移的y值
+                    rv?.translationX = tranX//设置值
+                    rv?.translationY = tranY
+                }
+            }
+            mLastX = x;//记录上次的坐标
+            mLastY = y;
+            true
+        }
     }
 
     override fun showOrHideControlView() {

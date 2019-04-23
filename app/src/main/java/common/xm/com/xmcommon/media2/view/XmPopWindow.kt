@@ -12,14 +12,18 @@ import android.widget.PopupWindow
  */
 class XmPopWindow(val context: Context?) : PopupWindow(context) {
 
-    fun ini( contentView: View?) {
+    fun ini(contentView: View?, width: Int = ViewGroup.LayoutParams.WRAP_CONTENT, height: Int = ViewGroup.LayoutParams.WRAP_CONTENT) {
         this.contentView = contentView
         this.isOutsideTouchable = true
         this.isFocusable = true
-        this.width = ViewGroup.LayoutParams.MATCH_PARENT
-        this.height = ViewGroup.LayoutParams.WRAP_CONTENT
+        this.width = width
+        this.height = height
         //实例化一个ColorDrawable颜色为半透明,设置SelectPicPopupWindow弹出窗体的背景
         this.setBackgroundDrawable(ColorDrawable(0x00000000))
+    }
+
+    init {
+
     }
 
     fun showAtLocation(location: Location?, animationStyle: Int, parentView: View, x: Int, y: Int) {
@@ -38,7 +42,9 @@ class XmPopWindow(val context: Context?) : PopupWindow(context) {
                 gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
             }
         }
-        this.animationStyle = animationStyle
+        if (animationStyle != 0) {
+            this.animationStyle = animationStyle
+        }
         showAtLocation(parentView, gravity, x, y)
     }
 

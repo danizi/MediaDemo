@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import common.xm.com.xmcommon.R
 import common.xm.com.xmcommon.media2.attachment.BaseAttachmentView
+import common.xm.com.xmcommon.media2.attachment.control.viewholder.LandscapeViewHolder
+import common.xm.com.xmcommon.media2.attachment.control.viewholder.PortraitViewHolder
 import common.xm.com.xmcommon.media2.base.IXmMediaPlayer
 import common.xm.com.xmcommon.media2.base.XmVideoView
 import common.xm.com.xmcommon.media2.event.GestureObserver
@@ -117,9 +119,7 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
                 controlViewHolder?.progressTimerStop()
 
                 //显示控制器界面
-                val slidePresent = horizontalSlidePos.toInt() + present * 1000//转化毫秒
-                xmVideoView?.mediaPlayer?.getCurrentPosition()!!
-                controlViewHolder?.updateProgress(slidePresent.toLong()) // ps: 更新进度条 播放进度文本
+                controlViewHolder?.updateProgress( horizontalSlidePos.toInt() + present * 1000L) // ps: 更新进度条 播放进度文本
                 controlViewHolder?.showProgress()
                 controlViewHolder?.showControlView()
             }
@@ -143,7 +143,6 @@ class AttachmentControl(context: Context?) : BaseAttachmentView(context) {
     private var portraitXmVideoViewRect: Rect? = Rect()
     //private var portraitXmVideoView: XmVideoView? = null
     private fun addPortraitView(visibility: Int = View.GONE) {
-
         val portraitView = getView(R.layout.attachment_control_portrait)
         portraitView.visibility = visibility
         addView(portraitView, LayoutParams(MATCH_PARENT, MATCH_PARENT))

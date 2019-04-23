@@ -1,8 +1,15 @@
 package common.xm.com.xmcommon;
 
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +19,8 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 
 import common.xm.com.xmcommon.media2.base.XmVideoView;
+import common.xm.com.xmcommon.media2.log.BKLog;
+import common.xm.com.xmcommon.media2.service.XmMediaPlayerService;
 import common.xm.com.xmcommon.media2.view.XmPopWindow;
 
 public class MainActivity extends AppCompatActivity {
@@ -46,16 +55,14 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_media2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                XmPopWindow xmPopWindow = new XmPopWindow(MainActivity.this);
-                xmPopWindow.ini(LayoutInflater.from(MainActivity.this).inflate(R.layout.attachment_control_landscape_setting_pop, null, false));
-                xmPopWindow.showAtLocation(XmPopWindow.Location.BOTTOM, R.style.AnimationBottomFade, view, 0, 0);
                 xmVideoView.test();
             }
         });
         findViewById(R.id.btn_next).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                xmVideoView.next();
+                //xmVideoView.next();
+                binder.next();
             }
         });
 
@@ -70,12 +77,49 @@ public class MainActivity extends AppCompatActivity {
         ivPre.setVisibility(View.GONE);
         String preUrl = "https://img-blog.csdn.net/20160413112832792?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center";
         Glide.with(this).load(preUrl).error(R.drawable.ic_launcher_background).into(ivPre);//加载图片
+
+
+        //youtube  底部播放列表 底部上滑 未达到一定距离 会回弹
+        //bilibili 右侧播放列表 右部左滑 到达一定距离 展示列表
+        RecyclerView recyclerView = null;
+        ObjectAnimator.ofFloat(recyclerView, "translationX", 0, 500f).setDuration(6000).start();
+        ObjectAnimator.ofFloat(recyclerView, "translationY", 0, 500f).setDuration(6000).start();
     }
+
+    XmMediaPlayerService.XmMediaPlayerBinder binder;
+    XmMediaPlayerService xmMediaPlayerService;
 
     @Override
     protected void onPause() {
         super.onPause();
         xmVideoView.onPause();
+        //startService(new Intent(this, XmMediaPlayerService.class));
+        ServiceConnection conn = new ServiceConnection() {
+
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                Log.d("", "onServiceConnected");
+                binder = (XmMediaPlayerService.XmMediaPlayerBinder) service;
+                binder.setXmVideoView(xmVideoView);
+                xmMediaPlayerService = binder.getService();
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                Log.d("", "onServiceDisconnected");
+            }
+
+            @Override
+            public void onBindingDied(ComponentName name) {
+                Log.d("", "onBindingDied");
+            }
+
+            @Override
+            public void onNullBinding(ComponentName name) {
+                Log.d("", "onNullBinding");
+            }
+        };
+        bindService(new Intent(this, XmMediaPlayerService.class), conn, BIND_AUTO_CREATE);
     }
 
     @Override

@@ -1,17 +1,19 @@
-package common.xm.com.xmcommon.media2.attachment.control
+package common.xm.com.xmcommon.media2.attachment.control.viewholder
 
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.support.constraint.ConstraintLayout
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.SeekBar
-import android.widget.TextView
+import android.view.ViewGroup
+import android.widget.*
 import common.xm.com.xmcommon.R
+import common.xm.com.xmcommon.media2.attachment.control.AttachmentControl
+import common.xm.com.xmcommon.media2.attachment.control.ControlViewHolder
 import common.xm.com.xmcommon.media2.log.BKLog
 import common.xm.com.xmcommon.media2.utils.ScreenUtil
 import common.xm.com.xmcommon.media2.utils.TimeUtil
+import common.xm.com.xmcommon.media2.view.XmPopWindow
 
 /**
  * 竖屏界面
@@ -97,6 +99,32 @@ class PortraitViewHolder : ControlViewHolder {
     }
 
     private fun initEvent() {
+        //顶部
+        ivBack?.setOnClickListener {
+            activity?.finish()
+        }
+        ivListener?.setOnClickListener {
+            Toast.makeText(activity, "耳机模式", Toast.LENGTH_SHORT).show()
+        }
+        ivMiracast?.setOnClickListener {
+            Toast.makeText(activity, "投屏", Toast.LENGTH_SHORT).show()
+        }
+        ivShare?.setOnClickListener {
+            val xmPopWindow = XmPopWindow(activity)
+            val shareView = LayoutInflater.from(activity).inflate(R.layout.media_share, null, false)
+            val share: ImageView = shareView.findViewById(R.id.iv_share_wx)
+            val friend: ImageView = shareView.findViewById(R.id.iv_share_friend)
+            share.setOnClickListener {
+                Toast.makeText(activity, "分享到微信", Toast.LENGTH_SHORT).show()
+            }
+            friend.setOnClickListener {
+                Toast.makeText(activity, "分享到朋友圈", Toast.LENGTH_SHORT).show()
+            }
+            xmPopWindow.ini(shareView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            xmPopWindow.showAtLocation(XmPopWindow.Location.BOTTOM, R.style.AnimationBottomFade, activity?.window?.decorView!!, 0, 0)
+        }
+
+        //底部
         ivAction?.setOnClickListener {
             try {
                 if (mediaPlayer?.isPlaying() == true) {
